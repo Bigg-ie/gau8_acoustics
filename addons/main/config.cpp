@@ -30,18 +30,54 @@ class CfgWeapons
         {
             displayName = "GAU-8 Low ROF [Acoustic Dev]";
 
+            // Allow each 60 ms sample to overlap the next shot.
+            soundContinuous = 0;
+
             class StandardSound
             {
                 begin1[] =
                 {
-                    "\z\big\addons\main\sounds\cannon\diagnostic.wav",
+                    "\z\big\addons\main\sounds\cannon\close_cola_1.wav",
                     5.62341,
                     1,
                     1500,
                     {25704,32159}
                 };
 
-                soundBegin[] = {"begin1",1};
+                begin2[] =
+                {
+                    "\z\big\addons\main\sounds\cannon\close_cola_2.wav",
+                    5.62341,
+                    1,
+                    1500,
+                    {25704,32159}
+                };
+
+                begin3[] =
+                {
+                    "\z\big\addons\main\sounds\cannon\close_cola_3.wav",
+                    5.62341,
+                    1,
+                    1500,
+                    {25704,32159}
+                };
+
+                begin4[] =
+                {
+                    "\z\big\addons\main\sounds\cannon\close_cola_4.wav",
+                    5.62341,
+                    1,
+                    1500,
+                    {25704,32159}
+                };
+
+                soundBegin[] =
+                {
+                    "begin1", 0.25,
+                    "begin2", 0.25,
+                    "begin3", 0.25,
+                    "begin4", 0.25
+                };
             };
         };
     };
