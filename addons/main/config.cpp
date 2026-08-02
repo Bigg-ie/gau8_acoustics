@@ -29,6 +29,18 @@ class CfgWeapons
         class LowROF: Mode_FullAuto
         {
             displayName = "GAU-8 Low ROF [Acoustic Dev]";
+
+            class StandardSound
+            {
+                begin1[] =
+                {
+                    "A3\Sounds_F\arsenal\weapons_vehicles\gatling_30mm\30mm_01_burst",
+                    5.62341,
+                    0.5,
+                    1500,
+                    {25704,32159}
+                };
+            };
         };
     };
 };
