@@ -17,6 +17,35 @@ class CfgPatches
     };
 };
 
+class CfgSoundCurves
+{
+    // Far layer fades in between approximately 300 and 750 metres.
+    class big_GAU8_FarShaderCurve
+    {
+        points[] =
+        {
+            {0.00, 0.00},
+            {0.10, 0.00},
+            {0.25, 1.00},
+            {1.00, 1.00}
+        };
+    };
+
+    // Far-layer output remains strong through the middle distance,
+    // then falls to zero at the configured maximum range.
+    class big_GAU8_FarSetCurve
+    {
+        points[] =
+        {
+            {0.00, 1.00},
+            {0.20, 1.00},
+            {0.50, 0.70},
+            {0.75, 0.30},
+            {1.00, 0.00}
+        };
+    };
+};
+
 class CfgSoundShaders
 {
     class big_GAU8_CloseBody_SoundShader
@@ -33,6 +62,21 @@ class CfgSoundShaders
         range = 300;
         rangeCurve = "closeShotCurve";
     };
+
+    class big_GAU8_FarBody_SoundShader
+    {
+        samples[] =
+        {
+            {"\z\big\addons\main\sounds\cannon\far_body_1.wav", 1},
+            {"\z\big\addons\main\sounds\cannon\far_body_2.wav", 1},
+            {"\z\big\addons\main\sounds\cannon\far_body_3.wav", 1},
+            {"\z\big\addons\main\sounds\cannon\far_body_4.wav", 1}
+        };
+
+        volume = 1;
+        range = 3000;
+        rangeCurve = "big_GAU8_FarShaderCurve";
+    };
 };
 
 class CfgSoundSets
@@ -46,6 +90,25 @@ class CfgSoundSets
 
         volumeFactor = 1;
         volumeCurve = "InverseSquare2Curve";
+
+        spatial = 1;
+        doppler = 1;
+        speedOfSound = 1;
+        loop = 0;
+
+        sound3DProcessingType = "WeaponMediumShot3DProcessingType";
+        distanceFilter = "weaponShotDistanceFreqAttenuationFilter";
+    };
+
+    class big_GAU8_FarBody_SoundSet
+    {
+        soundShaders[] =
+        {
+            "big_GAU8_FarBody_SoundShader"
+        };
+
+        volumeFactor = 1;
+        volumeCurve = "big_GAU8_FarSetCurve";
 
         spatial = 1;
         doppler = 1;
@@ -77,11 +140,14 @@ class CfgWeapons
 
             class StandardSound: BaseSoundModeType
             {
+                // Leave the far SoundSet disconnected for this validation step.
                 soundSetShot[] =
                 {
-                    "big_GAU8_CloseBody_SoundSet"
+                    "big_GAU8_CloseBody_SoundSet",
+                    "big_GAU8_FarBody_SoundSet"
                 };
             };
         };
     };
 };
+
