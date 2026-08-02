@@ -30,7 +30,7 @@ class CfgSoundShaders
         };
 
         volume = 1;
-        range = 300;
+        range = 1200;
         rangeCurve = "closeShotCurve";
     };
 };
@@ -45,7 +45,12 @@ class CfgSoundSets
         };
 
         volumeFactor = 1;
-        volumeCurve = "InverseSquare2Curve";
+        volumeCurve[] =
+        {
+            {0, 1},
+            {1000, 1},
+            {1200, 0}
+        };
 
         spatial = 1;
         doppler = 1;
@@ -53,7 +58,7 @@ class CfgSoundSets
         loop = 0;
 
         sound3DProcessingType = "WeaponMediumShot3DProcessingType";
-        distanceFilter = "weaponShotDistanceFreqAttenuationFilter";
+        distanceFilter = "none";
     };
 };
 
@@ -85,3 +90,5 @@ class CfgWeapons
         };
     };
 };
+
+
