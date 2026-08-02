@@ -8,6 +8,7 @@ class CfgPatches
         requiredVersion = 2.18;
         requiredAddons[] =
         {
+            "A3_Sounds_F",
             "A3_Air_F_EPC_Plane_CAS_01"
         };
 
@@ -16,7 +17,48 @@ class CfgPatches
     };
 };
 
+class CfgSoundShaders
+{
+    class big_GAU8_CloseBody_SoundShader
+    {
+        samples[] =
+        {
+            {"\z\big\addons\main\sounds\cannon\close_cola_1.wav", 1},
+            {"\z\big\addons\main\sounds\cannon\close_cola_2.wav", 1},
+            {"\z\big\addons\main\sounds\cannon\close_cola_3.wav", 1},
+            {"\z\big\addons\main\sounds\cannon\close_cola_4.wav", 1}
+        };
+
+        volume = 1;
+        range = 300;
+        rangeCurve = "closeShotCurve";
+    };
+};
+
+class CfgSoundSets
+{
+    class big_GAU8_CloseBody_SoundSet
+    {
+        soundShaders[] =
+        {
+            "big_GAU8_CloseBody_SoundShader"
+        };
+
+        volumeFactor = 1;
+        volumeCurve = "InverseSquare2Curve";
+
+        spatial = 1;
+        doppler = 1;
+        speedOfSound = 1;
+        loop = 0;
+
+        sound3DProcessingType = "WeaponMediumShot3DProcessingType";
+        distanceFilter = "weaponShotDistanceFreqAttenuationFilter";
+    };
+};
+
 class Mode_FullAuto;
+class BaseSoundModeType;
 
 class CfgWeapons
 {
@@ -30,53 +72,14 @@ class CfgWeapons
         {
             displayName = "GAU-8 Low ROF [Acoustic Dev]";
 
-            // Allow each 60 ms sample to overlap the next shot.
+            sounds[] = {"StandardSound"};
             soundContinuous = 0;
 
-            class StandardSound
+            class StandardSound: BaseSoundModeType
             {
-                begin1[] =
+                soundSetShot[] =
                 {
-                    "\z\big\addons\main\sounds\cannon\close_cola_1.wav",
-                    5.62341,
-                    1,
-                    1500,
-                    {25704,32159}
-                };
-
-                begin2[] =
-                {
-                    "\z\big\addons\main\sounds\cannon\close_cola_2.wav",
-                    5.62341,
-                    1,
-                    1500,
-                    {25704,32159}
-                };
-
-                begin3[] =
-                {
-                    "\z\big\addons\main\sounds\cannon\close_cola_3.wav",
-                    5.62341,
-                    1,
-                    1500,
-                    {25704,32159}
-                };
-
-                begin4[] =
-                {
-                    "\z\big\addons\main\sounds\cannon\close_cola_4.wav",
-                    5.62341,
-                    1,
-                    1500,
-                    {25704,32159}
-                };
-
-                soundBegin[] =
-                {
-                    "begin1", 0.25,
-                    "begin2", 0.25,
-                    "begin3", 0.25,
-                    "begin4", 0.25
+                    "big_GAU8_CloseBody_SoundSet"
                 };
             };
         };
