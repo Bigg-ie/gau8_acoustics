@@ -34,12 +34,14 @@ class CfgWeapons
             {
                 begin1[] =
                 {
-                    "A3\Sounds_F\arsenal\weapons_vehicles\gatling_30mm\30mm_01_burst",
+                    "\z\big\addons\main\sounds\cannon\diagnostic.wav",
                     5.62341,
-                    0.5,
+                    1,
                     1500,
                     {25704,32159}
                 };
+
+                soundBegin[] = {"begin1",1};
             };
         };
     };
