@@ -1,0 +1,24 @@
+Asset: GAU-8/A Avenger Test Fire
+Publisher: Hill Air Force Base
+Source page: https://www.facebook.com/HillAirForceBase/videos/gau-8a-avenger-test-fire/1212012495498460/
+Source type: Official U.S. Air Force social-media video
+Local asset: hill_afb_gau8_static_fire.wav
+Preparation: User-isolated static-fire audio excerpt
+
+Rights assessment:
+Provisionally treated as a United States Government work and public-domain
+material in the United States. The specific Facebook post attribution could
+not be independently inspected. Confirm that the source contains no
+third-party music or externally licensed audio before public distribution.
+
+Required limitation:
+Use must not state or imply endorsement by the United States Air Force or
+Department of Defense.
+
+Suggested notice:
+The appearance of U.S. Department of Defense visual information does not
+imply or constitute DoD endorsement.
+
+Source integrity:
+File size: 316682 bytes
+SHA-256: 6E9ADE8797BD1004C23DE3B90C9F30FB4F02A05079DBEF6F150F2CCF72BEE5A6

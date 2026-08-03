@@ -4,3 +4,7 @@ hemtt
 hemtt.exe
 *.biprivatekey
 *.hemttprivatekey
+# Local recorded-source media
+sources/recorded/*.wav
+sources/recorded/*.mp4
+sources/recorded/*.wmv
