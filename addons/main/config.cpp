@@ -182,6 +182,21 @@ class CfgSoundShaders
         rangeCurve = "big_GAU8_MidReportShaderCurve";
     };
 
+    class big_GAU8_AirframeResponse_SoundShader
+    {
+        samples[] =
+        {
+            {"\z\big\addons\main\sounds\cannon\airframe_response_1.wav", 1},
+            {"\z\big\addons\main\sounds\cannon\airframe_response_2.wav", 1},
+            {"\z\big\addons\main\sounds\cannon\airframe_response_3.wav", 1},
+            {"\z\big\addons\main\sounds\cannon\airframe_response_4.wav", 1}
+        };
+
+        volume = 1;
+        range = 70;
+        rangeCurve = "closeShotCurve";
+    };
+
 };
 
 class CfgSoundSets
@@ -297,6 +312,25 @@ class CfgSoundSets
         distanceFilter = "weaponShotDistanceFreqAttenuationFilter";
     };
 
+    class big_GAU8_AirframeResponse_SoundSet
+    {
+        soundShaders[] =
+        {
+            "big_GAU8_AirframeResponse_SoundShader"
+        };
+
+        volumeFactor = 0.40;
+        volumeCurve = "InverseSquare2Curve";
+
+        spatial = 1;
+        doppler = 1;
+        speedOfSound = 1;
+        loop = 0;
+
+        sound3DProcessingType = "WeaponMediumShot3DProcessingType";
+        distanceFilter = "weaponShotDistanceFreqAttenuationFilter";
+    };
+
 };
 
 class Mode_FullAuto;
@@ -331,6 +365,7 @@ class CfgWeapons
                     "big_GAU8_CloseBody_SoundSet",
                     "big_GAU8_CloseTransient_SoundSet",
                     "big_GAU8_CloseMechanical_SoundSet",
+                    "big_GAU8_AirframeResponse_SoundSet",
                     "big_GAU8_MidReport_SoundSet",
                     "big_GAU8_FarBody_SoundSet",
                     "big_GAU8_FarPulse_SoundSet"
