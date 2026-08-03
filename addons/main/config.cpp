@@ -193,6 +193,12 @@ class CfgWeapons
             sounds[] = {"StandardSound"};
             soundContinuous = 0;
 
+            // 3,900 RPM / 65 rounds per second.
+            reloadTime = 0.0153846;
+
+            // Preserve an approximately 0.6-second minimum burst.
+            burst = 39;
+
             class StandardSound: BaseSoundModeType
             {
                 // Leave the far SoundSet disconnected for this validation step.
