@@ -17,6 +17,19 @@ class CfgPatches
     };
 };
 
+class CfgDistanceFilters
+{
+    class big_GAU8_CannonDistanceFilter
+    {
+        type = "lowPassFilter";
+        minCutoffFrequency = 6000;
+        qFactor = 1;
+        innerRange = 150;
+        range = 600;
+        powerFactor = 1;
+    };
+};
+
 class CfgSoundCurves
 {
     // Far layer fades in between approximately 300 and 750 metres.
@@ -24,9 +37,7 @@ class CfgSoundCurves
     {
         points[] =
         {
-            {0.00, 0.00},
-            {0.10, 0.00},
-            {0.25, 1.00},
+            {0.00, 1.00},
             {1.00, 1.00}
         };
     };
@@ -49,10 +60,13 @@ class CfgSoundCurves
         points[] =
         {
             {0.00, 0.00},
-            {0.40, 0.00},
-            {0.55, 0.50},
-            {0.70, 1.00},
-            {0.90, 1.00},
+            {0.05, 0.00},
+            {0.075, 0.65},
+            {0.10, 1.00},
+            {0.20, 1.00},
+            {0.35, 0.70},
+            {0.50, 0.30},
+            {0.70, 0.00},
             {1.00, 0.00}
         };
     };
@@ -91,6 +105,21 @@ class CfgSoundCurves
         };
     };
 
+    class big_GAU8_CloseRecordedSetCurve
+    {
+        points[] =
+        {
+            {0, 1.00},
+            {10, 1.00},
+            {30, 1.00},
+            {100, 1.00},
+            {200, 0.82},
+            {300, 0.60},
+            {450, 0.28},
+            {600, 0.00}
+        };
+    };
+
 };
 
 class CfgSoundShaders
@@ -114,10 +143,7 @@ class CfgSoundShaders
     {
         samples[] =
         {
-            {"\z\big\addons\main\sounds\cannon\far_body_1.wav", 1},
-            {"\z\big\addons\main\sounds\cannon\far_body_2.wav", 1},
-            {"\z\big\addons\main\sounds\cannon\far_body_3.wav", 1},
-            {"\z\big\addons\main\sounds\cannon\far_body_4.wav", 1}
+            {"\z\big\addons\main\sounds\cannon\far_body_loop.wav", 1}
         };
 
         volume = 1;
@@ -223,7 +249,22 @@ class CfgSoundShaders
         };
 
         volume = 1;
-        range = 300;
+        range = 600;
+        rangeCurve = "closeShotCurve";
+    };
+
+    class big_GAU8_OpenTail_SoundShader
+    {
+        samples[] =
+        {
+            {"\z\big\addons\main\sounds\cannon\open_tail_1.wav", 1},
+            {"\z\big\addons\main\sounds\cannon\open_tail_2.wav", 1},
+            {"\z\big\addons\main\sounds\cannon\open_tail_3.wav", 1},
+            {"\z\big\addons\main\sounds\cannon\open_tail_4.wav", 1}
+        };
+
+        volume = 1;
+        range = 600;
         rangeCurve = "closeShotCurve";
     };
 
@@ -266,7 +307,7 @@ class CfgSoundSets
         loop = 0;
 
         sound3DProcessingType = "WeaponMediumShot3DProcessingType";
-        distanceFilter = "weaponShotDistanceFreqAttenuationFilter";
+        distanceFilter = "none";
     };
     class big_GAU8_FarPulse_SoundSet
     {
@@ -275,7 +316,7 @@ class CfgSoundSets
             "big_GAU8_FarPulse_SoundShader"
         };
 
-        volumeFactor = 0.30;
+        volumeFactor = 0.55;
         volumeCurve = "big_GAU8_FarPulseSetCurve";
 
         spatial = 1;
@@ -284,7 +325,7 @@ class CfgSoundSets
         loop = 0;
 
         sound3DProcessingType = "WeaponMediumShot3DProcessingType";
-        distanceFilter = "weaponShotDistanceFreqAttenuationFilter";
+        distanceFilter = "none";
     };
     class big_GAU8_CloseTransient_SoundSet
     {
@@ -387,8 +428,8 @@ class CfgSoundSets
             "big_GAU8_CloseRecorded_SoundShader"
         };
 
-        volumeFactor = 3.2;
-        volumeCurve = "InverseSquare2Curve";
+        volumeFactor = 4.0;
+        volumeCurve = "big_GAU8_CloseRecordedSetCurve";
 
         spatial = 1;
         spatialityRange = 15;
@@ -397,7 +438,26 @@ class CfgSoundSets
         loop = 0;
 
         sound3DProcessingType = "WeaponMediumShot3DProcessingType";
-        distanceFilter = "weaponShotDistanceFreqAttenuationFilter";
+        distanceFilter = "big_GAU8_CannonDistanceFilter";
+    };
+
+    class big_GAU8_OpenTail_SoundSet
+    {
+        soundShaders[] =
+        {
+            "big_GAU8_OpenTail_SoundShader"
+        };
+
+        volumeFactor = 0.8;
+        volumeCurve = "InverseSquare2Curve";
+
+        spatial = 1;
+        doppler = 0;
+        speedOfSound = 1;
+        loop = 0;
+
+        sound3DProcessingType = "WeaponMediumShotTail3DProcessingType";
+        distanceFilter = "weaponShotTailDistanceFreqAttenuationFilter";
     };
 
 };
@@ -419,6 +479,10 @@ class CfgWeapons
 
             sounds[] = {"StandardSound"};
             soundContinuous = 0;
+            soundBurst = 0;
+
+
+
 
             // 3,900 RPM / 65 rounds per second.
             reloadTime = 0.0153846;
@@ -428,20 +492,57 @@ class CfgWeapons
 
             class StandardSound: BaseSoundModeType
             {
-                // Leave the far SoundSet disconnected for this validation step.
-                soundSetShot[] =
-                {
-                    "big_GAU8_CloseRecorded_SoundSet",
-                    "big_GAU8_CloseMechanical_SoundSet",
-                    "big_GAU8_AirframeResponse_SoundSet",
-                    "big_GAU8_MidReport_SoundSet",
-                    "big_GAU8_FarBody_SoundSet",
-                    "big_GAU8_FarPulse_SoundSet"
-                };
+                // FarBody is controlled separately by a scripted sound source.
+                soundSetShot[] = {};
             };
         };
     };
 };
+class CfgSFX
+{
+    class big_GAU8_FarBody_SFX
+    {
+        sounds[] = {"sound0"};
 
+        sound0[] =
+        {
+            "\z\big\addons\main\sounds\cannon\far_body_loop.wav",
+            1.0,
+            1.0,
+            3000,
+            1,
+            0,
+            0,
+            0
+        };
 
+        empty[] = {"", 0, 0, 0, 0, 0, 0, 0};
+    };
+};
 
+class CfgVehicles
+{
+    class Sound;
+
+    class big_GAU8_FarBody_SoundSource: Sound
+    {
+        scope = 1;
+        sound = "big_GAU8_FarBody_SFX";
+    };
+};
+class CfgFunctions
+{
+    class big_gau8
+    {
+        tag = "big_gau8";
+
+        class main
+        {
+            file = "\z\big\addons\main\functions";
+
+            class installGrainHandler
+            {
+            };
+        };
+    };
+};
