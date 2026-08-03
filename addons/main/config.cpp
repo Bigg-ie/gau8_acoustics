@@ -384,7 +384,7 @@ class CfgSoundSets
             "big_GAU8_CloseRecorded_SoundShader"
         };
 
-        volumeFactor = 4.0;
+        volumeFactor = 3.2;
         volumeCurve = "big_GAU8_CloseRecordedSetCurve";
 
         spatial = 1;
@@ -426,8 +426,12 @@ class CfgWeapons
 
             class StandardSound: BaseSoundModeType
             {
-                // FarBody is controlled separately by a scripted sound source.
-                soundSetShot[] = {};
+                // Per-projectile close layers. FarBody remains scripted.
+                soundSetShot[] =
+                {
+                    "big_GAU8_CloseRecorded_SoundSet",
+                    "big_GAU8_CloseMechanical_SoundSet"
+                };
             };
         };
     };
@@ -441,6 +445,10 @@ class CfgFunctions
         class main
         {
             file = "\z\big\addons\main\functions";
+
+            class calculateShockGeometry
+            {
+            };
 
             class installGrainHandler
             {

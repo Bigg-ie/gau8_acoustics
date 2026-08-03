@@ -122,7 +122,11 @@ private _handler =
                 "_vehicle",
                 "_weapon",
                 "_muzzle",
-                "_mode"
+                "_mode",
+                "_ammo",
+                "_magazine",
+                "_projectile",
+                "_gunner"
             ];
 
             if (
@@ -144,6 +148,79 @@ private _handler =
                     "big_gau8_shotCount",
                     0
                 ];
+
+            /*
+                Capture one geometry solution at the beginning
+                of each continuous firing run.
+            */
+            if (
+                _shotCount == 0 &&
+                {!isNull _projectile}
+            ) then
+            {
+                private _listener = cameraOn;
+
+                if (!isNull _listener) then
+                {
+                    private _shockGeometry =
+                        [
+                            getPosASL _projectile,
+                            velocity _projectile,
+                            getPosASL _listener,
+                            343.0
+                        ]
+                        call
+                        big_gau8_fnc_calculateShockGeometry;
+
+                    _vehicle setVariable
+                    [
+                        "big_gau8_lastShockGeometry",
+                        _shockGeometry
+                    ];
+
+                    if (
+                        (count _shockGeometry) == 10
+                    ) then
+                    {
+                        _shockGeometry params
+                        [
+                            "_shockDistinct",
+                            "_shockDownrange",
+                            "_shockCrossTrack",
+                            "_shockProjectileSpeed",
+                            "_shockMach",
+                            "_shockMinimumDownrange",
+                            "_muzzleArrival",
+                            "_shockArrival",
+                            "_shockSeparation",
+                            "_shockEmissionPosition"
+                        ];
+
+                        private _message = format
+                        [
+                            "GAU-8 shock: distinct=%1, x=%2 m, d=%3 m, Mach=%4, separation=%5 ms",
+                            _shockDistinct,
+                            _shockDownrange,
+                            _shockCrossTrack,
+                            _shockMach,
+                            _shockSeparation * 1000
+                        ];
+
+                        systemChat _message;
+
+                        diag_log format
+                        [
+                            "GAU8 LIVE SHOCK: %1 | speed=%2 m/s | minimumX=%3 m | muzzleArrival=%4 s | shockArrival=%5 s | emission=%6",
+                            _message,
+                            _shockProjectileSpeed,
+                            _shockMinimumDownrange,
+                            _muzzleArrival,
+                            _shockArrival,
+                            _shockEmissionPosition
+                        ];
+                    };
+                };
+            };
 
             if (_shotCount == 0) then
             {
