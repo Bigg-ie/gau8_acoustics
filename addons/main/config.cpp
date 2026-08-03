@@ -67,6 +67,30 @@ class CfgSoundCurves
             {1.00, 0.00}
         };
     };
+    class big_GAU8_MidReportShaderCurve
+    {
+        points[] =
+        {
+            {0.00, 0.00},
+            {0.08, 0.00},
+            {0.16, 1.00},
+            {0.65, 1.00},
+            {1.00, 0.00}
+        };
+    };
+
+    class big_GAU8_MidReportSetCurve
+    {
+        points[] =
+        {
+            {0.00, 1.00},
+            {0.20, 1.00},
+            {0.50, 0.75},
+            {0.75, 0.40},
+            {1.00, 0.00}
+        };
+    };
+
 };
 
 class CfgSoundShaders
@@ -141,6 +165,21 @@ class CfgSoundShaders
         volume = 1;
         range = 100;
         rangeCurve = "closeShotCurve";
+    };
+
+    class big_GAU8_MidReport_SoundShader
+    {
+        samples[] =
+        {
+            {"\z\big\addons\main\sounds\cannon\mid_report_1.wav", 1},
+            {"\z\big\addons\main\sounds\cannon\mid_report_2.wav", 1},
+            {"\z\big\addons\main\sounds\cannon\mid_report_3.wav", 1},
+            {"\z\big\addons\main\sounds\cannon\mid_report_4.wav", 1}
+        };
+
+        volume = 1;
+        range = 1200;
+        rangeCurve = "big_GAU8_MidReportShaderCurve";
     };
 
 };
@@ -239,6 +278,25 @@ class CfgSoundSets
         distanceFilter = "weaponShotDistanceFreqAttenuationFilter";
     };
 
+    class big_GAU8_MidReport_SoundSet
+    {
+        soundShaders[] =
+        {
+            "big_GAU8_MidReport_SoundShader"
+        };
+
+        volumeFactor = 0.65;
+        volumeCurve = "big_GAU8_MidReportSetCurve";
+
+        spatial = 1;
+        doppler = 1;
+        speedOfSound = 1;
+        loop = 0;
+
+        sound3DProcessingType = "WeaponMediumShot3DProcessingType";
+        distanceFilter = "weaponShotDistanceFreqAttenuationFilter";
+    };
+
 };
 
 class Mode_FullAuto;
@@ -273,6 +331,7 @@ class CfgWeapons
                     "big_GAU8_CloseBody_SoundSet",
                     "big_GAU8_CloseTransient_SoundSet",
                     "big_GAU8_CloseMechanical_SoundSet",
+                    "big_GAU8_MidReport_SoundSet",
                     "big_GAU8_FarBody_SoundSet",
                     "big_GAU8_FarPulse_SoundSet"
                 };
