@@ -387,10 +387,11 @@ class CfgSoundSets
             "big_GAU8_CloseRecorded_SoundShader"
         };
 
-        volumeFactor = 1;
+        volumeFactor = 3.2;
         volumeCurve = "InverseSquare2Curve";
 
         spatial = 1;
+        spatialityRange = 15;
         doppler = 1;
         speedOfSound = 1;
         loop = 0;
