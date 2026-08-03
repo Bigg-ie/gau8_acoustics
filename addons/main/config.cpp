@@ -212,6 +212,21 @@ class CfgSoundShaders
         rangeCurve = "closeShotCurve";
     };
 
+    class big_GAU8_CloseRecorded_SoundShader
+    {
+        samples[] =
+        {
+            {"\z\big\addons\main\sounds\cannon\close_recorded_1.wav", 1},
+            {"\z\big\addons\main\sounds\cannon\close_recorded_2.wav", 1},
+            {"\z\big\addons\main\sounds\cannon\close_recorded_3.wav", 1},
+            {"\z\big\addons\main\sounds\cannon\close_recorded_4.wav", 1}
+        };
+
+        volume = 1;
+        range = 300;
+        rangeCurve = "closeShotCurve";
+    };
+
 };
 
 class CfgSoundSets
@@ -365,6 +380,25 @@ class CfgSoundSets
         distanceFilter = "weaponShotDistanceFreqAttenuationFilter";
     };
 
+    class big_GAU8_CloseRecorded_SoundSet
+    {
+        soundShaders[] =
+        {
+            "big_GAU8_CloseRecorded_SoundShader"
+        };
+
+        volumeFactor = 1;
+        volumeCurve = "InverseSquare2Curve";
+
+        spatial = 1;
+        doppler = 1;
+        speedOfSound = 1;
+        loop = 0;
+
+        sound3DProcessingType = "WeaponMediumShot3DProcessingType";
+        distanceFilter = "weaponShotDistanceFreqAttenuationFilter";
+    };
+
 };
 
 class Mode_FullAuto;
@@ -396,8 +430,7 @@ class CfgWeapons
                 // Leave the far SoundSet disconnected for this validation step.
                 soundSetShot[] =
                 {
-                    "big_GAU8_CloseBodyReal_SoundSet",
-                    "big_GAU8_CloseTransient_SoundSet",
+                    "big_GAU8_CloseRecorded_SoundSet",
                     "big_GAU8_CloseMechanical_SoundSet",
                     "big_GAU8_AirframeResponse_SoundSet",
                     "big_GAU8_MidReport_SoundSet",
