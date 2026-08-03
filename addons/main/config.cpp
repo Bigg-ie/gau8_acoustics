@@ -139,17 +139,6 @@ class CfgSoundShaders
         rangeCurve = "closeShotCurve";
     };
 
-    class big_GAU8_FarBody_SoundShader
-    {
-        samples[] =
-        {
-            {"\z\big\addons\main\sounds\cannon\far_body_loop.wav", 1}
-        };
-
-        volume = 1;
-        range = 3000;
-        rangeCurve = "big_GAU8_FarShaderCurve";
-    };
     class big_GAU8_FarPulse_SoundShader
     {
         samples[] =
@@ -253,21 +242,6 @@ class CfgSoundShaders
         rangeCurve = "closeShotCurve";
     };
 
-    class big_GAU8_OpenTail_SoundShader
-    {
-        samples[] =
-        {
-            {"\z\big\addons\main\sounds\cannon\open_tail_1.wav", 1},
-            {"\z\big\addons\main\sounds\cannon\open_tail_2.wav", 1},
-            {"\z\big\addons\main\sounds\cannon\open_tail_3.wav", 1},
-            {"\z\big\addons\main\sounds\cannon\open_tail_4.wav", 1}
-        };
-
-        volume = 1;
-        range = 600;
-        rangeCurve = "closeShotCurve";
-    };
-
 };
 
 class CfgSoundSets
@@ -291,24 +265,6 @@ class CfgSoundSets
         distanceFilter = "weaponShotDistanceFreqAttenuationFilter";
     };
 
-    class big_GAU8_FarBody_SoundSet
-    {
-        soundShaders[] =
-        {
-            "big_GAU8_FarBody_SoundShader"
-        };
-
-        volumeFactor = 1;
-        volumeCurve = "big_GAU8_FarSetCurve";
-
-        spatial = 1;
-        doppler = 1;
-        speedOfSound = 1;
-        loop = 0;
-
-        sound3DProcessingType = "WeaponMediumShot3DProcessingType";
-        distanceFilter = "none";
-    };
     class big_GAU8_FarPulse_SoundSet
     {
         soundShaders[] =
@@ -441,25 +397,6 @@ class CfgSoundSets
         distanceFilter = "big_GAU8_CannonDistanceFilter";
     };
 
-    class big_GAU8_OpenTail_SoundSet
-    {
-        soundShaders[] =
-        {
-            "big_GAU8_OpenTail_SoundShader"
-        };
-
-        volumeFactor = 0.8;
-        volumeCurve = "InverseSquare2Curve";
-
-        spatial = 1;
-        doppler = 0;
-        speedOfSound = 1;
-        loop = 0;
-
-        sound3DProcessingType = "WeaponMediumShotTail3DProcessingType";
-        distanceFilter = "weaponShotTailDistanceFreqAttenuationFilter";
-    };
-
 };
 
 class Mode_FullAuto;
@@ -481,9 +418,6 @@ class CfgWeapons
             soundContinuous = 0;
             soundBurst = 0;
 
-
-
-
             // 3,900 RPM / 65 rounds per second.
             reloadTime = 0.0153846;
 
@@ -496,38 +430,6 @@ class CfgWeapons
                 soundSetShot[] = {};
             };
         };
-    };
-};
-class CfgSFX
-{
-    class big_GAU8_FarBody_SFX
-    {
-        sounds[] = {"sound0"};
-
-        sound0[] =
-        {
-            "\z\big\addons\main\sounds\cannon\far_body_loop.wav",
-            1.0,
-            1.0,
-            3000,
-            1,
-            0,
-            0,
-            0
-        };
-
-        empty[] = {"", 0, 0, 0, 0, 0, 0, 0};
-    };
-};
-
-class CfgVehicles
-{
-    class Sound;
-
-    class big_GAU8_FarBody_SoundSource: Sound
-    {
-        scope = 1;
-        sound = "big_GAU8_FarBody_SFX";
     };
 };
 class CfgFunctions
