@@ -44,6 +44,29 @@ class CfgSoundCurves
             {1.00, 0.00}
         };
     };
+    class big_GAU8_FarPulseShaderCurve
+    {
+        points[] =
+        {
+            {0.00, 0.00},
+            {0.40, 0.00},
+            {0.55, 0.50},
+            {0.70, 1.00},
+            {0.90, 1.00},
+            {1.00, 0.00}
+        };
+    };
+
+    class big_GAU8_FarPulseSetCurve
+    {
+        points[] =
+        {
+            {0.00, 1.00},
+            {0.65, 1.00},
+            {0.85, 0.65},
+            {1.00, 0.00}
+        };
+    };
 };
 
 class CfgSoundShaders
@@ -76,6 +99,20 @@ class CfgSoundShaders
         volume = 1;
         range = 3000;
         rangeCurve = "big_GAU8_FarShaderCurve";
+    };
+    class big_GAU8_FarPulse_SoundShader
+    {
+        samples[] =
+        {
+            {"\z\big\addons\main\sounds\cannon\far_pulse_1.wav", 1},
+            {"\z\big\addons\main\sounds\cannon\far_pulse_2.wav", 1},
+            {"\z\big\addons\main\sounds\cannon\far_pulse_3.wav", 1},
+            {"\z\big\addons\main\sounds\cannon\far_pulse_4.wav", 1}
+        };
+
+        volume = 1;
+        range = 3000;
+        rangeCurve = "big_GAU8_FarPulseShaderCurve";
     };
 };
 
@@ -118,6 +155,24 @@ class CfgSoundSets
         sound3DProcessingType = "WeaponMediumShot3DProcessingType";
         distanceFilter = "weaponShotDistanceFreqAttenuationFilter";
     };
+    class big_GAU8_FarPulse_SoundSet
+    {
+        soundShaders[] =
+        {
+            "big_GAU8_FarPulse_SoundShader"
+        };
+
+        volumeFactor = 0.30;
+        volumeCurve = "big_GAU8_FarPulseSetCurve";
+
+        spatial = 1;
+        doppler = 1;
+        speedOfSound = 1;
+        loop = 0;
+
+        sound3DProcessingType = "WeaponMediumShot3DProcessingType";
+        distanceFilter = "weaponShotDistanceFreqAttenuationFilter";
+    };
 };
 
 class Mode_FullAuto;
@@ -144,10 +199,13 @@ class CfgWeapons
                 soundSetShot[] =
                 {
                     "big_GAU8_CloseBody_SoundSet",
-                    "big_GAU8_FarBody_SoundSet"
+                    "big_GAU8_FarBody_SoundSet",
+                    "big_GAU8_FarPulse_SoundSet"
                 };
             };
         };
     };
 };
+
+
 
