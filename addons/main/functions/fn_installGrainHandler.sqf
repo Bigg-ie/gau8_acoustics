@@ -170,6 +170,119 @@ _aircraft setVariable
 
 _aircraft setVariable
 [
+    "big_gau8_cockpitBodyPaths",
+    [
+        "z\big\addons\main\sounds\cannon\cockpit_body_grain_1.wav",
+        "z\big\addons\main\sounds\cannon\cockpit_body_grain_2.wav",
+        "z\big\addons\main\sounds\cannon\cockpit_body_grain_3.wav",
+        "z\big\addons\main\sounds\cannon\cockpit_body_grain_4.wav",
+        "z\big\addons\main\sounds\cannon\cockpit_body_grain_5.wav",
+        "z\big\addons\main\sounds\cannon\cockpit_body_grain_6.wav"
+    ]
+];
+
+_aircraft setVariable
+[
+    "big_gau8_cockpitBodyStartPath",
+    "z\big\addons\main\sounds\cannon\cockpit_body_start.wav"
+];
+
+_aircraft setVariable
+[
+    "big_gau8_cockpitBodyEndPath",
+    "z\big\addons\main\sounds\cannon\cockpit_body_end.wav"
+];
+
+_aircraft setVariable
+[
+    "big_gau8_cockpitAirframePaths",
+    [
+        "z\big\addons\main\sounds\cannon\cockpit_airframe_grain_1.wav",
+        "z\big\addons\main\sounds\cannon\cockpit_airframe_grain_2.wav",
+        "z\big\addons\main\sounds\cannon\cockpit_airframe_grain_3.wav",
+        "z\big\addons\main\sounds\cannon\cockpit_airframe_grain_4.wav",
+        "z\big\addons\main\sounds\cannon\cockpit_airframe_grain_5.wav",
+        "z\big\addons\main\sounds\cannon\cockpit_airframe_grain_6.wav"
+    ]
+];
+
+_aircraft setVariable
+[
+    "big_gau8_cockpitAirframeStartPath",
+    "z\big\addons\main\sounds\cannon\cockpit_airframe_start.wav"
+];
+
+_aircraft setVariable
+[
+    "big_gau8_cockpitAirframeEndPath",
+    "z\big\addons\main\sounds\cannon\cockpit_airframe_end.wav"
+];
+
+/*
+    Cockpit audio is listener-relative rather than world-positioned. Raw
+    playSound3D events remain fixed at their creation position, which is
+    correct for external reports but incorrect for a moving cockpit. The UI
+    command is routed through the effects channel and returns a stopSound ID.
+*/
+_aircraft setVariable
+[
+    "big_gau8_playCockpitSound",
+    {
+        params
+        [
+            "_vehicle",
+            "_path",
+            "_volume",
+            ["_pitch", 1.0]
+        ];
+
+        if (
+            isNull _vehicle ||
+            {_path isEqualTo ""} ||
+            {_volume <= 0.000001}
+        ) exitWith
+        {
+            -1
+        };
+
+        private _soundID =
+            playSoundUI
+            [
+                _path,
+                (_volume max 0) min 5,
+                _pitch,
+                true
+            ];
+
+        if (_soundID >= 0) then
+        {
+            private _ids =
+                _vehicle getVariable
+                [
+                    "big_gau8_grainIDs",
+                    []
+                ];
+
+            _ids pushBack _soundID;
+
+            while {(count _ids) > 160} do
+            {
+                _ids deleteAt 0;
+            };
+
+            _vehicle setVariable
+            [
+                "big_gau8_grainIDs",
+                _ids
+            ];
+        };
+
+        _soundID
+    }
+];
+
+_aircraft setVariable
+[
     "big_gau8_grainIDs",
     []
 ];
@@ -220,6 +333,36 @@ _aircraft setVariable
 [
     "big_gau8_lastArrivalTime",
     time
+];
+
+_aircraft setVariable
+[
+    "big_gau8_cockpitMix",
+    0.0
+];
+
+_aircraft setVariable
+[
+    "big_gau8_lastCockpitBodyGain",
+    0.0
+];
+
+_aircraft setVariable
+[
+    "big_gau8_lastCockpitAirframeGain",
+    0.0
+];
+
+_aircraft setVariable
+[
+    "big_gau8_nextCockpitGrainShot",
+    20
+];
+
+_aircraft setVariable
+[
+    "big_gau8_lastCockpitGrainIndex",
+    -1
 ];
 
 private _handler =
@@ -284,7 +427,13 @@ private _handler =
                 "_midBodyDirectivity",
                 "_farBodyDirectivity",
                 "_mechanicalDirectivity",
-                "_muzzleDirectivity"
+                "_muzzleDirectivity",
+                "_cameraMode",
+                "_cockpitTarget",
+                "_cockpitMix",
+                "_externalMix",
+                "_cockpitBodyGain",
+                "_cockpitAirframeGain"
             ];
 
             private _arrivalTime = time + _propagationDelay;
@@ -377,6 +526,24 @@ private _handler =
                 ]
             ];
 
+            _vehicle setVariable
+            [
+                "big_gau8_lastCockpitBodyGain",
+                _cockpitBodyGain
+            ];
+
+            _vehicle setVariable
+            [
+                "big_gau8_lastCockpitAirframeGain",
+                _cockpitAirframeGain
+            ];
+
+            _vehicle setVariable
+            [
+                "big_gau8_lastCockpitMix",
+                _cockpitMix
+            ];
+
             if
             (
                 _shotCount == 0 &&
@@ -402,6 +569,33 @@ private _handler =
 
                 systemChat _directivityMessage;
                 diag_log _directivityMessage;
+            };
+
+            if
+            (
+                _shotCount == 0 &&
+                {
+                    _vehicle getVariable
+                    [
+                        "big_gau8_debugCockpit",
+                        false
+                    ]
+                }
+            ) then
+            {
+                private _cockpitMessage = format
+                [
+                    "GAU-8 cockpit: mode=%1 target=%2 mix=%3 external=%4 body=%5 airframe=%6",
+                    _cameraMode,
+                    _cockpitTarget,
+                    (_cockpitMix toFixed 3),
+                    (_externalMix toFixed 3),
+                    (_cockpitBodyGain toFixed 3),
+                    (_cockpitAirframeGain toFixed 3)
+                ];
+
+                systemChat _cockpitMessage;
+                diag_log _cockpitMessage;
             };
 
             /*
@@ -514,6 +708,27 @@ private _handler =
                         ""
                     ];
 
+                private _cockpitBodyStartPath =
+                    _vehicle getVariable
+                    [
+                        "big_gau8_cockpitBodyStartPath",
+                        ""
+                    ];
+
+                private _cockpitAirframeStartPath =
+                    _vehicle getVariable
+                    [
+                        "big_gau8_cockpitAirframeStartPath",
+                        ""
+                    ];
+
+                private _playCockpitSound =
+                    _vehicle getVariable
+                    [
+                        "big_gau8_playCockpitSound",
+                        {}
+                    ];
+
                 [
                     _vehicle,
                     _farStartPath,
@@ -568,6 +783,23 @@ private _handler =
                     2000
                 ]
                 call big_gau8_fnc_queueSoundArrival;
+
+                [
+                    _vehicle,
+                    _cockpitBodyStartPath,
+                    1.85 * _cockpitBodyGain,
+                    1.0
+                ]
+                call _playCockpitSound;
+
+                [
+                    _vehicle,
+                    _cockpitAirframeStartPath,
+                    2.05 * _cockpitAirframeGain,
+                    1.0
+                ]
+                call _playCockpitSound;
+
             };
 
             private _farPaths =
@@ -597,6 +829,132 @@ private _handler =
                     "big_gau8_closeMechanicalPaths",
                     []
                 ];
+
+            private _cockpitBodyPaths =
+                _vehicle getVariable
+                [
+                    "big_gau8_cockpitBodyPaths",
+                    []
+                ];
+
+            private _cockpitAirframePaths =
+                _vehicle getVariable
+                [
+                    "big_gau8_cockpitAirframePaths",
+                    []
+                ];
+
+            private _playCockpitSound =
+                _vehicle getVariable
+                [
+                    "big_gau8_playCockpitSound",
+                    {}
+                ];
+
+            /*
+                Cockpit sustain has its own shot-count clock. Checking a
+                time gate only when the randomized external scheduler fired
+                produced actual gaps longer than the 0.48-second samples.
+
+                At 3,900 RPM, 22 rounds is approximately 0.338 seconds. The
+                first sustain pair begins after 20 rounds, overlapping the
+                0.36-second start files by approximately 52 milliseconds.
+                Later pairs overlap the 0.48-second grains by approximately
+                140 milliseconds, giving stable continuity without the heavy
+                six-voice stacking of the original V8 scheduler.
+            */
+            private _cockpitGrainCount =
+                (count _cockpitBodyPaths)
+                min
+                (count _cockpitAirframePaths);
+
+            if (
+                (_cockpitGrainCount > 0) &&
+                (
+                    (_cockpitBodyGain > 0.000001) ||
+                    (_cockpitAirframeGain > 0.000001)
+                )
+            ) then
+            {
+                private _nextCockpitGrainShot =
+                    _vehicle getVariable
+                    [
+                        "big_gau8_nextCockpitGrainShot",
+                        20
+                    ];
+
+                if (_shotCount >= _nextCockpitGrainShot) then
+                {
+                    private _lastCockpitIndex =
+                        _vehicle getVariable
+                        [
+                            "big_gau8_lastCockpitGrainIndex",
+                            -1
+                        ];
+
+                    private _cockpitGrainIndex =
+                        floor (random _cockpitGrainCount);
+
+                    if (_cockpitGrainIndex == _lastCockpitIndex) then
+                    {
+                        _cockpitGrainIndex =
+                            (_cockpitGrainIndex + 1)
+                            mod
+                            _cockpitGrainCount;
+                    };
+
+                    private _cockpitPitch =
+                        0.990 + random 0.020;
+
+                    private _cockpitBodyVolume =
+                        1.55 + random 0.20;
+
+                    private _cockpitAirframeVolume =
+                        1.75 + random 0.25;
+
+                    [
+                        _vehicle,
+                        _cockpitBodyPaths select _cockpitGrainIndex,
+                        _cockpitBodyVolume * _cockpitBodyGain,
+                        _cockpitPitch
+                    ]
+                    call _playCockpitSound;
+
+                    [
+                        _vehicle,
+                        _cockpitAirframePaths select _cockpitGrainIndex,
+                        _cockpitAirframeVolume * _cockpitAirframeGain,
+                        _cockpitPitch
+                    ]
+                    call _playCockpitSound;
+
+                    private _cockpitIntervalShots =
+                        round
+                        (
+                            (
+                                _vehicle getVariable
+                                [
+                                    "big_gau8_cockpitIntervalShots",
+                                    22
+                                ]
+                            )
+                            max 19
+                            min 25
+                        );
+
+                    _vehicle setVariable
+                    [
+                        "big_gau8_nextCockpitGrainShot",
+                        _shotCount + _cockpitIntervalShots
+                    ];
+
+                    _vehicle setVariable
+                    [
+                        "big_gau8_lastCockpitGrainIndex",
+                        _cockpitGrainIndex
+                    ];
+                };
+            };
 
             private _grainCount =
                 ((count _farPaths) min (count _closeBodyPaths))
@@ -844,6 +1202,20 @@ private _handler =
                                     0
                                 ];
 
+                            private _releaseCockpitBodyGain =
+                                _vehicle getVariable
+                                [
+                                    "big_gau8_lastCockpitBodyGain",
+                                    0
+                                ];
+
+                            private _releaseCockpitAirframeGain =
+                                _vehicle getVariable
+                                [
+                                    "big_gau8_lastCockpitAirframeGain",
+                                    0
+                                ];
+
                             private _closeEndPath =
                                 _vehicle getVariable
                                 [
@@ -863,6 +1235,27 @@ private _handler =
                                 [
                                     "big_gau8_endPath",
                                     ""
+                                ];
+
+                            private _cockpitBodyEndPath =
+                                _vehicle getVariable
+                                [
+                                    "big_gau8_cockpitBodyEndPath",
+                                    ""
+                                ];
+
+                            private _cockpitAirframeEndPath =
+                                _vehicle getVariable
+                                [
+                                    "big_gau8_cockpitAirframeEndPath",
+                                    ""
+                                ];
+
+                            private _playCockpitSound =
+                                _vehicle getVariable
+                                [
+                                    "big_gau8_playCockpitSound",
+                                    {}
                                 ];
 
                             [
@@ -898,6 +1291,22 @@ private _handler =
                             ]
                             call big_gau8_fnc_queueSoundArrival;
 
+                            [
+                                _vehicle,
+                                _cockpitBodyEndPath,
+                                1.55 * _releaseCockpitBodyGain,
+                                1.0
+                            ]
+                            call _playCockpitSound;
+
+                            [
+                                _vehicle,
+                                _cockpitAirframeEndPath,
+                                1.70 * _releaseCockpitAirframeGain,
+                                1.0
+                            ]
+                            call _playCockpitSound;
+
                             /*
                                 Reset only the emission scheduler. Already
                                 emitted sounds and queued arrivals continue
@@ -913,6 +1322,18 @@ private _handler =
                             [
                                 "big_gau8_nextGrainShot",
                                 9
+                            ];
+
+                            _vehicle setVariable
+                            [
+                                "big_gau8_nextCockpitGrainShot",
+                                20
+                            ];
+
+                            _vehicle setVariable
+                            [
+                                "big_gau8_lastCockpitGrainIndex",
+                                -1
                             ];
 
                             _vehicle setVariable

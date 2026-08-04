@@ -20,7 +20,13 @@
         midBodyDirectivity,
         farBodyDirectivity,
         mechanicalDirectivity,
-        muzzleDirectivity
+        muzzleDirectivity,
+        cameraMode,
+        cockpitTarget,
+        cockpitMix,
+        externalMix,
+        cockpitBodyGain,
+        cockpitAirframeGain
     ]
 */
 params
@@ -215,6 +221,85 @@ private _mechanicalPresence =
     ]
     call _sampleCurve;
 
+/*
+    Cockpit context is listener-local and view-dependent.
+
+    INTERNAL and GUNNER views from the firing aircraft use the structural
+    cockpit path. EXTERNAL, GROUP, Zeus, spectator, and remote cameras retain
+    the accepted external V7 model.
+
+    A short constant-sum transition prevents a hard switch if the player
+    changes view during a firing run. A new run snaps to the current view.
+*/
+private _cameraObject = cameraOn;
+private _cameraVehicle =
+    if (isNull _cameraObject) then
+    {
+        objNull
+    }
+    else
+    {
+        vehicle _cameraObject
+    };
+
+private _cameraMode = toUpper cameraView;
+
+private _cockpitTarget =
+    (_cameraVehicle isEqualTo _vehicle) &&
+    {_cameraMode in ["INTERNAL", "GUNNER"]};
+
+private _targetCockpitMix = parseNumber _cockpitTarget;
+
+private _shotCount =
+    _vehicle getVariable
+    [
+        "big_gau8_shotCount",
+        0
+    ];
+
+private _previousCockpitMix =
+    _vehicle getVariable
+    [
+        "big_gau8_cockpitMix",
+        _targetCockpitMix
+    ];
+
+private _cockpitMix =
+    if (_shotCount == 0) then
+    {
+        _targetCockpitMix
+    }
+    else
+    {
+        _previousCockpitMix +
+        ((_targetCockpitMix - _previousCockpitMix) * 0.28)
+    };
+
+_cockpitMix = (_cockpitMix max 0) min 1;
+
+_vehicle setVariable
+[
+    "big_gau8_cockpitMix",
+    _cockpitMix
+];
+
+private _externalMix = 1 - _cockpitMix;
+
+private _cockpitMaster =
+    (
+        _vehicle getVariable
+        [
+            "big_gau8_cockpitMaster",
+            1.0
+        ]
+    ) max 0 min 2;
+
+private _cockpitBodyGain =
+    _cockpitMix * _cockpitMaster;
+
+private _cockpitAirframeGain =
+    _cockpitMix * _cockpitMaster;
+
 private _toListener =
     if (_distance > 0.01) then
     {
@@ -330,23 +415,23 @@ private _muzzleDirectivity =
     call _sampleCurve;
 
 private _closeBodyGain =
-    _distanceGain * _closeWeight * _closeBodyDirectivity * 1.25;
+    _distanceGain * _closeWeight * _closeBodyDirectivity * 1.25 * _externalMix;
 
 /*
     Mid files are rendered 1 dB below the close files to retain headroom.
     The 1.12 multiplier restores nominal crossover loudness.
 */
 private _midBodyGain =
-    _distanceGain * _midWeight * _midBodyDirectivity * 1.12;
+    _distanceGain * _midWeight * _midBodyDirectivity * 1.12 * _externalMix;
 
 private _farBodyGain =
-    _distanceGain * _farWeight * _farBodyDirectivity;
+    _distanceGain * _farWeight * _farBodyDirectivity * _externalMix;
 
 private _mechanicalGain =
-    _distanceGain * _mechanicalPresence * _mechanicalDirectivity * 0.35;
+    _distanceGain * _mechanicalPresence * _mechanicalDirectivity * 0.35 * _externalMix;
 
 private _muzzleGain =
-    _distanceGain * _closeWeight * _muzzleDirectivity * 0.90;
+    _distanceGain * _closeWeight * _muzzleDirectivity * 0.90 * _externalMix;
 
 [
     _listenerPositionASL,
@@ -365,5 +450,12 @@ private _muzzleGain =
     _midBodyDirectivity,
     _farBodyDirectivity,
     _mechanicalDirectivity,
-    _muzzleDirectivity
+    _muzzleDirectivity,
+    _cameraMode,
+    _cockpitTarget,
+    _cockpitMix,
+    _externalMix,
+    _cockpitBodyGain,
+    _cockpitAirframeGain
 ]
+
