@@ -1,0 +1,460 @@
+/*
+    Estimate external acoustic obstruction and a first-order ground
+    reflection for one emitted GAU-8 event.
+
+    Expensive geometry checks are cached and smoothed per aircraft. The
+    reflection geometry is inexpensive and is recalculated for each emitted
+    event so its arrival position follows the historical source position.
+
+    Return value:
+    [
+        terrainOcclusion,
+        objectOcclusion,
+        combinedOcclusion,
+        reflectionPresence,
+        reflectionPositionASL,
+        reflectionPropagationDelaySeconds,
+        reflectionExtraDelaySeconds,
+        sourceHeightAGL,
+        listenerHeightAGL,
+        objectHitCount
+    ]
+*/
+params
+[
+    "_vehicle",
+    "_emissionPositionASL",
+    "_listenerPositionASL",
+    "_distance",
+    ["_externalMix", 1.0]
+];
+
+if (
+    isNull _vehicle ||
+    {(count _emissionPositionASL) != 3} ||
+    {(count _listenerPositionASL) != 3} ||
+    {_externalMix <= 0.000001}
+) exitWith
+{
+    [
+        0,
+        0,
+        0,
+        0,
+        +_emissionPositionASL,
+        _distance / 343.0,
+        0,
+        0,
+        0,
+        0
+    ]
+};
+
+private _sampleCurve =
+{
+    params
+    [
+        "_x",
+        "_points"
+    ];
+
+    private _count = count _points;
+
+    if (_count == 0) exitWith
+    {
+        0
+    };
+
+    private _first = _points select 0;
+
+    if (_x <= (_first select 0)) exitWith
+    {
+        _first select 1
+    };
+
+    private _last = _points select (_count - 1);
+    private _value = _last select 1;
+
+    for "_index" from 1 to (_count - 1) do
+    {
+        private _lower = _points select (_index - 1);
+        private _upper = _points select _index;
+
+        if (_x <= (_upper select 0)) exitWith
+        {
+            _value = linearConversion
+            [
+                _lower select 0,
+                _upper select 0,
+                _x,
+                _lower select 1,
+                _upper select 1,
+                true
+            ];
+        };
+    };
+
+    _value
+};
+
+private _cache =
+    _vehicle getVariable
+    [
+        "big_gau8_environmentCache",
+        []
+    ];
+
+private _nextCheck = _cache param [0, -1000.0];
+private _cachedListener =
+    _cache param
+    [
+        1,
+        +_listenerPositionASL
+    ];
+private _cachedSource =
+    _cache param
+    [
+        2,
+        +_emissionPositionASL
+    ];
+private _previousTerrain = _cache param [3, 0.0];
+private _previousObject = _cache param [4, 0.0];
+private _previousHitCount = _cache param [5, 0];
+
+private _checkInterval =
+    (
+        _vehicle getVariable
+        [
+            "big_gau8_environmentCheckInterval",
+            0.12
+        ]
+    )
+    max 0.08
+    min 0.50;
+
+private _needsCheck =
+    (time >= _nextCheck) ||
+    {(_listenerPositionASL vectorDistance _cachedListener) > 12} ||
+    {(_emissionPositionASL vectorDistance _cachedSource) > 20};
+
+private _terrainOcclusion = _previousTerrain;
+private _objectOcclusion = _previousObject;
+private _objectHitCount = _previousHitCount;
+
+if (_needsCheck && {_distance > 4}) then
+{
+    private _sourceToListener =
+        _emissionPositionASL vectorFromTo _listenerPositionASL;
+
+    private _side =
+        _sourceToListener vectorCrossProduct [0, 0, 1];
+
+    if ((vectorMagnitude _side) < 0.01) then
+    {
+        _side = [1, 0, 0];
+    }
+    else
+    {
+        _side = vectorNormalized _side;
+    };
+
+    private _up = [0, 0, 1];
+
+    /*
+        Begin a few metres beyond the projectile spawn point. This avoids
+        classifying the projectile proxy or the aircraft's own nose geometry
+        as an obstruction while preserving the useful external path.
+    */
+    private _rayOrigin =
+        _emissionPositionASL vectorAdd
+        (_sourceToListener vectorMultiply 4.0);
+
+    private _offsets =
+    [
+        [0, 0, 0],
+        (_side vectorMultiply 1.8) vectorAdd (_up vectorMultiply 0.8),
+        (_side vectorMultiply -1.8) vectorAdd (_up vectorMultiply 0.8)
+    ];
+
+    private _listenerObject = cameraOn;
+    private _listenerIgnore =
+        if (isNull _listenerObject) then
+        {
+            objNull
+        }
+        else
+        {
+            vehicle _listenerObject
+        };
+
+    private _terrainBlockedRays = 0;
+    private _objectBlockedRays = 0;
+    _objectHitCount = 0;
+
+    {
+        private _rayStart =
+            _rayOrigin vectorAdd _x;
+
+        private _rayEnd =
+            _listenerPositionASL vectorAdd _x;
+
+        if (terrainIntersectASL [_rayStart, _rayEnd]) then
+        {
+            _terrainBlockedRays = _terrainBlockedRays + 1;
+        };
+
+        if (_distance <= 5000) then
+        {
+            private _hits =
+                lineIntersectsSurfaces
+                [
+                    _rayStart,
+                    _rayEnd,
+                    _vehicle,
+                    _listenerIgnore,
+                    true,
+                    6,
+                    "VIEW",
+                    "FIRE",
+                    true
+                ];
+
+            private _rayObjectBlocked = false;
+
+            {
+                private _hitObject = _x param [2, objNull];
+                private _parentObject = _x param [3, objNull];
+
+                if (
+                    !isNull _hitObject ||
+                    {!isNull _parentObject}
+                ) then
+                {
+                    _rayObjectBlocked = true;
+                    _objectHitCount = _objectHitCount + 1;
+                };
+            }
+            forEach _hits;
+
+            if (_rayObjectBlocked) then
+            {
+                _objectBlockedRays = _objectBlockedRays + 1;
+            };
+        };
+    }
+    forEach _offsets;
+
+    private _targetTerrain = _terrainBlockedRays / 3;
+    private _targetObject = _objectBlockedRays / 3;
+
+    private _smoothOcclusion =
+    {
+        params
+        [
+            "_previous",
+            "_target"
+        ];
+
+        private _response =
+            if (_target > _previous) then
+            {
+                0.62
+            }
+            else
+            {
+                0.22
+            };
+
+        _previous + ((_target - _previous) * _response)
+    };
+
+    _terrainOcclusion =
+        [_previousTerrain, _targetTerrain]
+        call _smoothOcclusion;
+
+    _objectOcclusion =
+        [_previousObject, _targetObject]
+        call _smoothOcclusion;
+
+    _vehicle setVariable
+    [
+        "big_gau8_environmentCache",
+        [
+            time + _checkInterval,
+            +_listenerPositionASL,
+            +_emissionPositionASL,
+            _terrainOcclusion,
+            _objectOcclusion,
+            _objectHitCount
+        ]
+    ];
+};
+
+_terrainOcclusion = (_terrainOcclusion max 0) min 1;
+_objectOcclusion = (_objectOcclusion max 0) min 1;
+
+private _combinedOcclusion =
+    1 -
+    (
+        (1 - _terrainOcclusion) *
+        (1 - _objectOcclusion)
+    );
+
+private _sourceGroundASL =
+    getTerrainHeightASL
+    [
+        _emissionPositionASL select 0,
+        _emissionPositionASL select 1
+    ];
+
+private _listenerGroundASL =
+    getTerrainHeightASL
+    [
+        _listenerPositionASL select 0,
+        _listenerPositionASL select 1
+    ];
+
+private _sourceHeightAGL =
+    ((_emissionPositionASL select 2) - _sourceGroundASL) max 0;
+
+private _listenerHeightAGL =
+    ((_listenerPositionASL select 2) - _listenerGroundASL) max 0;
+
+private _averageGroundASL =
+    (_sourceGroundASL + _listenerGroundASL) * 0.5;
+
+private _mirrorSource =
+[
+    _emissionPositionASL select 0,
+    _emissionPositionASL select 1,
+    (2 * _averageGroundASL) -
+    (_emissionPositionASL select 2)
+];
+
+private _reflectedDistance =
+    _mirrorSource vectorDistance _listenerPositionASL;
+
+_reflectedDistance = _reflectedDistance max _distance;
+
+private _reflectionPropagationDelay =
+    _reflectedDistance / 343.0;
+
+private _reflectionExtraDelay =
+    (_reflectedDistance - _distance) / 343.0;
+
+private _reflectionPositionASL = +_emissionPositionASL;
+private _mirrorToListener =
+    _listenerPositionASL vectorDiff _mirrorSource;
+private _verticalSpan = _mirrorToListener select 2;
+
+if ((abs _verticalSpan) > 0.001) then
+{
+    private _fraction =
+        (
+            (_averageGroundASL - (_mirrorSource select 2)) /
+            _verticalSpan
+        )
+        max 0
+        min 1;
+
+    _reflectionPositionASL =
+        _mirrorSource vectorAdd
+        (_mirrorToListener vectorMultiply _fraction);
+
+    _reflectionPositionASL set
+    [
+        2,
+        (
+            getTerrainHeightASL
+            [
+                _reflectionPositionASL select 0,
+                _reflectionPositionASL select 1
+            ]
+        ) + 0.15
+    ];
+};
+
+private _distancePresence =
+    [
+        _distance,
+        [
+            [0,    0.00],
+            [60,   0.00],
+            [100,  0.40],
+            [250,  1.00],
+            [1200, 1.00],
+            [2000, 0.62],
+            [3000, 0.18],
+            [3500, 0.00]
+        ]
+    ]
+    call _sampleCurve;
+
+private _sourceHeightPresence =
+    [
+        _sourceHeightAGL,
+        [
+            [0,   1.00],
+            [60,  1.00],
+            [150, 0.85],
+            [300, 0.55],
+            [600, 0.20],
+            [900, 0.00]
+        ]
+    ]
+    call _sampleCurve;
+
+private _listenerHeightPresence =
+    [
+        _listenerHeightAGL,
+        [
+            [0,   1.00],
+            [8,   1.00],
+            [25,  0.78],
+            [60,  0.35],
+            [120, 0.00]
+        ]
+    ]
+    call _sampleCurve;
+
+private _delayPresence =
+    [
+        _reflectionExtraDelay,
+        [
+            [0.000, 0.35],
+            [0.001, 0.75],
+            [0.003, 1.00],
+            [0.040, 1.00],
+            [0.120, 0.75],
+            [0.250, 0.00]
+        ]
+    ]
+    call _sampleCurve;
+
+private _occlusionClear =
+    (1 - _terrainOcclusion) *
+    (1 - (0.75 * _objectOcclusion));
+
+private _reflectionPresence =
+    0.32 *
+    _distancePresence *
+    _sourceHeightPresence *
+    _listenerHeightPresence *
+    _delayPresence *
+    _occlusionClear *
+    _externalMix;
+
+_reflectionPresence = (_reflectionPresence max 0) min 0.32;
+
+[
+    _terrainOcclusion,
+    _objectOcclusion,
+    _combinedOcclusion,
+    _reflectionPresence,
+    _reflectionPositionASL,
+    _reflectionPropagationDelay,
+    _reflectionExtraDelay,
+    _sourceHeightAGL,
+    _listenerHeightAGL,
+    _objectHitCount
+]
