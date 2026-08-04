@@ -1,5 +1,10 @@
 params ["_aircraft"];
 
+if (!hasInterface) exitWith
+{
+    -1
+};
+
 if (isNull _aircraft) exitWith
 {
     -1
@@ -84,8 +89,89 @@ _aircraft setVariable
 
 _aircraft setVariable
 [
+    "big_gau8_endPath",
+    "z\big\addons\main\sounds\cannon\far_body_end.wav"
+];
+
+_aircraft setVariable
+[
+    "big_gau8_closeBodyPaths",
+    [
+        "z\big\addons\main\sounds\cannon\close_body_grain_1.wav",
+        "z\big\addons\main\sounds\cannon\close_body_grain_2.wav",
+        "z\big\addons\main\sounds\cannon\close_body_grain_3.wav",
+        "z\big\addons\main\sounds\cannon\close_body_grain_4.wav",
+        "z\big\addons\main\sounds\cannon\close_body_grain_5.wav",
+        "z\big\addons\main\sounds\cannon\close_body_grain_6.wav"
+    ]
+];
+
+_aircraft setVariable
+[
+    "big_gau8_closeBodyStartPath",
+    "z\big\addons\main\sounds\cannon\close_body_start.wav"
+];
+
+_aircraft setVariable
+[
+    "big_gau8_closeBodyEndPath",
+    "z\big\addons\main\sounds\cannon\close_body_end.wav"
+];
+
+_aircraft setVariable
+[
+    "big_gau8_closeMechanicalPaths",
+    [
+        "z\big\addons\main\sounds\cannon\close_mechanical_grain_1.wav",
+        "z\big\addons\main\sounds\cannon\close_mechanical_grain_2.wav",
+        "z\big\addons\main\sounds\cannon\close_mechanical_grain_3.wav",
+        "z\big\addons\main\sounds\cannon\close_mechanical_grain_4.wav",
+        "z\big\addons\main\sounds\cannon\close_mechanical_grain_5.wav",
+        "z\big\addons\main\sounds\cannon\close_mechanical_grain_6.wav"
+    ]
+];
+
+_aircraft setVariable
+[
+    "big_gau8_closeMechanicalStartPath",
+    "z\big\addons\main\sounds\cannon\close_mechanical_start.wav"
+];
+
+_aircraft setVariable
+[
+    "big_gau8_closeMuzzlePath",
+    "z\big\addons\main\sounds\cannon\close_muzzle_blast.wav"
+];
+
+_aircraft setVariable
+[
+    "big_gau8_shockPaths",
+    [
+        "z\big\addons\main\sounds\cannon\shock_crack_1.wav",
+        "z\big\addons\main\sounds\cannon\shock_crack_2.wav",
+        "z\big\addons\main\sounds\cannon\shock_crack_3.wav",
+        "z\big\addons\main\sounds\cannon\shock_crack_4.wav",
+        "z\big\addons\main\sounds\cannon\shock_crack_5.wav",
+        "z\big\addons\main\sounds\cannon\shock_crack_6.wav"
+    ]
+];
+
+_aircraft setVariable
+[
     "big_gau8_grainIDs",
     []
+];
+
+_aircraft setVariable
+[
+    "big_gau8_arrivalQueue",
+    []
+];
+
+_aircraft setVariable
+[
+    "big_gau8_arrivalWorkerRunning",
+    false
 ];
 
 _aircraft setVariable
@@ -110,6 +196,18 @@ _aircraft setVariable
 [
     "big_gau8_monitorRunning",
     false
+];
+
+_aircraft setVariable
+[
+    "big_gau8_lastEmissionPositionASL",
+    getPosASL _aircraft
+];
+
+_aircraft setVariable
+[
+    "big_gau8_lastArrivalTime",
+    time
 ];
 
 private _handler =
@@ -139,7 +237,7 @@ private _handler =
             _vehicle setVariable
             [
                 "big_gau8_lastShotTime",
-                diag_tickTime
+                time
             ];
 
             private _shotCount =
@@ -149,161 +247,51 @@ private _handler =
                     0
                 ];
 
-            private _listener = cameraOn;
+            private _acousticState =
+                [
+                    _vehicle,
+                    _projectile
+                ]
+                call big_gau8_fnc_getAcousticState;
 
-            if (isNull _listener) then
-            {
-                _listener = player;
-            };
+            _acousticState params
+            [
+                "_listenerPositionASL",
+                "_emissionPositionASL",
+                "_listenerDistance",
+                "_propagationDelay",
+                "_distanceGain",
+                "_closeBodyGain",
+                "_farBodyGain",
+                "_mechanicalGain",
+                "_muzzleGain",
+                "_forwardDot"
+            ];
 
-            private _listenerPosition =
-                positionCameraToWorld [0, 0, 0];
+            private _arrivalTime = time + _propagationDelay;
 
-            private _sourcePosition =
-                ASLToAGL
-                (
-                    getPosASL _vehicle
-                );
+            /*
+                Preserve the final emission state so the release recording
+                can arrive from the last-shot position at the correct time.
+            */
+            _vehicle setVariable
+            [
+                "big_gau8_lastEmissionPositionASL",
+                +_emissionPositionASL
+            ];
 
-            private _listenerDistance =
-                _listenerPosition vectorDistance _sourcePosition;
+            _vehicle setVariable
+            [
+                "big_gau8_lastArrivalTime",
+                _arrivalTime
+            ];
 
-            private _farBodyGain =
-                if (_listenerDistance <= 150) then
-                {
-                    0
-                }
-                else
-                {
-                    if (_listenerDistance < 200) then
-                    {
-                        linearConversion
-                        [
-                            150,
-                            200,
-                            _listenerDistance,
-                            0,
-                            1,
-                            true
-                        ]
-                    }
-                    else
-                    {
-                        if (_listenerDistance <= 500) then
-                        {
-                            1
-                        }
-                        else
-                        {
-                            if (_listenerDistance < 1000) then
-                            {
-                                linearConversion
-                                [
-                                    500,
-                                    1000,
-                                    _listenerDistance,
-                                    1.0000,
-                                    0.5012,
-                                    true
-                                ]
-                            }
-                            else
-                            {
-                                if (_listenerDistance < 2000) then
-                                {
-                                    linearConversion
-                                    [
-                                        1000,
-                                        2000,
-                                        _listenerDistance,
-                                        0.5012,
-                                        0.2512,
-                                        true
-                                    ]
-                                }
-                                else
-                                {
-                                    if (_listenerDistance < 5000) then
-                                    {
-                                        linearConversion
-                                        [
-                                            2000,
-                                            5000,
-                                            _listenerDistance,
-                                            0.2512,
-                                            0.0891,
-                                            true
-                                        ]
-                                    }
-                                    else
-                                    {
-                                        if (_listenerDistance < 10000) then
-                                        {
-                                            linearConversion
-                                            [
-                                                5000,
-                                                10000,
-                                                _listenerDistance,
-                                                0.0891,
-                                                0.0447,
-                                                true
-                                            ]
-                                        }
-                                        else
-                                        {
-                                            if (_listenerDistance < 20000) then
-                                            {
-                                                linearConversion
-                                                [
-                                                    10000,
-                                                    20000,
-                                                    _listenerDistance,
-                                                    0.0447,
-                                                    0.0224,
-                                                    true
-                                                ]
-                                            }
-                                            else
-                                            {
-                                                if (_listenerDistance < 30000) then
-                                                {
-                                                    linearConversion
-                                                    [
-                                                        20000,
-                                                        30000,
-                                                        _listenerDistance,
-                                                        0.0224,
-                                                        0.0141,
-                                                        true
-                                                    ]
-                                                }
-                                                else
-                                                {
-                                                    if (_listenerDistance < 50000) then
-                                                    {
-                                                        linearConversion
-                                                        [
-                                                            30000,
-                                                            50000,
-                                                            _listenerDistance,
-                                                            0.0141,
-                                                            0.0079,
-                                                            true
-                                                        ]
-                                                    }
-                                                    else
-                                                    {
-                                                        0
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                };
+            _vehicle setVariable
+            [
+                "big_gau8_lastMuzzleGain",
+                _muzzleGain
+            ];
+
             _vehicle setVariable
             [
                 "big_gau8_lastListenerDistance",
@@ -312,30 +300,72 @@ private _handler =
 
             _vehicle setVariable
             [
+                "big_gau8_lastPropagationDelay",
+                _propagationDelay
+            ];
+
+            _vehicle setVariable
+            [
+                "big_gau8_lastDistanceGain",
+                _distanceGain
+            ];
+
+            _vehicle setVariable
+            [
+                "big_gau8_lastCloseGain",
+                _closeBodyGain
+            ];
+
+            _vehicle setVariable
+            [
                 "big_gau8_lastFarBodyGain",
                 _farBodyGain
             ];
 
+            _vehicle setVariable
+            [
+                "big_gau8_lastMechanicalGain",
+                _mechanicalGain
+            ];
+
+            _vehicle setVariable
+            [
+                "big_gau8_lastForwardDot",
+                _forwardDot
+            ];
+
             /*
-                Capture one geometry solution at the beginning
-                of each continuous firing run.
+                Every supersonic projectile produces a short N-wave only
+                when the listener lies inside its forward Mach cone. The
+                playback position is the point on the trajectory from which
+                the earliest wavefront reaches the listener.
             */
-            if (
-                _shotCount == 0 &&
-                {!isNull _projectile}
-            ) then
+            if (!isNull _projectile) then
             {
-                if (!isNull _listener) then
+                private _shockGeometry =
+                    [
+                        getPosASL _projectile,
+                        velocity _projectile,
+                        _listenerPositionASL,
+                        343.0
+                    ]
+                    call big_gau8_fnc_calculateShockGeometry;
+
+                if ((count _shockGeometry) == 10) then
                 {
-                    private _shockGeometry =
-                        [
-                            getPosASL _projectile,
-                            velocity _projectile,
-                            getPosASL _listener,
-                            343.0
-                        ]
-                        call
-                        big_gau8_fnc_calculateShockGeometry;
+                    _shockGeometry params
+                    [
+                        "_shockDistinct",
+                        "_shockDownrange",
+                        "_shockCrossTrack",
+                        "_shockProjectileSpeed",
+                        "_shockMach",
+                        "_shockMinimumDownrange",
+                        "_muzzleArrival",
+                        "_shockArrival",
+                        "_shockSeparation",
+                        "_shockEmissionPosition"
+                    ];
 
                     _vehicle setVariable
                     [
@@ -343,27 +373,128 @@ private _handler =
                         _shockGeometry
                     ];
 
+                    if (_shockDistinct) then
+                    {
+                        private _crossTrackGain =
+                            if (_shockCrossTrack <= 25) then
+                            {
+                                1.00
+                            }
+                            else
+                            {
+                                if (_shockCrossTrack <= 50) then
+                                {
+                                    linearConversion
+                                    [25, 50, _shockCrossTrack, 1.00, 0.90, true]
+                                }
+                                else
+                                {
+                                    if (_shockCrossTrack <= 100) then
+                                    {
+                                        linearConversion
+                                        [50, 100, _shockCrossTrack, 0.90, 0.68, true]
+                                    }
+                                    else
+                                    {
+                                        if (_shockCrossTrack <= 200) then
+                                        {
+                                            linearConversion
+                                            [100, 200, _shockCrossTrack, 0.68, 0.42, true]
+                                        }
+                                        else
+                                        {
+                                            if (_shockCrossTrack <= 350) then
+                                            {
+                                                linearConversion
+                                                [200, 350, _shockCrossTrack, 0.42, 0.22, true]
+                                            }
+                                            else
+                                            {
+                                                if (_shockCrossTrack <= 500) then
+                                                {
+                                                    linearConversion
+                                                    [350, 500, _shockCrossTrack, 0.22, 0.10, true]
+                                                }
+                                                else
+                                                {
+                                                    linearConversion
+                                                    [500, 750, _shockCrossTrack, 0.10, 0.00, true]
+                                                };
+                                            };
+                                        };
+                                    };
+                                };
+                            };
+
+                        private _separationGain =
+                            linearConversion
+                            [
+                                0.008,
+                                0.120,
+                                _shockSeparation,
+                                0.20,
+                                1.00,
+                                true
+                            ];
+
+                        private _machGain =
+                            linearConversion
+                            [
+                                1.05,
+                                3.20,
+                                _shockMach,
+                                0.65,
+                                1.05,
+                                true
+                            ];
+
+                        private _shockGain =
+                            _crossTrackGain *
+                            _separationGain *
+                            _machGain;
+
+                        private _shockPaths =
+                            _vehicle getVariable
+                            [
+                                "big_gau8_shockPaths",
+                                []
+                            ];
+
+                        if (
+                            _shockGain > 0.0001 &&
+                            {(count _shockPaths) > 0}
+                        ) then
+                        {
+                            private _shockIndex =
+                                _shotCount mod (count _shockPaths);
+
+                            [
+                                _vehicle,
+                                _shockPaths select _shockIndex,
+                                _shockEmissionPosition,
+                                time + _shockArrival,
+                                9.0 * _shockGain,
+                                0.985 + random 0.030,
+                                5000
+                            ]
+                            call big_gau8_fnc_queueSoundArrival;
+                        };
+                    };
+
                     if (
-                        (count _shockGeometry) == 10
+                        _shotCount == 0 &&
+                        {
+                            _vehicle getVariable
+                            [
+                                "big_gau8_debugShock",
+                                false
+                            ]
+                        }
                     ) then
                     {
-                        _shockGeometry params
-                        [
-                            "_shockDistinct",
-                            "_shockDownrange",
-                            "_shockCrossTrack",
-                            "_shockProjectileSpeed",
-                            "_shockMach",
-                            "_shockMinimumDownrange",
-                            "_muzzleArrival",
-                            "_shockArrival",
-                            "_shockSeparation",
-                            "_shockEmissionPosition"
-                        ];
-
                         private _message = format
                         [
-                            "GAU-8 shock: distinct=%1, x=%2 m, d=%3 m, Mach=%4, separation=%5 ms",
+                            "GAU-8 shock: distinct=%1, x=%2 m, d=%3 m, Mach=%4, lead=%5 ms",
                             _shockDistinct,
                             _shockDownrange,
                             _shockCrossTrack,
@@ -372,10 +503,9 @@ private _handler =
                         ];
 
                         systemChat _message;
-
                         diag_log format
                         [
-                            "GAU8 LIVE SHOCK: %1 | speed=%2 m/s | minimumX=%3 m | muzzleArrival=%4 s | shockArrival=%5 s | emission=%6",
+                            "GAU8 LIVE SHOCK: %1 | speed=%2 m/s | coneX=%3 m | muzzleArrival=%4 s | shockArrival=%5 s | emission=%6",
                             _message,
                             _shockProjectileSpeed,
                             _shockMinimumDownrange,
@@ -387,61 +517,112 @@ private _handler =
                 };
             };
 
-            if (
-                _shotCount == 0 &&
-                {_farBodyGain > 0.001}
-            ) then
+            if (_shotCount == 0) then
             {
-                private _startPath =
+                private _farStartPath =
                     _vehicle getVariable
                     [
                         "big_gau8_startPath",
                         ""
                     ];
 
-                private _startID =
-                    playSound3D
+                private _closeStartPath =
+                    _vehicle getVariable
                     [
-                        _startPath,
-                        _vehicle,
-                        false,
-                        getPosASL _vehicle,
-                        4.8 * _farBodyGain,
-                        1.0,
-                        50000,
-                        0,
-                        true
+                        "big_gau8_closeBodyStartPath",
+                        ""
                     ];
 
-                if (_startID >= 0) then
-                {
-                    private _ids =
-                        _vehicle getVariable
-                        [
-                            "big_gau8_grainIDs",
-                            []
-                        ];
-
-                    _ids pushBack _startID;
-
-                    _vehicle setVariable
+                private _mechanicalStartPath =
+                    _vehicle getVariable
                     [
-                        "big_gau8_grainIDs",
-                        _ids
+                        "big_gau8_closeMechanicalStartPath",
+                        ""
                     ];
-                };
+
+                private _muzzlePath =
+                    _vehicle getVariable
+                    [
+                        "big_gau8_closeMuzzlePath",
+                        ""
+                    ];
+
+                [
+                    _vehicle,
+                    _farStartPath,
+                    _emissionPositionASL,
+                    _arrivalTime,
+                    4.8 * _farBodyGain,
+                    1.0,
+                    50000
+                ]
+                call big_gau8_fnc_queueSoundArrival;
+
+                [
+                    _vehicle,
+                    _closeStartPath,
+                    _emissionPositionASL,
+                    _arrivalTime,
+                    4.8 * _closeBodyGain,
+                    1.0,
+                    50000
+                ]
+                call big_gau8_fnc_queueSoundArrival;
+
+                [
+                    _vehicle,
+                    _mechanicalStartPath,
+                    _emissionPositionASL,
+                    _arrivalTime,
+                    4.8 * _mechanicalGain,
+                    1.0,
+                    500
+                ]
+                call big_gau8_fnc_queueSoundArrival;
+
+                [
+                    _vehicle,
+                    _muzzlePath,
+                    _emissionPositionASL,
+                    _arrivalTime,
+                    4.8 * _muzzleGain,
+                    1.0,
+                    2000
+                ]
+                call big_gau8_fnc_queueSoundArrival;
             };
 
-            private _paths =
+            private _farPaths =
                 _vehicle getVariable
                 [
                     "big_gau8_grainPaths",
                     []
                 ];
 
+            private _closeBodyPaths =
+                _vehicle getVariable
+                [
+                    "big_gau8_closeBodyPaths",
+                    []
+                ];
+
+            private _closeMechanicalPaths =
+                _vehicle getVariable
+                [
+                    "big_gau8_closeMechanicalPaths",
+                    []
+                ];
+
+            private _grainCount =
+                (count _farPaths) min (count _closeBodyPaths);
+
             if (
-                _farBodyGain > 0.001 &&
-                {(count _paths) > 0}
+                (_grainCount > 0) &&
+                (
+                    (_farBodyGain > 0.000001) ||
+                    (_closeBodyGain > 0.000001) ||
+                    (_mechanicalGain > 0.000001)
+                )
             ) then
             {
                 private _nextGrainShot =
@@ -463,79 +644,59 @@ private _handler =
                     private _grainIndex =
                         floor
                         (
-                            random
-                            (
-                                count _paths
-                            )
+                            random _grainCount
                         );
 
                     if (_grainIndex == _lastIndex) then
                     {
                         _grainIndex =
-                            (
-                                _grainIndex + 1
-                            )
-                            mod
-                            (
-                                count _paths
-                            );
+                            (_grainIndex + 1) mod _grainCount;
                     };
 
                     private _pitch =
-                        0.985 +
-                        random 0.030;
+                        0.985 + random 0.030;
 
-                    private _volume =
-                        (
-                            4.2 +
-                            random 0.6
-                        )
-                        *
-                        _farBodyGain;
+                    private _baseVolume =
+                        4.2 + random 0.6;
 
-                    private _soundID =
-                        playSound3D
-                        [
-                            _paths select _grainIndex,
-                            _vehicle,
-                            false,
-                            getPosASL _vehicle,
-                            _volume,
-                            _pitch,
-                            50000,
-                            0,
-                            true
-                        ];
+                    [
+                        _vehicle,
+                        _farPaths select _grainIndex,
+                        _emissionPositionASL,
+                        _arrivalTime,
+                        _baseVolume * _farBodyGain,
+                        _pitch,
+                        50000
+                    ]
+                    call big_gau8_fnc_queueSoundArrival;
 
-                    if (_soundID >= 0) then
+                    [
+                        _vehicle,
+                        _closeBodyPaths select _grainIndex,
+                        _emissionPositionASL,
+                        _arrivalTime,
+                        _baseVolume * _closeBodyGain,
+                        _pitch,
+                        50000
+                    ]
+                    call big_gau8_fnc_queueSoundArrival;
+
+                    if (_grainIndex < (count _closeMechanicalPaths)) then
                     {
-                        private _ids =
-                            _vehicle getVariable
-                            [
-                                "big_gau8_grainIDs",
-                                []
-                            ];
-
-                        _ids pushBack _soundID;
-
-                        if ((count _ids) > 12) then
-                        {
-                            _ids deleteAt 0;
-                        };
-
-                        _vehicle setVariable
                         [
-                            "big_gau8_grainIDs",
-                            _ids
-                        ];
+                            _vehicle,
+                            _closeMechanicalPaths select _grainIndex,
+                            _emissionPositionASL,
+                            _arrivalTime,
+                            _baseVolume * _mechanicalGain,
+                            _pitch,
+                            500
+                        ]
+                        call big_gau8_fnc_queueSoundArrival;
                     };
 
                     private _nextGap =
-                        7 +
-                        floor
-                        (
-                            random 7
-                        );
+                        7 + floor (random 7);
 
                     _vehicle setVariable
                     [
@@ -550,6 +711,7 @@ private _handler =
                     ];
                 };
             };
+
             _vehicle setVariable
             [
                 "big_gau8_shotCount",
@@ -594,7 +756,7 @@ private _handler =
 
                     while {!_finished} do
                     {
-                        uiSleep 0.02;
+                        sleep 0.02;
 
                         if (isNull _vehicle) then
                         {
@@ -609,10 +771,7 @@ private _handler =
                                     -1
                                 ];
 
-                            if (
-                                _currentGeneration !=
-                                _generation
-                            ) then
+                            if (_currentGeneration != _generation) then
                             {
                                 _finished = true;
                             }
@@ -625,11 +784,7 @@ private _handler =
                                         -1000
                                     ];
 
-                                private _elapsed =
-                                    diag_tickTime -
-                                    _lastShot;
-
-                                if (_elapsed > 0.08) then
+                                if ((time - _lastShot) > 0.08) then
                                 {
                                     _finished = true;
                                 };
@@ -646,32 +801,84 @@ private _handler =
                                 -1
                             ];
 
-                        if (
-                            _currentGeneration ==
-                            _generation
-                        ) then
+                        if (_currentGeneration == _generation) then
                         {
-                            private _ids =
+                            /*
+                                Emit the recorded trigger-release phase at
+                                the acoustic arrival time of the final shot.
+                                Existing sustain grains are allowed to decay;
+                                the release layer supplies the real stop
+                                character instead of hard-stopping voices.
+                            */
+                            private _releasePosition =
                                 _vehicle getVariable
                                 [
-                                    "big_gau8_grainIDs",
-                                    []
+                                    "big_gau8_lastEmissionPositionASL",
+                                    getPosASL _vehicle
                                 ];
 
-                            {
-                                if (_x >= 0) then
-                                {
-                                    stopSound _x;
-                                };
-                            }
-                            forEach _ids;
+                            private _releaseArrival =
+                                _vehicle getVariable
+                                [
+                                    "big_gau8_lastArrivalTime",
+                                    time
+                                ];
 
-                            _vehicle setVariable
+                            private _releaseCloseGain =
+                                _vehicle getVariable
+                                [
+                                    "big_gau8_lastCloseGain",
+                                    0
+                                ];
+
+                            private _releaseFarGain =
+                                _vehicle getVariable
+                                [
+                                    "big_gau8_lastFarBodyGain",
+                                    0
+                                ];
+
+                            private _closeEndPath =
+                                _vehicle getVariable
+                                [
+                                    "big_gau8_closeBodyEndPath",
+                                    ""
+                                ];
+
+                            private _farEndPath =
+                                _vehicle getVariable
+                                [
+                                    "big_gau8_endPath",
+                                    ""
+                                ];
+
                             [
-                                "big_gau8_grainIDs",
-                                []
-                            ];
+                                _vehicle,
+                                _farEndPath,
+                                _releasePosition,
+                                _releaseArrival,
+                                4.2 * _releaseFarGain,
+                                1.0,
+                                50000
+                            ]
+                            call big_gau8_fnc_queueSoundArrival;
 
+                            [
+                                _vehicle,
+                                _closeEndPath,
+                                _releasePosition,
+                                _releaseArrival,
+                                4.2 * _releaseCloseGain,
+                                1.0,
+                                50000
+                            ]
+                            call big_gau8_fnc_queueSoundArrival;
+
+                            /*
+                                Reset only the emission scheduler. Already
+                                emitted sounds and queued arrivals continue
+                                naturally and are never truncated here.
+                            */
                             _vehicle setVariable
                             [
                                 "big_gau8_shotCount",
@@ -682,6 +889,12 @@ private _handler =
                             [
                                 "big_gau8_nextGrainShot",
                                 9
+                            ];
+
+                            _vehicle setVariable
+                            [
+                                "big_gau8_lastGrainIndex",
+                                -1
                             ];
 
                             _vehicle setVariable

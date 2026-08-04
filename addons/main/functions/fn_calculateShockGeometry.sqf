@@ -1,181 +1,104 @@
 /*
-    Calculates ideal constant-velocity Mach-cone geometry.
+    Solve the earliest Mach-cone arrival from a projectile travelling at
+    constant velocity from its current position.
 
-    Parameters:
-        0: Muzzle position, PositionASL
-        1: Initial projectile velocity, Vector3D in m/s
-        2: Listener position, PositionASL
-        3: Speed of sound in m/s; default 343
-
-    Returns:
-        0: Distinct shock is geometrically eligible
-        1: Listener distance downrange along projectile axis
-        2: Listener perpendicular distance from projectile axis
-        3: Projectile speed
-        4: Mach number
-        5: Minimum downrange distance for a distinct shock
-        6: Muzzle-report arrival time
-        7: Shock arrival time
-        8: Shock-to-muzzle separation time
-        9: Retarded shock-emission position, PositionASL
+    Return value:
+    [
+        distinctShock,
+        listenerDownrangeMetres,
+        listenerCrossTrackMetres,
+        projectileSpeedMetresPerSecond,
+        machNumber,
+        minimumDownrangeForConeMetres,
+        muzzleArrivalSeconds,
+        shockArrivalSeconds,
+        shockBeforeMuzzleSeconds,
+        shockEmissionPositionASL
+    ]
 */
-
 params
 [
-    "_muzzlePositionASL",
+    "_projectilePositionASL",
     "_projectileVelocity",
     "_listenerPositionASL",
-    ["_speedOfSound", 343.0]
+    ["_soundSpeed", 343.0]
 ];
 
+private _projectileSpeed = vectorMagnitude _projectileVelocity;
+private _relative =
+    _listenerPositionASL vectorDiff _projectilePositionASL;
+private _muzzleDistance = vectorMagnitude _relative;
+private _muzzleArrival = _muzzleDistance / _soundSpeed;
+
 if (
-    (count _muzzlePositionASL) != 3 ||
-    (count _projectileVelocity) != 3 ||
-    (count _listenerPositionASL) != 3 ||
-    _speedOfSound <= 0
+    _projectileSpeed <= (_soundSpeed * 1.001) ||
+    {_muzzleDistance <= 0.001}
 ) exitWith
 {
-    []
-};
-
-private _projectileSpeed =
-    vectorMagnitude _projectileVelocity;
-
-if (_projectileSpeed <= 0) exitWith
-{
-    []
-};
-
-private _projectileAxis =
-    vectorNormalized _projectileVelocity;
-
-private _muzzleToListener =
-    _listenerPositionASL
-    vectorDiff
-    _muzzlePositionASL;
-
-private _directDistance =
-    vectorMagnitude _muzzleToListener;
-
-private _downrange =
-    _muzzleToListener
-    vectorDotProduct
-    _projectileAxis;
-
-private _axialComponent =
-    _projectileAxis
-    vectorMultiply
-    _downrange;
-
-private _crossTrackVector =
-    _muzzleToListener
-    vectorDiff
-    _axialComponent;
-
-private _crossTrackDistance =
-    vectorMagnitude _crossTrackVector;
-
-private _mach =
-    _projectileSpeed /
-    _speedOfSound;
-
-private _muzzleArrival =
-    _directDistance /
-    _speedOfSound;
-
-if (_mach <= 1) exitWith
-{
     [
         false,
-        _downrange,
-        _crossTrackDistance,
+        0,
+        _muzzleDistance,
         _projectileSpeed,
-        _mach,
-        -1,
+        _projectileSpeed / _soundSpeed,
+        0,
         _muzzleArrival,
         _muzzleArrival,
         0,
-        _muzzlePositionASL
+        +_projectilePositionASL
     ]
 };
 
-private _machRoot =
-    sqrt
-    (
-        (_mach * _mach) - 1
-    );
+private _direction =
+    _projectileVelocity vectorMultiply (1 / _projectileSpeed);
+private _downrange = _relative vectorDotProduct _direction;
+private _relativeSquared = _relative vectorDotProduct _relative;
+private _crossTrackSquared =
+    (_relativeSquared - (_downrange * _downrange)) max 0;
+private _crossTrack = sqrt _crossTrackSquared;
+private _mach = _projectileSpeed / _soundSpeed;
+private _machRoot = sqrt ((_mach * _mach) - 1);
 
 /*
-    A distinct shock requires a non-negative retarded
-    emission point after the projectile leaves the muzzle.
-
-        x >= d / sqrt(M^2 - 1)
+    At the stationary-phase point, the listener lies on the projectile's
+    Mach cone. This is the minimum forward displacement required before a
+    shock emitted by the projectile can reach the listener.
 */
-private _minimumDownrange =
-    _crossTrackDistance /
-    _machRoot;
-
-private _isDistinct =
-    _downrange >=
-    _minimumDownrange;
-
-if (!_isDistinct) exitWith
-{
-    [
-        false,
-        _downrange,
-        _crossTrackDistance,
-        _projectileSpeed,
-        _mach,
-        _minimumDownrange,
-        _muzzleArrival,
-        _muzzleArrival,
-        0,
-        _muzzlePositionASL
-    ]
-};
-
-/*
-    Retarded-time arrival of the Mach front:
-
-        t_shock =
-            (x + d * sqrt(M^2 - 1)) / v
-*/
-private _shockArrival =
-    (
-        _downrange +
-        (
-            _crossTrackDistance *
-            _machRoot
-        )
-    ) /
-    _projectileSpeed;
-
-private _separation =
-    (
-        _muzzleArrival -
-        _shockArrival
-    )
-    max
-    0;
-
-private _emissionDistance =
-    _downrange -
-    _minimumDownrange;
+private _minimumDownrange = _crossTrack / _machRoot;
+private _projectileTravel = _downrange - _minimumDownrange;
+private _distinct = _projectileTravel >= 0;
 
 private _shockEmissionPosition =
-    _muzzlePositionASL
-    vectorAdd
-    (
-        _projectileAxis
-        vectorMultiply
-        _emissionDistance
-    );
+    if (_distinct) then
+    {
+        _projectilePositionASL vectorAdd
+        (_direction vectorMultiply _projectileTravel)
+    }
+    else
+    {
+        +_projectilePositionASL
+    };
+
+private _shockArrival = _muzzleArrival;
+private _separation = 0;
+
+if (_distinct) then
+{
+    private _shockSlantDistance =
+        _listenerPositionASL vectorDistance _shockEmissionPosition;
+
+    _shockArrival =
+        (_projectileTravel / _projectileSpeed) +
+        (_shockSlantDistance / _soundSpeed);
+
+    _separation = _muzzleArrival - _shockArrival;
+    _distinct = _separation > 0.001;
+};
 
 [
-    true,
+    _distinct,
     _downrange,
-    _crossTrackDistance,
+    _crossTrack,
     _projectileSpeed,
     _mach,
     _minimumDownrange,

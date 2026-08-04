@@ -437,13 +437,12 @@ class CfgWeapons
 
             class StandardSound: BaseSoundModeType
             {
-                // Short grain-derived samples provide the per-projectile close body.
-                // Scripted FarBody remains independent and will be distance-gated.
-                soundSetShot[] =
-                {
-                    "big_GAU8_CloseRecorded_SoundSet",
-                    "big_GAU8_CloseMechanical_SoundSet"
-                };
+                /*
+                    Accepted body, mechanical, and muzzle files are emitted
+                    by the scripted propagation scheduler. Per-projectile
+                    SoundSets would stack 0.48-second grains at 65 Hz.
+                */
+                soundSetShot[] = {};
             };
         };
     };
@@ -462,6 +461,18 @@ class CfgFunctions
             {
             };
 
+            class getAcousticState
+            {
+            };
+
+            class queueSoundArrival
+            {
+            };
+
+            class clientInit
+            {
+                postInit = 1;
+            };
             class installGrainHandler
             {
             };
