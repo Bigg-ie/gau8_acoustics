@@ -10,6 +10,7 @@
         propagationDelaySeconds,
         distanceGain,
         closeBodyGain,
+        midBodyGain,
         farBodyGain,
         mechanicalGain,
         muzzleGain,
@@ -125,22 +126,71 @@ private _distanceGain =
     call _sampleCurve;
 
 /*
-    Close and far are timbre weights. Their sum is always one through the
-    crossover, which prevents the level increase caused by independently
-    applying full-strength close and far gains.
-*/
-private _closeWeight =
-    [
-        _distance,
-        [
-            [0, 1.0],
-            [150, 1.0],
-            [500, 0.0]
-        ]
-    ]
-    call _sampleCurve;
+    Three-zone spectral model.
 
-private _farWeight = 1 - _closeWeight;
+    0-150 m:
+        Accepted close recording only.
+
+    150-500 m:
+        Constant-sum close-to-mid transition. The mid assets are filtered
+        derivatives of the close source, so constant-sum mixing avoids
+        correlated reinforcement.
+
+    500-800 m:
+        Equal-power mid-to-far transition. The far recording is independent,
+        so square-root weights prevent the usual -3 dB midpoint dip.
+*/
+private _closeToMid =
+    linearConversion
+    [
+        150,
+        500,
+        _distance,
+        0,
+        1,
+        true
+    ];
+
+private _midToFar =
+    linearConversion
+    [
+        500,
+        800,
+        _distance,
+        0,
+        1,
+        true
+    ];
+
+private _closeWeight =
+    if (_distance < 500) then
+    {
+        1 - _closeToMid
+    }
+    else
+    {
+        0
+    };
+
+private _midWeight =
+    if (_distance < 500) then
+    {
+        _closeToMid
+    }
+    else
+    {
+        sqrt (1 - _midToFar)
+    };
+
+private _farWeight =
+    if (_distance <= 500) then
+    {
+        0
+    }
+    else
+    {
+        sqrt _midToFar
+    };
 
 /*
     Mechanical texture remains local. Its files already sit roughly 17 dB
@@ -202,6 +252,13 @@ private _muzzleDirectivity =
 private _closeBodyGain =
     _distanceGain * _closeWeight * _bodyDirectivity * 1.25;
 
+/*
+    Mid files are rendered 1 dB below the close files to retain headroom.
+    The 1.12 multiplier restores nominal crossover loudness.
+*/
+private _midBodyGain =
+    _distanceGain * _midWeight * _bodyDirectivity * 1.12;
+
 private _farBodyGain =
     _distanceGain * _farWeight * _bodyDirectivity;
 
@@ -218,6 +275,7 @@ private _muzzleGain =
     _distance / 343.0,
     _distanceGain,
     _closeBodyGain,
+    _midBodyGain,
     _farBodyGain,
     _mechanicalGain,
     _muzzleGain,

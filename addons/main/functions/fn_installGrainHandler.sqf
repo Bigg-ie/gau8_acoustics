@@ -95,6 +95,31 @@ _aircraft setVariable
 
 _aircraft setVariable
 [
+    "big_gau8_midBodyPaths",
+    [
+        "z\big\addons\main\sounds\cannon\mid_body_grain_1.wav",
+        "z\big\addons\main\sounds\cannon\mid_body_grain_2.wav",
+        "z\big\addons\main\sounds\cannon\mid_body_grain_3.wav",
+        "z\big\addons\main\sounds\cannon\mid_body_grain_4.wav",
+        "z\big\addons\main\sounds\cannon\mid_body_grain_5.wav",
+        "z\big\addons\main\sounds\cannon\mid_body_grain_6.wav"
+    ]
+];
+
+_aircraft setVariable
+[
+    "big_gau8_midBodyStartPath",
+    "z\big\addons\main\sounds\cannon\mid_body_start.wav"
+];
+
+_aircraft setVariable
+[
+    "big_gau8_midBodyEndPath",
+    "z\big\addons\main\sounds\cannon\mid_body_end.wav"
+];
+
+_aircraft setVariable
+[
     "big_gau8_closeBodyPaths",
     [
         "z\big\addons\main\sounds\cannon\close_body_grain_1.wav",
@@ -249,6 +274,7 @@ private _handler =
                 "_propagationDelay",
                 "_distanceGain",
                 "_closeBodyGain",
+                "_midBodyGain",
                 "_farBodyGain",
                 "_mechanicalGain",
                 "_muzzleGain",
@@ -301,6 +327,12 @@ private _handler =
             [
                 "big_gau8_lastCloseGain",
                 _closeBodyGain
+            ];
+
+            _vehicle setVariable
+            [
+                "big_gau8_lastMidBodyGain",
+                _midBodyGain
             ];
 
             _vehicle setVariable
@@ -410,6 +442,13 @@ private _handler =
                         ""
                     ];
 
+                private _midStartPath =
+                    _vehicle getVariable
+                    [
+                        "big_gau8_midBodyStartPath",
+                        ""
+                    ];
+
                 private _mechanicalStartPath =
                     _vehicle getVariable
                     [
@@ -441,6 +480,17 @@ private _handler =
                     _emissionPositionASL,
                     _arrivalTime,
                     4.8 * _closeBodyGain,
+                    1.0,
+                    50000
+                ]
+                call big_gau8_fnc_queueSoundArrival;
+
+                [
+                    _vehicle,
+                    _midStartPath,
+                    _emissionPositionASL,
+                    _arrivalTime,
+                    4.8 * _midBodyGain,
                     1.0,
                     50000
                 ]
@@ -483,6 +533,13 @@ private _handler =
                     []
                 ];
 
+            private _midBodyPaths =
+                _vehicle getVariable
+                [
+                    "big_gau8_midBodyPaths",
+                    []
+                ];
+
             private _closeMechanicalPaths =
                 _vehicle getVariable
                 [
@@ -491,12 +548,15 @@ private _handler =
                 ];
 
             private _grainCount =
-                (count _farPaths) min (count _closeBodyPaths);
+                ((count _farPaths) min (count _closeBodyPaths))
+                min
+                (count _midBodyPaths);
 
             if (
                 (_grainCount > 0) &&
                 (
                     (_farBodyGain > 0.000001) ||
+                    (_midBodyGain > 0.000001) ||
                     (_closeBodyGain > 0.000001) ||
                     (_mechanicalGain > 0.000001)
                 )
@@ -553,6 +613,17 @@ private _handler =
                         _emissionPositionASL,
                         _arrivalTime,
                         _baseVolume * _closeBodyGain,
+                        _pitch,
+                        50000
+                    ]
+                    call big_gau8_fnc_queueSoundArrival;
+
+                    [
+                        _vehicle,
+                        _midBodyPaths select _grainIndex,
+                        _emissionPositionASL,
+                        _arrivalTime,
+                        _baseVolume * _midBodyGain,
                         _pitch,
                         50000
                     ]
@@ -708,6 +779,13 @@ private _handler =
                                     0
                                 ];
 
+                            private _releaseMidGain =
+                                _vehicle getVariable
+                                [
+                                    "big_gau8_lastMidBodyGain",
+                                    0
+                                ];
+
                             private _releaseFarGain =
                                 _vehicle getVariable
                                 [
@@ -719,6 +797,13 @@ private _handler =
                                 _vehicle getVariable
                                 [
                                     "big_gau8_closeBodyEndPath",
+                                    ""
+                                ];
+
+                            private _midEndPath =
+                                _vehicle getVariable
+                                [
+                                    "big_gau8_midBodyEndPath",
                                     ""
                                 ];
 
@@ -746,6 +831,17 @@ private _handler =
                                 _releasePosition,
                                 _releaseArrival,
                                 4.2 * _releaseCloseGain,
+                                1.0,
+                                50000
+                            ]
+                            call big_gau8_fnc_queueSoundArrival;
+
+                            [
+                                _vehicle,
+                                _midEndPath,
+                                _releasePosition,
+                                _releaseArrival,
+                                4.2 * _releaseMidGain,
                                 1.0,
                                 50000
                             ]
