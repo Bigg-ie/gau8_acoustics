@@ -145,19 +145,6 @@ _aircraft setVariable
 
 _aircraft setVariable
 [
-    "big_gau8_shockPaths",
-    [
-        "z\big\addons\main\sounds\cannon\shock_crack_1.wav",
-        "z\big\addons\main\sounds\cannon\shock_crack_2.wav",
-        "z\big\addons\main\sounds\cannon\shock_crack_3.wav",
-        "z\big\addons\main\sounds\cannon\shock_crack_4.wav",
-        "z\big\addons\main\sounds\cannon\shock_crack_5.wav",
-        "z\big\addons\main\sounds\cannon\shock_crack_6.wav"
-    ]
-];
-
-_aircraft setVariable
-[
     "big_gau8_grainIDs",
     []
 ];
@@ -335,12 +322,14 @@ private _handler =
             ];
 
             /*
-                Every supersonic projectile produces a short N-wave only
-                when the listener lies inside its forward Mach cone. The
-                playback position is the point on the trajectory from which
-                the earliest wavefront reaches the listener.
+                Capture one shock-wave geometry solution at the beginning
+                of each continuous firing run. Playback remains a later step
+                because no accepted ballistic-crack asset exists yet.
             */
-            if (!isNull _projectile) then
+            if (
+                _shotCount == 0 &&
+                {!isNull _projectile}
+            ) then
             {
                 private _shockGeometry =
                     [
@@ -351,7 +340,20 @@ private _handler =
                     ]
                     call big_gau8_fnc_calculateShockGeometry;
 
-                if ((count _shockGeometry) == 10) then
+                _vehicle setVariable
+                [
+                    "big_gau8_lastShockGeometry",
+                    _shockGeometry
+                ];
+
+                if (
+                    _vehicle getVariable
+                    [
+                        "big_gau8_debugShock",
+                        false
+                    ] &&
+                    {(count _shockGeometry) == 10}
+                ) then
                 {
                     _shockGeometry params
                     [
@@ -367,153 +369,28 @@ private _handler =
                         "_shockEmissionPosition"
                     ];
 
-                    _vehicle setVariable
+                    private _message = format
                     [
-                        "big_gau8_lastShockGeometry",
-                        _shockGeometry
+                        "GAU-8 shock: distinct=%1, x=%2 m, d=%3 m, Mach=%4, separation=%5 ms",
+                        _shockDistinct,
+                        _shockDownrange,
+                        _shockCrossTrack,
+                        _shockMach,
+                        _shockSeparation * 1000
                     ];
 
-                    if (_shockDistinct) then
-                    {
-                        private _crossTrackGain =
-                            if (_shockCrossTrack <= 25) then
-                            {
-                                1.00
-                            }
-                            else
-                            {
-                                if (_shockCrossTrack <= 50) then
-                                {
-                                    linearConversion
-                                    [25, 50, _shockCrossTrack, 1.00, 0.90, true]
-                                }
-                                else
-                                {
-                                    if (_shockCrossTrack <= 100) then
-                                    {
-                                        linearConversion
-                                        [50, 100, _shockCrossTrack, 0.90, 0.68, true]
-                                    }
-                                    else
-                                    {
-                                        if (_shockCrossTrack <= 200) then
-                                        {
-                                            linearConversion
-                                            [100, 200, _shockCrossTrack, 0.68, 0.42, true]
-                                        }
-                                        else
-                                        {
-                                            if (_shockCrossTrack <= 350) then
-                                            {
-                                                linearConversion
-                                                [200, 350, _shockCrossTrack, 0.42, 0.22, true]
-                                            }
-                                            else
-                                            {
-                                                if (_shockCrossTrack <= 500) then
-                                                {
-                                                    linearConversion
-                                                    [350, 500, _shockCrossTrack, 0.22, 0.10, true]
-                                                }
-                                                else
-                                                {
-                                                    linearConversion
-                                                    [500, 750, _shockCrossTrack, 0.10, 0.00, true]
-                                                };
-                                            };
-                                        };
-                                    };
-                                };
-                            };
+                    systemChat _message;
 
-                        private _separationGain =
-                            linearConversion
-                            [
-                                0.008,
-                                0.120,
-                                _shockSeparation,
-                                0.20,
-                                1.00,
-                                true
-                            ];
-
-                        private _machGain =
-                            linearConversion
-                            [
-                                1.05,
-                                3.20,
-                                _shockMach,
-                                0.65,
-                                1.05,
-                                true
-                            ];
-
-                        private _shockGain =
-                            _crossTrackGain *
-                            _separationGain *
-                            _machGain;
-
-                        private _shockPaths =
-                            _vehicle getVariable
-                            [
-                                "big_gau8_shockPaths",
-                                []
-                            ];
-
-                        if (
-                            _shockGain > 0.0001 &&
-                            {(count _shockPaths) > 0}
-                        ) then
-                        {
-                            private _shockIndex =
-                                _shotCount mod (count _shockPaths);
-
-                            [
-                                _vehicle,
-                                _shockPaths select _shockIndex,
-                                _shockEmissionPosition,
-                                time + _shockArrival,
-                                9.0 * _shockGain,
-                                0.985 + random 0.030,
-                                5000
-                            ]
-                            call big_gau8_fnc_queueSoundArrival;
-                        };
-                    };
-
-                    if (
-                        _shotCount == 0 &&
-                        {
-                            _vehicle getVariable
-                            [
-                                "big_gau8_debugShock",
-                                false
-                            ]
-                        }
-                    ) then
-                    {
-                        private _message = format
-                        [
-                            "GAU-8 shock: distinct=%1, x=%2 m, d=%3 m, Mach=%4, lead=%5 ms",
-                            _shockDistinct,
-                            _shockDownrange,
-                            _shockCrossTrack,
-                            _shockMach,
-                            _shockSeparation * 1000
-                        ];
-
-                        systemChat _message;
-                        diag_log format
-                        [
-                            "GAU8 LIVE SHOCK: %1 | speed=%2 m/s | coneX=%3 m | muzzleArrival=%4 s | shockArrival=%5 s | emission=%6",
-                            _message,
-                            _shockProjectileSpeed,
-                            _shockMinimumDownrange,
-                            _muzzleArrival,
-                            _shockArrival,
-                            _shockEmissionPosition
-                        ];
-                    };
+                    diag_log format
+                    [
+                        "GAU8 LIVE SHOCK: %1 | speed=%2 m/s | minimumX=%3 m | muzzleArrival=%4 s | shockArrival=%5 s | emission=%6",
+                        _message,
+                        _shockProjectileSpeed,
+                        _shockMinimumDownrange,
+                        _muzzleArrival,
+                        _shockArrival,
+                        _shockEmissionPosition
+                    ];
                 };
             };
 
