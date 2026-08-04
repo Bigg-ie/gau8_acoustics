@@ -104,21 +104,20 @@ class CfgSoundCurves
             {1.00, 0.00}
         };
     };
-
     class big_GAU8_CloseRecordedSetCurve
+{
+    points[] =
     {
-        points[] =
-        {
-            {0, 1.00},
-            {10, 1.00},
-            {30, 1.00},
-            {100, 1.00},
-            {200, 0.82},
-            {300, 0.60},
-            {450, 0.28},
-            {600, 0.00}
-        };
+        {0, 1.0000},
+        {50, 1.0000},
+        {100, 0.4467},
+        {200, 0.2239},
+        {500, 0.0794},
+        {1000, 0.0398},
+        {1500, 0.0150},
+        {2000, 0.0000}
     };
+};
 
 };
 
@@ -231,14 +230,26 @@ class CfgSoundShaders
     {
         samples[] =
         {
-            {"\z\big\addons\main\sounds\cannon\close_recorded_1.wav", 1},
-            {"\z\big\addons\main\sounds\cannon\close_recorded_2.wav", 1},
-            {"\z\big\addons\main\sounds\cannon\close_recorded_3.wav", 1},
-            {"\z\big\addons\main\sounds\cannon\close_recorded_4.wav", 1}
+            {"\z\big\addons\main\sounds\cannon\close_cell_01.wav", 1},
+            {"\z\big\addons\main\sounds\cannon\close_cell_02.wav", 1},
+            {"\z\big\addons\main\sounds\cannon\close_cell_03.wav", 1},
+            {"\z\big\addons\main\sounds\cannon\close_cell_04.wav", 1},
+            {"\z\big\addons\main\sounds\cannon\close_cell_05.wav", 1},
+            {"\z\big\addons\main\sounds\cannon\close_cell_06.wav", 1},
+            {"\z\big\addons\main\sounds\cannon\close_cell_07.wav", 1},
+            {"\z\big\addons\main\sounds\cannon\close_cell_08.wav", 1},
+            {"\z\big\addons\main\sounds\cannon\close_cell_09.wav", 1},
+            {"\z\big\addons\main\sounds\cannon\close_cell_10.wav", 1},
+            {"\z\big\addons\main\sounds\cannon\close_cell_11.wav", 1},
+            {"\z\big\addons\main\sounds\cannon\close_cell_12.wav", 1},
+            {"\z\big\addons\main\sounds\cannon\close_cell_13.wav", 1},
+            {"\z\big\addons\main\sounds\cannon\close_cell_14.wav", 1},
+            {"\z\big\addons\main\sounds\cannon\close_cell_15.wav", 1},
+            {"\z\big\addons\main\sounds\cannon\close_cell_16.wav", 1}
         };
 
         volume = 1;
-        range = 600;
+        range = 2000;
         rangeCurve = "closeShotCurve";
     };
 
@@ -426,7 +437,8 @@ class CfgWeapons
 
             class StandardSound: BaseSoundModeType
             {
-                // Per-projectile close layers. FarBody remains scripted.
+                // Short grain-derived samples provide the per-projectile close body.
+                // Scripted FarBody remains independent and will be distance-gated.
                 soundSetShot[] =
                 {
                     "big_GAU8_CloseRecorded_SoundSet",

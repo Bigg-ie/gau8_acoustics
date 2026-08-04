@@ -149,6 +149,173 @@ private _handler =
                     0
                 ];
 
+            private _listener = cameraOn;
+
+            if (isNull _listener) then
+            {
+                _listener = player;
+            };
+
+            private _listenerPosition =
+                positionCameraToWorld [0, 0, 0];
+
+            private _sourcePosition =
+                ASLToAGL
+                (
+                    getPosASL _vehicle
+                );
+
+            private _listenerDistance =
+                _listenerPosition vectorDistance _sourcePosition;
+
+            private _farBodyGain =
+                if (_listenerDistance <= 150) then
+                {
+                    0
+                }
+                else
+                {
+                    if (_listenerDistance < 200) then
+                    {
+                        linearConversion
+                        [
+                            150,
+                            200,
+                            _listenerDistance,
+                            0,
+                            1,
+                            true
+                        ]
+                    }
+                    else
+                    {
+                        if (_listenerDistance <= 500) then
+                        {
+                            1
+                        }
+                        else
+                        {
+                            if (_listenerDistance < 1000) then
+                            {
+                                linearConversion
+                                [
+                                    500,
+                                    1000,
+                                    _listenerDistance,
+                                    1.0000,
+                                    0.5012,
+                                    true
+                                ]
+                            }
+                            else
+                            {
+                                if (_listenerDistance < 2000) then
+                                {
+                                    linearConversion
+                                    [
+                                        1000,
+                                        2000,
+                                        _listenerDistance,
+                                        0.5012,
+                                        0.2512,
+                                        true
+                                    ]
+                                }
+                                else
+                                {
+                                    if (_listenerDistance < 5000) then
+                                    {
+                                        linearConversion
+                                        [
+                                            2000,
+                                            5000,
+                                            _listenerDistance,
+                                            0.2512,
+                                            0.0891,
+                                            true
+                                        ]
+                                    }
+                                    else
+                                    {
+                                        if (_listenerDistance < 10000) then
+                                        {
+                                            linearConversion
+                                            [
+                                                5000,
+                                                10000,
+                                                _listenerDistance,
+                                                0.0891,
+                                                0.0447,
+                                                true
+                                            ]
+                                        }
+                                        else
+                                        {
+                                            if (_listenerDistance < 20000) then
+                                            {
+                                                linearConversion
+                                                [
+                                                    10000,
+                                                    20000,
+                                                    _listenerDistance,
+                                                    0.0447,
+                                                    0.0224,
+                                                    true
+                                                ]
+                                            }
+                                            else
+                                            {
+                                                if (_listenerDistance < 30000) then
+                                                {
+                                                    linearConversion
+                                                    [
+                                                        20000,
+                                                        30000,
+                                                        _listenerDistance,
+                                                        0.0224,
+                                                        0.0141,
+                                                        true
+                                                    ]
+                                                }
+                                                else
+                                                {
+                                                    if (_listenerDistance < 50000) then
+                                                    {
+                                                        linearConversion
+                                                        [
+                                                            30000,
+                                                            50000,
+                                                            _listenerDistance,
+                                                            0.0141,
+                                                            0.0079,
+                                                            true
+                                                        ]
+                                                    }
+                                                    else
+                                                    {
+                                                        0
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                };
+            _vehicle setVariable
+            [
+                "big_gau8_lastListenerDistance",
+                _listenerDistance
+            ];
+
+            _vehicle setVariable
+            [
+                "big_gau8_lastFarBodyGain",
+                _farBodyGain
+            ];
+
             /*
                 Capture one geometry solution at the beginning
                 of each continuous firing run.
@@ -158,8 +325,6 @@ private _handler =
                 {!isNull _projectile}
             ) then
             {
-                private _listener = cameraOn;
-
                 if (!isNull _listener) then
                 {
                     private _shockGeometry =
@@ -222,7 +387,10 @@ private _handler =
                 };
             };
 
-            if (_shotCount == 0) then
+            if (
+                _shotCount == 0 &&
+                {_farBodyGain > 0.001}
+            ) then
             {
                 private _startPath =
                     _vehicle getVariable
@@ -238,9 +406,9 @@ private _handler =
                         _vehicle,
                         false,
                         getPosASL _vehicle,
-                        2.4,
+                        4.8 * _farBodyGain,
                         1.0,
-                        3000,
+                        50000,
                         0,
                         true
                     ];
@@ -264,115 +432,124 @@ private _handler =
                 };
             };
 
-            private _nextGrainShot =
+            private _paths =
                 _vehicle getVariable
                 [
-                    "big_gau8_nextGrainShot",
-                    9
+                    "big_gau8_grainPaths",
+                    []
                 ];
 
-            if (_shotCount >= _nextGrainShot) then
+            if (
+                _farBodyGain > 0.001 &&
+                {(count _paths) > 0}
+            ) then
             {
-                private _paths =
+                private _nextGrainShot =
                     _vehicle getVariable
                     [
-                        "big_gau8_grainPaths",
-                        []
+                        "big_gau8_nextGrainShot",
+                        9
                     ];
 
-                private _lastIndex =
-                    _vehicle getVariable
-                    [
-                        "big_gau8_lastGrainIndex",
-                        -1
-                    ];
-
-                private _grainIndex =
-                    floor
-                    (
-                        random
-                        (
-                            count _paths
-                        )
-                    );
-
-                if (_grainIndex == _lastIndex) then
+                if (_shotCount >= _nextGrainShot) then
                 {
-                    _grainIndex =
+                    private _lastIndex =
+                        _vehicle getVariable
+                        [
+                            "big_gau8_lastGrainIndex",
+                            -1
+                        ];
+
+                    private _grainIndex =
+                        floor
                         (
-                            _grainIndex + 1
-                        )
-                        mod
-                        (
-                            count _paths
+                            random
+                            (
+                                count _paths
+                            )
                         );
-                };
 
-                private _pitch =
-                    0.985 +
-                    random 0.030;
-
-                private _volume =
-                    2.1 +
-                    random 0.6;
-
-                private _soundID =
-                    playSound3D
-                    [
-                        _paths select _grainIndex,
-                        _vehicle,
-                        false,
-                        getPosASL _vehicle,
-                        _volume,
-                        _pitch,
-                        3000,
-                        0,
-                        true
-                    ];
-
-                private _ids =
-                    _vehicle getVariable
-                    [
-                        "big_gau8_grainIDs",
-                        []
-                    ];
-
-                if (_soundID >= 0) then
-                {
-                    _ids pushBack _soundID;
-
-                    if ((count _ids) > 12) then
+                    if (_grainIndex == _lastIndex) then
                     {
-                        _ids deleteAt 0;
+                        _grainIndex =
+                            (
+                                _grainIndex + 1
+                            )
+                            mod
+                            (
+                                count _paths
+                            );
                     };
+
+                    private _pitch =
+                        0.985 +
+                        random 0.030;
+
+                    private _volume =
+                        (
+                            4.2 +
+                            random 0.6
+                        )
+                        *
+                        _farBodyGain;
+
+                    private _soundID =
+                        playSound3D
+                        [
+                            _paths select _grainIndex,
+                            _vehicle,
+                            false,
+                            getPosASL _vehicle,
+                            _volume,
+                            _pitch,
+                            50000,
+                            0,
+                            true
+                        ];
+
+                    if (_soundID >= 0) then
+                    {
+                        private _ids =
+                            _vehicle getVariable
+                            [
+                                "big_gau8_grainIDs",
+                                []
+                            ];
+
+                        _ids pushBack _soundID;
+
+                        if ((count _ids) > 12) then
+                        {
+                            _ids deleteAt 0;
+                        };
+
+                        _vehicle setVariable
+                        [
+                            "big_gau8_grainIDs",
+                            _ids
+                        ];
+                    };
+
+                    private _nextGap =
+                        7 +
+                        floor
+                        (
+                            random 7
+                        );
 
                     _vehicle setVariable
                     [
-                        "big_gau8_grainIDs",
-                        _ids
+                        "big_gau8_nextGrainShot",
+                        _shotCount + _nextGap
+                    ];
+
+                    _vehicle setVariable
+                    [
+                        "big_gau8_lastGrainIndex",
+                        _grainIndex
                     ];
                 };
-
-                private _nextGap =
-                    7 +
-                    floor
-                    (
-                        random 7
-                    );
-
-                _vehicle setVariable
-                [
-                    "big_gau8_nextGrainShot",
-                    _shotCount + _nextGap
-                ];
-
-                _vehicle setVariable
-                [
-                    "big_gau8_lastGrainIndex",
-                    _grainIndex
-                ];
             };
-
             _vehicle setVariable
             [
                 "big_gau8_shotCount",
