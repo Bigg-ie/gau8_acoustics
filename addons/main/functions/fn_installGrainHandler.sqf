@@ -278,7 +278,13 @@ private _handler =
                 "_farBodyGain",
                 "_mechanicalGain",
                 "_muzzleGain",
-                "_forwardDot"
+                "_forwardDot",
+                "_offAxisAngle",
+                "_closeBodyDirectivity",
+                "_midBodyDirectivity",
+                "_farBodyDirectivity",
+                "_mechanicalDirectivity",
+                "_muzzleDirectivity"
             ];
 
             private _arrivalTime = time + _propagationDelay;
@@ -353,10 +359,55 @@ private _handler =
                 _forwardDot
             ];
 
+            _vehicle setVariable
+            [
+                "big_gau8_lastOffAxisAngle",
+                _offAxisAngle
+            ];
+
+            _vehicle setVariable
+            [
+                "big_gau8_lastDirectivity",
+                [
+                    _closeBodyDirectivity,
+                    _midBodyDirectivity,
+                    _farBodyDirectivity,
+                    _mechanicalDirectivity,
+                    _muzzleDirectivity
+                ]
+            ];
+
+            if
+            (
+                _shotCount == 0 &&
+                {
+                    _vehicle getVariable
+                    [
+                        "big_gau8_debugDirectivity",
+                        false
+                    ]
+                }
+            ) then
+            {
+                private _directivityMessage = format
+                [
+                    "GAU-8 directivity: angle=%1 deg | close=%2 mid=%3 far=%4 mech=%5 muzzle=%6",
+                    (_offAxisAngle toFixed 1),
+                    (_closeBodyDirectivity toFixed 3),
+                    (_midBodyDirectivity toFixed 3),
+                    (_farBodyDirectivity toFixed 3),
+                    (_mechanicalDirectivity toFixed 3),
+                    (_muzzleDirectivity toFixed 3)
+                ];
+
+                systemChat _directivityMessage;
+                diag_log _directivityMessage;
+            };
+
             /*
-                Capture one shock-wave geometry solution at the beginning
-                of each continuous firing run. Playback remains a later step
-                because no accepted ballistic-crack asset exists yet.
+                Retain one Mach-cone geometry solution at the beginning of
+                each firing run for diagnostics only. Arma's ammunition
+                system owns the accepted supersonic-crack playback.
             */
             if (
                 _shotCount == 0 &&

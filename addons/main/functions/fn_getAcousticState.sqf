@@ -14,7 +14,13 @@
         farBodyGain,
         mechanicalGain,
         muzzleGain,
-        forwardDot
+        forwardDot,
+        offAxisAngleDegrees,
+        closeBodyDirectivity,
+        midBodyDirectivity,
+        farBodyDirectivity,
+        mechanicalDirectivity,
+        muzzleDirectivity
     ]
 */
 params
@@ -219,51 +225,125 @@ private _toListener =
         vectorDir _vehicle
     };
 
-private _forward = vectorDir _vehicle;
+/*
+    Use the projectile's initial velocity as the cannon axis. This follows
+    the actual shot direction during diving, climbing, and banked attacks.
+    Fall back to the airframe forward vector when the projectile is missing
+    or has not received a useful velocity yet.
+*/
+private _sourceForward = vectorDir _vehicle;
+
+if (!isNull _projectile) then
+{
+    private _projectileVelocity = velocity _projectile;
+
+    if ((vectorMagnitude _projectileVelocity) > 50) then
+    {
+        _sourceForward = vectorNormalized _projectileVelocity;
+    };
+};
+
 private _forwardDot =
-    ((_forward vectorDotProduct _toListener) max -1) min 1;
+    ((_sourceForward vectorDotProduct _toListener) max -1) min 1;
+
+private _offAxisAngle = acos _forwardDot;
 
 /*
-    First-order directivity. The sustained body remains broad; the initial
-    muzzle-pressure transient is more forward-biased.
-*/
-private _bodyDirectivity =
-    linearConversion
-    [
-        -1,
-        1,
-        _forwardDot,
-        0.95,
-        1.00,
-        true
-    ];
+    Axisymmetric source directivity, sampled as smooth angle curves.
 
-private _muzzleDirectivity =
-    linearConversion
+    Angle convention:
+        0 degrees   = directly in front of the cannon
+        90 degrees  = broadside
+        180 degrees = directly behind the cannon
+
+    Close body retains the strongest front/aft contrast because it carries
+    the near-field harshness. Mid body is broader. Far body is deliberately
+    close to omnidirectional because terrain and atmospheric scattering
+    dominate at long range. Mechanical texture is omnidirectional.
+*/
+private _closeBodyDirectivity =
     [
-        -1,
-        1,
-        _forwardDot,
-        0.65,
-        1.00,
-        true
-    ];
+        _offAxisAngle,
+        [
+            [0,   1.10],
+            [30,  1.08],
+            [60,  1.00],
+            [90,  0.88],
+            [120, 0.78],
+            [150, 0.70],
+            [180, 0.66]
+        ]
+    ]
+    call _sampleCurve;
+
+private _midBodyDirectivity =
+    [
+        _offAxisAngle,
+        [
+            [0,   1.06],
+            [30,  1.04],
+            [60,  1.00],
+            [90,  0.92],
+            [120, 0.84],
+            [150, 0.79],
+            [180, 0.76]
+        ]
+    ]
+    call _sampleCurve;
+
+private _farBodyDirectivity =
+    [
+        _offAxisAngle,
+        [
+            [0,   1.03],
+            [30,  1.02],
+            [60,  1.00],
+            [90,  0.97],
+            [120, 0.94],
+            [150, 0.92],
+            [180, 0.90]
+        ]
+    ]
+    call _sampleCurve;
+
+private _mechanicalDirectivity = 1.00;
+
+/*
+    Muzzle pressure is the most directional element. Forward listeners get
+    a modest boost over v6; broadside and aft listeners receive a smooth,
+    substantial reduction without a hard cone boundary.
+*/
+private _muzzleDirectivity =
+    [
+        _offAxisAngle,
+        [
+            [0,   1.35],
+            [15,  1.30],
+            [30,  1.15],
+            [60,  0.85],
+            [90,  0.55],
+            [120, 0.35],
+            [150, 0.22],
+            [180, 0.18]
+        ]
+    ]
+    call _sampleCurve;
 
 private _closeBodyGain =
-    _distanceGain * _closeWeight * _bodyDirectivity * 1.25;
+    _distanceGain * _closeWeight * _closeBodyDirectivity * 1.25;
 
 /*
     Mid files are rendered 1 dB below the close files to retain headroom.
     The 1.12 multiplier restores nominal crossover loudness.
 */
 private _midBodyGain =
-    _distanceGain * _midWeight * _bodyDirectivity * 1.12;
+    _distanceGain * _midWeight * _midBodyDirectivity * 1.12;
 
 private _farBodyGain =
-    _distanceGain * _farWeight * _bodyDirectivity;
+    _distanceGain * _farWeight * _farBodyDirectivity;
 
 private _mechanicalGain =
-    _distanceGain * _mechanicalPresence * 0.35;
+    _distanceGain * _mechanicalPresence * _mechanicalDirectivity * 0.35;
 
 private _muzzleGain =
     _distanceGain * _closeWeight * _muzzleDirectivity * 0.90;
@@ -279,5 +359,11 @@ private _muzzleGain =
     _farBodyGain,
     _mechanicalGain,
     _muzzleGain,
-    _forwardDot
+    _forwardDot,
+    _offAxisAngle,
+    _closeBodyDirectivity,
+    _midBodyDirectivity,
+    _farBodyDirectivity,
+    _mechanicalDirectivity,
+    _muzzleDirectivity
 ]
