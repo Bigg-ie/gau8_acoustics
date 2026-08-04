@@ -465,6 +465,10 @@ class CfgFunctions
             {
             };
 
+            class getEnvironmentState
+            {
+            };
+
             class queueSoundArrival
             {
             };

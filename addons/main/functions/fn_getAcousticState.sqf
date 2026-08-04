@@ -26,7 +26,17 @@
         cockpitMix,
         externalMix,
         cockpitBodyGain,
-        cockpitAirframeGain
+        cockpitAirframeGain,
+        terrainOcclusion,
+        objectOcclusion,
+        combinedOcclusion,
+        reflectionGain,
+        reflectionPositionASL,
+        reflectionPropagationDelaySeconds,
+        reflectionExtraDelaySeconds,
+        sourceHeightAGL,
+        listenerHeightAGL,
+        objectHitCount
     ]
 */
 params
@@ -414,24 +424,60 @@ private _muzzleDirectivity =
     ]
     call _sampleCurve;
 
-private _closeBodyGain =
+/*
+    V9.5 arrival-time obstruction handoff.
+
+    External obstruction is evaluated by fn_queueSoundArrival when the
+    emitted wavefront reaches the listener. These values remain in the
+    acoustic-state return contract for compatibility.
+*/
+private _terrainOcclusion = 0.0;
+private _objectOcclusion = 0.0;
+private _combinedOcclusion = 0.0;
+private _reflectionPresence = 0.0;
+private _reflectionPositionASL = +_emissionPositionASL;
+private _reflectionPropagationDelay = _distance / 343.0;
+private _reflectionExtraDelay = 0.0;
+private _sourceHeightAGL = 0.0;
+private _listenerHeightAGL = 0.0;
+private _objectHitCount = 0;
+private _baseCloseBodyGain =
     _distanceGain * _closeWeight * _closeBodyDirectivity * 1.25 * _externalMix;
 
 /*
     Mid files are rendered 1 dB below the close files to retain headroom.
     The 1.12 multiplier restores nominal crossover loudness.
 */
-private _midBodyGain =
+private _baseMidBodyGain =
     _distanceGain * _midWeight * _midBodyDirectivity * 1.12 * _externalMix;
 
-private _farBodyGain =
+private _baseFarBodyGain =
     _distanceGain * _farWeight * _farBodyDirectivity * _externalMix;
 
-private _mechanicalGain =
+private _baseMechanicalGain =
     _distanceGain * _mechanicalPresence * _mechanicalDirectivity * 0.35 * _externalMix;
 
-private _muzzleGain =
+private _baseMuzzleGain =
     _distanceGain * _closeWeight * _muzzleDirectivity * 0.90 * _externalMix;
+
+/*
+    Queue unoccluded external gains. Arrival-time terrain/object transfer is
+    applied in fn_queueSoundArrival using the listener's current position.
+*/
+private _closeBodyGain = _baseCloseBodyGain;
+private _midBodyGain = _baseMidBodyGain;
+private _farBodyGain = _baseFarBodyGain;
+private _mechanicalGain = _baseMechanicalGain;
+private _muzzleGain = _baseMuzzleGain;
+/*
+    Discrete ground-reflection playback is disabled.
+
+    A second 0.48-second playSound3D body voice is perceived as a separate
+    cannon report, especially around the first sustain grain. V9 retains the
+    terrain/object obstruction model; ground interaction can be revisited as
+    a baked spectral variant or engine-native environmental effect.
+*/
+private _reflectionGain = 0.0;
 
 [
     _listenerPositionASL,
@@ -456,6 +502,15 @@ private _muzzleGain =
     _cockpitMix,
     _externalMix,
     _cockpitBodyGain,
-    _cockpitAirframeGain
+    _cockpitAirframeGain,
+    _terrainOcclusion,
+    _objectOcclusion,
+    _combinedOcclusion,
+    _reflectionGain,
+    _reflectionPositionASL,
+    _reflectionPropagationDelay,
+    _reflectionExtraDelay,
+    _sourceHeightAGL,
+    _listenerHeightAGL,
+    _objectHitCount
 ]
-

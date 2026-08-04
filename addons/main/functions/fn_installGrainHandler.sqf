@@ -117,7 +117,6 @@ _aircraft setVariable
     "big_gau8_midBodyEndPath",
     "z\big\addons\main\sounds\cannon\mid_body_end.wav"
 ];
-
 _aircraft setVariable
 [
     "big_gau8_closeBodyPaths",
@@ -364,6 +363,29 @@ _aircraft setVariable
     "big_gau8_lastCockpitGrainIndex",
     -1
 ];
+_aircraft setVariable
+[
+    "big_gau8_lastReflectionGain",
+    0.0
+];
+
+_aircraft setVariable
+[
+    "big_gau8_lastReflectionPositionASL",
+    getPosASL _aircraft
+];
+
+_aircraft setVariable
+[
+    "big_gau8_lastReflectionArrivalTime",
+    time
+];
+
+_aircraft setVariable
+[
+    "big_gau8_environmentCache",
+    []
+];
 
 private _handler =
     _aircraft addEventHandler
@@ -433,7 +455,17 @@ private _handler =
                 "_cockpitMix",
                 "_externalMix",
                 "_cockpitBodyGain",
-                "_cockpitAirframeGain"
+                "_cockpitAirframeGain",
+                "_terrainOcclusion",
+                "_objectOcclusion",
+                "_combinedOcclusion",
+                "_reflectionGain",
+                "_reflectionPositionASL",
+                "_reflectionPropagationDelay",
+                "_reflectionExtraDelay",
+                "_sourceHeightAGL",
+                "_listenerHeightAGL",
+                "_objectHitCount"
             ];
 
             private _arrivalTime = time + _propagationDelay;
@@ -544,6 +576,42 @@ private _handler =
                 _cockpitMix
             ];
 
+            private _reflectionArrivalTime =
+                time + _reflectionPropagationDelay;
+
+            _vehicle setVariable
+            [
+                "big_gau8_lastEnvironmentState",
+                [
+                    _terrainOcclusion,
+                    _objectOcclusion,
+                    _combinedOcclusion,
+                    _reflectionGain,
+                    _reflectionExtraDelay,
+                    _sourceHeightAGL,
+                    _listenerHeightAGL,
+                    _objectHitCount
+                ]
+            ];
+
+            _vehicle setVariable
+            [
+                "big_gau8_lastReflectionGain",
+                _reflectionGain
+            ];
+
+            _vehicle setVariable
+            [
+                "big_gau8_lastReflectionPositionASL",
+                +_reflectionPositionASL
+            ];
+
+            _vehicle setVariable
+            [
+                "big_gau8_lastReflectionArrivalTime",
+                _reflectionArrivalTime
+            ];
+
             if
             (
                 _shotCount == 0 &&
@@ -597,8 +665,11 @@ private _handler =
                 systemChat _cockpitMessage;
                 diag_log _cockpitMessage;
             };
-
             /*
+                Environment diagnostics are emitted by the arrival worker,
+                after listener position and obstruction are resampled.
+            */
+/*
                 Retain one Mach-cone geometry solution at the beginning of
                 each firing run for diagnostics only. Arma's ammunition
                 system owns the accepted supersonic-crack playback.
@@ -721,8 +792,7 @@ private _handler =
                         "big_gau8_cockpitAirframeStartPath",
                         ""
                     ];
-
-                private _playCockpitSound =
+private _playCockpitSound =
                     _vehicle getVariable
                     [
                         "big_gau8_playCockpitSound",
@@ -783,8 +853,7 @@ private _handler =
                     2000
                 ]
                 call big_gau8_fnc_queueSoundArrival;
-
-                [
+[
                     _vehicle,
                     _cockpitBodyStartPath,
                     1.85 * _cockpitBodyGain,
@@ -799,7 +868,6 @@ private _handler =
                     1.0
                 ]
                 call _playCockpitSound;
-
             };
 
             private _farPaths =
@@ -843,8 +911,7 @@ private _handler =
                     "big_gau8_cockpitAirframePaths",
                     []
                 ];
-
-            private _playCockpitSound =
+private _playCockpitSound =
                 _vehicle getVariable
                 [
                     "big_gau8_playCockpitSound",
@@ -1038,6 +1105,73 @@ private _handler =
                     ]
                     call big_gau8_fnc_queueSoundArrival;
 
+                    /*
+                        Ground response is synchronized to the direct body
+                        grain. It uses the same index and pitch, with only the
+                        geometric reflected-path delay added by the arrival
+                        queue. This prevents the reflection from becoming an
+                        independent second cannon report.
+
+                        Reflection spectrum follows the active distance mix:
+                        close energy is shifted into the mid recording, mid
+                        energy is split between mid and far, and far energy
+                        remains in the far recording. No close-derived
+                        reflection asset is used at mid or far distance.
+                    */
+                    if (_reflectionGain > 0.000001) then
+                    {
+                        private _reflectionMidNumerator =
+                            (0.85 * _closeBodyGain) +
+                            (0.75 * _midBodyGain);
+
+                        private _reflectionFarNumerator =
+                            (0.25 * _midBodyGain) +
+                            _farBodyGain;
+
+                        private _reflectionSpectralTotal =
+                            _reflectionMidNumerator +
+                            _reflectionFarNumerator;
+
+                        if (_reflectionSpectralTotal > 0.000001) then
+                        {
+                            private _reflectionMidGain =
+                                _reflectionGain *
+                                (
+                                    _reflectionMidNumerator /
+                                    _reflectionSpectralTotal
+                                );
+
+                            private _reflectionFarGain =
+                                _reflectionGain *
+                                (
+                                    _reflectionFarNumerator /
+                                    _reflectionSpectralTotal
+                                );
+
+                            [
+                                _vehicle,
+                                _midBodyPaths select _grainIndex,
+                                _reflectionPositionASL,
+                                _reflectionArrivalTime,
+                                _baseVolume * _reflectionMidGain,
+                                _pitch,
+                                50000
+                            ]
+                            call big_gau8_fnc_queueSoundArrival;
+
+                            [
+                                _vehicle,
+                                _farPaths select _grainIndex,
+                                _reflectionPositionASL,
+                                _reflectionArrivalTime,
+                                _baseVolume * _reflectionFarGain,
+                                _pitch,
+                                50000
+                            ]
+                            call big_gau8_fnc_queueSoundArrival;
+                        };
+                    };
+
                     if (_grainIndex < (count _closeMechanicalPaths)) then
                     {
                         [
@@ -1216,6 +1350,27 @@ private _handler =
                                     0
                                 ];
 
+                            private _releaseReflectionGain =
+                                _vehicle getVariable
+                                [
+                                    "big_gau8_lastReflectionGain",
+                                    0
+                                ];
+
+                            private _releaseReflectionPosition =
+                                _vehicle getVariable
+                                [
+                                    "big_gau8_lastReflectionPositionASL",
+                                    +_releasePosition
+                                ];
+
+                            private _releaseReflectionArrival =
+                                _vehicle getVariable
+                                [
+                                    "big_gau8_lastReflectionArrivalTime",
+                                    _releaseArrival
+                                ];
+
                             private _closeEndPath =
                                 _vehicle getVariable
                                 [
@@ -1250,8 +1405,7 @@ private _handler =
                                     "big_gau8_cockpitAirframeEndPath",
                                     ""
                                 ];
-
-                            private _playCockpitSound =
+private _playCockpitSound =
                                 _vehicle getVariable
                                 [
                                     "big_gau8_playCockpitSound",
@@ -1290,8 +1444,7 @@ private _handler =
                                 50000
                             ]
                             call big_gau8_fnc_queueSoundArrival;
-
-                            [
+[
                                 _vehicle,
                                 _cockpitBodyEndPath,
                                 1.55 * _releaseCockpitBodyGain,
@@ -1335,8 +1488,7 @@ private _handler =
                                 "big_gau8_lastCockpitGrainIndex",
                                 -1
                             ];
-
-                            _vehicle setVariable
+_vehicle setVariable
                             [
                                 "big_gau8_lastGrainIndex",
                                 -1
