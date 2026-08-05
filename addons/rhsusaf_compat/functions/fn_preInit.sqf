@@ -9,4 +9,4 @@
         "far"
     ]
 ]
-call big_gau8_fnc_registerWeapon;
+call gau_gau8_fnc_registerWeapon;

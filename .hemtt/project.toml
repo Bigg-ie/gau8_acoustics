@@ -1,6 +1,6 @@
 name = "GAU-8 Acoustic Simulation"
 author = "Biggie"
-prefix = "big"
+prefix = "gau"
 mainprefix = "z"
 
 [version]

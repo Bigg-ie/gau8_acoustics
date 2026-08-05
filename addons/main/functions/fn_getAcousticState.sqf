@@ -263,14 +263,14 @@ private _targetCockpitMix = parseNumber _cockpitTarget;
 private _shotCount =
     _vehicle getVariable
     [
-        "big_gau8_shotCount",
+        "gau_gau8_shotCount",
         0
     ];
 
 private _previousCockpitMix =
     _vehicle getVariable
     [
-        "big_gau8_cockpitMix",
+        "gau_gau8_cockpitMix",
         _targetCockpitMix
     ];
 
@@ -289,7 +289,7 @@ _cockpitMix = (_cockpitMix max 0) min 1;
 
 _vehicle setVariable
 [
-    "big_gau8_cockpitMix",
+    "gau_gau8_cockpitMix",
     _cockpitMix
 ];
 
@@ -299,7 +299,7 @@ private _cockpitMaster =
     (
         _vehicle getVariable
         [
-            "big_gau8_cockpitMaster",
+            "gau_gau8_cockpitMaster",
             1.0
         ]
     ) max 0 min 2;

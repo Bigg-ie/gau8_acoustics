@@ -1,13 +1,13 @@
 class CfgPatches
 {
-    class big_gau8_jsrs2025_compat
+    class gau_gau8_jsrs2025_compat
     {
         name = "GAU-8 Acoustic Simulation - JSRS 2025 Compatibility";
-        author = "BIG";
+        author = "Biggie";
         requiredVersion = 2.14;
         requiredAddons[] =
         {
-            "big_gau8_main",
+            "gau_gau8_main",
             "jsrs2025_config_c"
         };
         skipWhenMissingDependencies = 1;

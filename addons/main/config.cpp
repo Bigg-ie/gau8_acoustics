@@ -1,6 +1,6 @@
 class CfgPatches
 {
-    class big_gau8_main
+    class gau_gau8_main
     {
         name = "GAU-8 Acoustic Simulation";
         author = "Biggie";
@@ -19,7 +19,7 @@ class CfgPatches
 
 class CfgDistanceFilters
 {
-    class big_GAU8_CannonDistanceFilter
+    class gau_GAU8_CannonDistanceFilter
     {
         type = "lowPassFilter";
         minCutoffFrequency = 6000;
@@ -33,7 +33,7 @@ class CfgDistanceFilters
 class CfgSoundCurves
 {
     // Far layer fades in between approximately 300 and 750 metres.
-    class big_GAU8_FarShaderCurve
+    class gau_GAU8_FarShaderCurve
     {
         points[] =
         {
@@ -44,7 +44,7 @@ class CfgSoundCurves
 
     // Far-layer output remains strong through the middle distance,
     // then falls to zero at the configured maximum range.
-    class big_GAU8_FarSetCurve
+    class gau_GAU8_FarSetCurve
     {
         points[] =
         {
@@ -55,7 +55,7 @@ class CfgSoundCurves
             {1.00, 0.00}
         };
     };
-    class big_GAU8_FarPulseShaderCurve
+    class gau_GAU8_FarPulseShaderCurve
     {
         points[] =
         {
@@ -71,7 +71,7 @@ class CfgSoundCurves
         };
     };
 
-    class big_GAU8_FarPulseSetCurve
+    class gau_GAU8_FarPulseSetCurve
     {
         points[] =
         {
@@ -81,7 +81,7 @@ class CfgSoundCurves
             {1.00, 0.00}
         };
     };
-    class big_GAU8_MidReportShaderCurve
+    class gau_GAU8_MidReportShaderCurve
     {
         points[] =
         {
@@ -93,7 +93,7 @@ class CfgSoundCurves
         };
     };
 
-    class big_GAU8_MidReportSetCurve
+    class gau_GAU8_MidReportSetCurve
     {
         points[] =
         {
@@ -104,7 +104,7 @@ class CfgSoundCurves
             {1.00, 0.00}
         };
     };
-    class big_GAU8_CloseRecordedSetCurve
+    class gau_GAU8_CloseRecordedSetCurve
 {
     points[] =
     {
@@ -123,14 +123,14 @@ class CfgSoundCurves
 
 class CfgSoundShaders
 {
-    class big_GAU8_CloseBody_SoundShader
+    class gau_GAU8_CloseBody_SoundShader
     {
         samples[] =
         {
-            {"\z\big\addons\main\sounds\cannon\close_cola_1.wav", 1},
-            {"\z\big\addons\main\sounds\cannon\close_cola_2.wav", 1},
-            {"\z\big\addons\main\sounds\cannon\close_cola_3.wav", 1},
-            {"\z\big\addons\main\sounds\cannon\close_cola_4.wav", 1}
+            {"\z\gau\addons\main\sounds\cannon\close_cola_1.wav", 1},
+            {"\z\gau\addons\main\sounds\cannon\close_cola_2.wav", 1},
+            {"\z\gau\addons\main\sounds\cannon\close_cola_3.wav", 1},
+            {"\z\gau\addons\main\sounds\cannon\close_cola_4.wav", 1}
         };
 
         volume = 1;
@@ -138,42 +138,42 @@ class CfgSoundShaders
         rangeCurve = "closeShotCurve";
     };
 
-    class big_GAU8_FarPulse_SoundShader
+    class gau_GAU8_FarPulse_SoundShader
     {
         samples[] =
         {
-            {"\z\big\addons\main\sounds\cannon\far_pulse_1.wav", 1},
-            {"\z\big\addons\main\sounds\cannon\far_pulse_2.wav", 1},
-            {"\z\big\addons\main\sounds\cannon\far_pulse_3.wav", 1},
-            {"\z\big\addons\main\sounds\cannon\far_pulse_4.wav", 1}
+            {"\z\gau\addons\main\sounds\cannon\far_pulse_1.wav", 1},
+            {"\z\gau\addons\main\sounds\cannon\far_pulse_2.wav", 1},
+            {"\z\gau\addons\main\sounds\cannon\far_pulse_3.wav", 1},
+            {"\z\gau\addons\main\sounds\cannon\far_pulse_4.wav", 1}
         };
 
         volume = 1;
         range = 3000;
-        rangeCurve = "big_GAU8_FarPulseShaderCurve";
+        rangeCurve = "gau_GAU8_FarPulseShaderCurve";
     };
-    class big_GAU8_CloseTransient_SoundShader
+    class gau_GAU8_CloseTransient_SoundShader
     {
         samples[] =
         {
-            {"\z\big\addons\main\sounds\cannon\close_transient_1.wav", 1},
-            {"\z\big\addons\main\sounds\cannon\close_transient_2.wav", 1},
-            {"\z\big\addons\main\sounds\cannon\close_transient_3.wav", 1},
-            {"\z\big\addons\main\sounds\cannon\close_transient_4.wav", 1}
+            {"\z\gau\addons\main\sounds\cannon\close_transient_1.wav", 1},
+            {"\z\gau\addons\main\sounds\cannon\close_transient_2.wav", 1},
+            {"\z\gau\addons\main\sounds\cannon\close_transient_3.wav", 1},
+            {"\z\gau\addons\main\sounds\cannon\close_transient_4.wav", 1}
         };
 
         volume = 1;
         range = 220;
         rangeCurve = "closeShotCurve";
     };
-    class big_GAU8_CloseMechanical_SoundShader
+    class gau_GAU8_CloseMechanical_SoundShader
     {
         samples[] =
         {
-            {"\z\big\addons\main\sounds\cannon\close_mechanical_1.wav", 1},
-            {"\z\big\addons\main\sounds\cannon\close_mechanical_2.wav", 1},
-            {"\z\big\addons\main\sounds\cannon\close_mechanical_3.wav", 1},
-            {"\z\big\addons\main\sounds\cannon\close_mechanical_4.wav", 1}
+            {"\z\gau\addons\main\sounds\cannon\close_mechanical_1.wav", 1},
+            {"\z\gau\addons\main\sounds\cannon\close_mechanical_2.wav", 1},
+            {"\z\gau\addons\main\sounds\cannon\close_mechanical_3.wav", 1},
+            {"\z\gau\addons\main\sounds\cannon\close_mechanical_4.wav", 1}
         };
 
         volume = 1;
@@ -181,29 +181,29 @@ class CfgSoundShaders
         rangeCurve = "closeShotCurve";
     };
 
-    class big_GAU8_MidReport_SoundShader
+    class gau_GAU8_MidReport_SoundShader
     {
         samples[] =
         {
-            {"\z\big\addons\main\sounds\cannon\mid_report_1.wav", 1},
-            {"\z\big\addons\main\sounds\cannon\mid_report_2.wav", 1},
-            {"\z\big\addons\main\sounds\cannon\mid_report_3.wav", 1},
-            {"\z\big\addons\main\sounds\cannon\mid_report_4.wav", 1}
+            {"\z\gau\addons\main\sounds\cannon\mid_report_1.wav", 1},
+            {"\z\gau\addons\main\sounds\cannon\mid_report_2.wav", 1},
+            {"\z\gau\addons\main\sounds\cannon\mid_report_3.wav", 1},
+            {"\z\gau\addons\main\sounds\cannon\mid_report_4.wav", 1}
         };
 
         volume = 1;
         range = 1200;
-        rangeCurve = "big_GAU8_MidReportShaderCurve";
+        rangeCurve = "gau_GAU8_MidReportShaderCurve";
     };
 
-    class big_GAU8_AirframeResponse_SoundShader
+    class gau_GAU8_AirframeResponse_SoundShader
     {
         samples[] =
         {
-            {"\z\big\addons\main\sounds\cannon\airframe_response_1.wav", 1},
-            {"\z\big\addons\main\sounds\cannon\airframe_response_2.wav", 1},
-            {"\z\big\addons\main\sounds\cannon\airframe_response_3.wav", 1},
-            {"\z\big\addons\main\sounds\cannon\airframe_response_4.wav", 1}
+            {"\z\gau\addons\main\sounds\cannon\airframe_response_1.wav", 1},
+            {"\z\gau\addons\main\sounds\cannon\airframe_response_2.wav", 1},
+            {"\z\gau\addons\main\sounds\cannon\airframe_response_3.wav", 1},
+            {"\z\gau\addons\main\sounds\cannon\airframe_response_4.wav", 1}
         };
 
         volume = 1;
@@ -211,14 +211,14 @@ class CfgSoundShaders
         rangeCurve = "closeShotCurve";
     };
 
-    class big_GAU8_CloseBodyReal_SoundShader
+    class gau_GAU8_CloseBodyReal_SoundShader
     {
         samples[] =
         {
-            {"\z\big\addons\main\sounds\cannon\close_body_real_1.wav", 1},
-            {"\z\big\addons\main\sounds\cannon\close_body_real_2.wav", 1},
-            {"\z\big\addons\main\sounds\cannon\close_body_real_3.wav", 1},
-            {"\z\big\addons\main\sounds\cannon\close_body_real_4.wav", 1}
+            {"\z\gau\addons\main\sounds\cannon\close_body_real_1.wav", 1},
+            {"\z\gau\addons\main\sounds\cannon\close_body_real_2.wav", 1},
+            {"\z\gau\addons\main\sounds\cannon\close_body_real_3.wav", 1},
+            {"\z\gau\addons\main\sounds\cannon\close_body_real_4.wav", 1}
         };
 
         volume = 1;
@@ -226,26 +226,26 @@ class CfgSoundShaders
         rangeCurve = "closeShotCurve";
     };
 
-    class big_GAU8_CloseRecorded_SoundShader
+    class gau_GAU8_CloseRecorded_SoundShader
     {
         samples[] =
         {
-            {"\z\big\addons\main\sounds\cannon\close_cell_01.wav", 1},
-            {"\z\big\addons\main\sounds\cannon\close_cell_02.wav", 1},
-            {"\z\big\addons\main\sounds\cannon\close_cell_03.wav", 1},
-            {"\z\big\addons\main\sounds\cannon\close_cell_04.wav", 1},
-            {"\z\big\addons\main\sounds\cannon\close_cell_05.wav", 1},
-            {"\z\big\addons\main\sounds\cannon\close_cell_06.wav", 1},
-            {"\z\big\addons\main\sounds\cannon\close_cell_07.wav", 1},
-            {"\z\big\addons\main\sounds\cannon\close_cell_08.wav", 1},
-            {"\z\big\addons\main\sounds\cannon\close_cell_09.wav", 1},
-            {"\z\big\addons\main\sounds\cannon\close_cell_10.wav", 1},
-            {"\z\big\addons\main\sounds\cannon\close_cell_11.wav", 1},
-            {"\z\big\addons\main\sounds\cannon\close_cell_12.wav", 1},
-            {"\z\big\addons\main\sounds\cannon\close_cell_13.wav", 1},
-            {"\z\big\addons\main\sounds\cannon\close_cell_14.wav", 1},
-            {"\z\big\addons\main\sounds\cannon\close_cell_15.wav", 1},
-            {"\z\big\addons\main\sounds\cannon\close_cell_16.wav", 1}
+            {"\z\gau\addons\main\sounds\cannon\close_cell_01.wav", 1},
+            {"\z\gau\addons\main\sounds\cannon\close_cell_02.wav", 1},
+            {"\z\gau\addons\main\sounds\cannon\close_cell_03.wav", 1},
+            {"\z\gau\addons\main\sounds\cannon\close_cell_04.wav", 1},
+            {"\z\gau\addons\main\sounds\cannon\close_cell_05.wav", 1},
+            {"\z\gau\addons\main\sounds\cannon\close_cell_06.wav", 1},
+            {"\z\gau\addons\main\sounds\cannon\close_cell_07.wav", 1},
+            {"\z\gau\addons\main\sounds\cannon\close_cell_08.wav", 1},
+            {"\z\gau\addons\main\sounds\cannon\close_cell_09.wav", 1},
+            {"\z\gau\addons\main\sounds\cannon\close_cell_10.wav", 1},
+            {"\z\gau\addons\main\sounds\cannon\close_cell_11.wav", 1},
+            {"\z\gau\addons\main\sounds\cannon\close_cell_12.wav", 1},
+            {"\z\gau\addons\main\sounds\cannon\close_cell_13.wav", 1},
+            {"\z\gau\addons\main\sounds\cannon\close_cell_14.wav", 1},
+            {"\z\gau\addons\main\sounds\cannon\close_cell_15.wav", 1},
+            {"\z\gau\addons\main\sounds\cannon\close_cell_16.wav", 1}
         };
 
         volume = 1;
@@ -257,11 +257,11 @@ class CfgSoundShaders
 
 class CfgSoundSets
 {
-    class big_GAU8_CloseBody_SoundSet
+    class gau_GAU8_CloseBody_SoundSet
     {
         soundShaders[] =
         {
-            "big_GAU8_CloseBody_SoundShader"
+            "gau_GAU8_CloseBody_SoundShader"
         };
 
         volumeFactor = 1;
@@ -276,15 +276,15 @@ class CfgSoundSets
         distanceFilter = "weaponShotDistanceFreqAttenuationFilter";
     };
 
-    class big_GAU8_FarPulse_SoundSet
+    class gau_GAU8_FarPulse_SoundSet
     {
         soundShaders[] =
         {
-            "big_GAU8_FarPulse_SoundShader"
+            "gau_GAU8_FarPulse_SoundShader"
         };
 
         volumeFactor = 0.55;
-        volumeCurve = "big_GAU8_FarPulseSetCurve";
+        volumeCurve = "gau_GAU8_FarPulseSetCurve";
 
         spatial = 1;
         doppler = 1;
@@ -294,11 +294,11 @@ class CfgSoundSets
         sound3DProcessingType = "WeaponMediumShot3DProcessingType";
         distanceFilter = "none";
     };
-    class big_GAU8_CloseTransient_SoundSet
+    class gau_GAU8_CloseTransient_SoundSet
     {
         soundShaders[] =
         {
-            "big_GAU8_CloseTransient_SoundShader"
+            "gau_GAU8_CloseTransient_SoundShader"
         };
 
         volumeFactor = 0.55;
@@ -312,11 +312,11 @@ class CfgSoundSets
         sound3DProcessingType = "WeaponMediumShot3DProcessingType";
         distanceFilter = "weaponShotDistanceFreqAttenuationFilter";
     };
-    class big_GAU8_CloseMechanical_SoundSet
+    class gau_GAU8_CloseMechanical_SoundSet
     {
         soundShaders[] =
         {
-            "big_GAU8_CloseMechanical_SoundShader"
+            "gau_GAU8_CloseMechanical_SoundShader"
         };
 
         volumeFactor = 0.20;
@@ -331,15 +331,15 @@ class CfgSoundSets
         distanceFilter = "weaponShotDistanceFreqAttenuationFilter";
     };
 
-    class big_GAU8_MidReport_SoundSet
+    class gau_GAU8_MidReport_SoundSet
     {
         soundShaders[] =
         {
-            "big_GAU8_MidReport_SoundShader"
+            "gau_GAU8_MidReport_SoundShader"
         };
 
         volumeFactor = 0.65;
-        volumeCurve = "big_GAU8_MidReportSetCurve";
+        volumeCurve = "gau_GAU8_MidReportSetCurve";
 
         spatial = 1;
         doppler = 1;
@@ -350,11 +350,11 @@ class CfgSoundSets
         distanceFilter = "weaponShotDistanceFreqAttenuationFilter";
     };
 
-    class big_GAU8_AirframeResponse_SoundSet
+    class gau_GAU8_AirframeResponse_SoundSet
     {
         soundShaders[] =
         {
-            "big_GAU8_AirframeResponse_SoundShader"
+            "gau_GAU8_AirframeResponse_SoundShader"
         };
 
         volumeFactor = 0.40;
@@ -369,11 +369,11 @@ class CfgSoundSets
         distanceFilter = "weaponShotDistanceFreqAttenuationFilter";
     };
 
-    class big_GAU8_CloseBodyReal_SoundSet
+    class gau_GAU8_CloseBodyReal_SoundSet
     {
         soundShaders[] =
         {
-            "big_GAU8_CloseBodyReal_SoundShader"
+            "gau_GAU8_CloseBodyReal_SoundShader"
         };
 
         volumeFactor = 1;
@@ -388,15 +388,15 @@ class CfgSoundSets
         distanceFilter = "weaponShotDistanceFreqAttenuationFilter";
     };
 
-    class big_GAU8_CloseRecorded_SoundSet
+    class gau_GAU8_CloseRecorded_SoundSet
     {
         soundShaders[] =
         {
-            "big_GAU8_CloseRecorded_SoundShader"
+            "gau_GAU8_CloseRecorded_SoundShader"
         };
 
         volumeFactor = 3.2;
-        volumeCurve = "big_GAU8_CloseRecordedSetCurve";
+        volumeCurve = "gau_GAU8_CloseRecordedSetCurve";
 
         spatial = 1;
         spatialityRange = 15;
@@ -405,7 +405,7 @@ class CfgSoundSets
         loop = 0;
 
         sound3DProcessingType = "WeaponMediumShot3DProcessingType";
-        distanceFilter = "big_GAU8_CannonDistanceFilter";
+        distanceFilter = "gau_GAU8_CannonDistanceFilter";
     };
 
 };
@@ -419,11 +419,11 @@ class CfgWeapons
 
     class Gatling_30mm_Plane_CAS_01_F: CannonCore
     {
-        displayName = "GAU-8/A Avenger [GAU-8 Acoustic Dev]";
+        displayName = "GAU-8/A Avenger";
 
         class LowROF: Mode_FullAuto
         {
-            displayName = "GAU-8 Low ROF [Acoustic Dev]";
+            displayName = "GAU-8/A Avenger Low ROF";
 
             sounds[] = {"StandardSound"};
             soundContinuous = 0;
@@ -449,13 +449,13 @@ class CfgWeapons
 };
 class CfgFunctions
 {
-    class big_gau8
+    class gau_gau8
     {
-        tag = "big_gau8";
+        tag = "gau_gau8";
 
         class main
         {
-            file = "\z\big\addons\main\functions";
+            file = "\z\gau\addons\main\functions";
 
             class calculateShockGeometry
             {

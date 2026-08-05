@@ -10,7 +10,7 @@ if (!hasInterface) exitWith {};
         "far"
     ]
 ]
-call big_gau8_fnc_registerWeapon;
+call gau_gau8_fnc_registerWeapon;
 
 private _installOnSupportedAircraft =
 {
@@ -51,7 +51,7 @@ private _installOnSupportedAircraft =
     private _registry =
         missionNamespace getVariable
         [
-            "big_gau8_weaponRegistry",
+            "gau_gau8_weaponRegistry",
             []
         ];
 
@@ -69,19 +69,19 @@ private _installOnSupportedAircraft =
 
     if (_supported < 0) exitWith {};
 
-    [_aircraft] call big_gau8_fnc_installGrainHandler;
+    [_aircraft] call gau_gau8_fnc_installGrainHandler;
 };
 
 missionNamespace setVariable
 [
-    "big_gau8_installOnSupportedAircraft",
+    "gau_gau8_installOnSupportedAircraft",
     _installOnSupportedAircraft
 ];
 
 private _oldEntityCreatedHandler =
     missionNamespace getVariable
     [
-        "big_gau8_entityCreatedHandler",
+        "gau_gau8_entityCreatedHandler",
         -1
     ];
 
@@ -111,7 +111,7 @@ private _entityCreatedHandler =
                 private _installer =
                     missionNamespace getVariable
                     [
-                        "big_gau8_installOnSupportedAircraft",
+                        "gau_gau8_installOnSupportedAircraft",
                         {}
                     ];
 
@@ -122,7 +122,7 @@ private _entityCreatedHandler =
 
 missionNamespace setVariable
 [
-    "big_gau8_entityCreatedHandler",
+    "gau_gau8_entityCreatedHandler",
     _entityCreatedHandler
 ];
 
@@ -137,7 +137,7 @@ diag_log format
     count vehicles,
     missionNamespace getVariable
     [
-        "big_gau8_weaponRegistry",
+        "gau_gau8_weaponRegistry",
         []
     ]
 ];

@@ -42,7 +42,7 @@ if (
 private _generation =
     _vehicle getVariable
     [
-        "big_gau8_handlerGeneration",
+        "gau_gau8_handlerGeneration",
         -1
     ];
 
@@ -56,7 +56,7 @@ private _speedOfSound =
     (
         _vehicle getVariable
         [
-            "big_gau8_speedOfSound",
+            "gau_gau8_speedOfSound",
             343.0
         ]
     ) max 300 min 360;
@@ -87,7 +87,7 @@ private _arrivalHint =
 private _queue =
     _vehicle getVariable
     [
-        "big_gau8_arrivalQueue",
+        "gau_gau8_arrivalQueue",
         []
     ];
 
@@ -120,14 +120,14 @@ while {(count _queue) > _aircraftQueueLimit} do
 
 _vehicle setVariable
 [
-    "big_gau8_arrivalQueue",
+    "gau_gau8_arrivalQueue",
     _queue
 ];
 
 private _workerRunning =
     _vehicle getVariable
     [
-        "big_gau8_arrivalWorkerRunning",
+        "gau_gau8_arrivalWorkerRunning",
         false
     ];
 
@@ -135,7 +135,7 @@ if (!_workerRunning) then
 {
     _vehicle setVariable
     [
-        "big_gau8_arrivalWorkerRunning",
+        "gau_gau8_arrivalWorkerRunning",
         true
     ];
 
@@ -191,7 +191,7 @@ if (!_workerRunning) then
                 private _currentGeneration =
                     _vehicle getVariable
                     [
-                        "big_gau8_handlerGeneration",
+                        "gau_gau8_handlerGeneration",
                         -1
                     ];
 
@@ -204,7 +204,7 @@ if (!_workerRunning) then
                     private _queue =
                         _vehicle getVariable
                         [
-                            "big_gau8_arrivalQueue",
+                            "gau_gau8_arrivalQueue",
                             []
                         ];
 
@@ -241,7 +241,7 @@ if (!_workerRunning) then
                             (
                                 _vehicle getVariable
                                 [
-                                    "big_gau8_speedOfSound",
+                                    "gau_gau8_speedOfSound",
                                     343.0
                                 ]
                             ) max 300 min 360;
@@ -317,7 +317,7 @@ if (!_workerRunning) then
 
                                 _vehicle setVariable
                                 [
-                                    "big_gau8_arrivalQueue",
+                                    "gau_gau8_arrivalQueue",
                                     _queue
                                 ];
 
@@ -443,7 +443,7 @@ if (!_workerRunning) then
                                 private _dopplerEnabled =
                                     _vehicle getVariable
                                     [
-                                        "big_gau8_dopplerEnabled",
+                                        "gau_gau8_dopplerEnabled",
                                         true
                                     ];
 
@@ -451,7 +451,7 @@ if (!_workerRunning) then
                                     (
                                         _vehicle getVariable
                                         [
-                                            "big_gau8_dopplerMaster",
+                                            "gau_gau8_dopplerMaster",
                                             1.0
                                         ]
                                     ) max 0 min 1;
@@ -460,7 +460,7 @@ if (!_workerRunning) then
                                     (
                                         _vehicle getVariable
                                         [
-                                            "big_gau8_dopplerMinimum",
+                                            "gau_gau8_dopplerMinimum",
                                             0.60
                                         ]
                                     ) max 0.25 min 1.0;
@@ -469,7 +469,7 @@ if (!_workerRunning) then
                                     (
                                         _vehicle getVariable
                                         [
-                                            "big_gau8_dopplerMaximum",
+                                            "gau_gau8_dopplerMaximum",
                                             1.80
                                         ]
                                     ) max 1.0 min 3.0;
@@ -525,7 +525,7 @@ if (!_workerRunning) then
                                         _currentDistance,
                                         1.0
                                     ]
-                                    call big_gau8_fnc_getEnvironmentState;
+                                    call gau_gau8_fnc_getEnvironmentState;
 
                                 _environmentState params
                                 [
@@ -713,7 +713,7 @@ if (!_workerRunning) then
                                     (
                                         _vehicle getVariable
                                         [
-                                            "big_gau8_externalMaster",
+                                            "gau_gau8_externalMaster",
                                             1.0
                                         ]
                                     )
@@ -724,7 +724,7 @@ if (!_workerRunning) then
                                     (
                                         _vehicle getVariable
                                         [
-                                            "big_gau8_closeBodyTrim",
+                                            "gau_gau8_closeBodyTrim",
                                             1.258925
                                         ]
                                     )
@@ -735,7 +735,7 @@ if (!_workerRunning) then
                                     (
                                         _vehicle getVariable
                                         [
-                                            "big_gau8_midBodyTrim",
+                                            "gau_gau8_midBodyTrim",
                                             1.412538
                                         ]
                                     )
@@ -746,7 +746,7 @@ if (!_workerRunning) then
                                     (
                                         _vehicle getVariable
                                         [
-                                            "big_gau8_farBodyTrim",
+                                            "gau_gau8_farBodyTrim",
                                             1.333521
                                         ]
                                     )
@@ -757,7 +757,7 @@ if (!_workerRunning) then
                                     (
                                         _vehicle getVariable
                                         [
-                                            "big_gau8_muzzleTrim",
+                                            "gau_gau8_muzzleTrim",
                                             1.122018
                                         ]
                                     )
@@ -768,7 +768,7 @@ if (!_workerRunning) then
                                     (
                                         _vehicle getVariable
                                         [
-                                            "big_gau8_mechanicalTrim",
+                                            "gau_gau8_mechanicalTrim",
                                             1.0
                                         ]
                                     )
@@ -778,7 +778,7 @@ if (!_workerRunning) then
                                 private _presenceEQEnabled =
                                     _vehicle getVariable
                                     [
-                                        "big_gau8_presenceEQEnabled",
+                                        "gau_gau8_presenceEQEnabled",
                                         true
                                     ];
 
@@ -799,7 +799,7 @@ if (!_workerRunning) then
                                 private _groundResponseEnabled =
                                     _vehicle getVariable
                                     [
-                                        "big_gau8_groundResponseEnabled",
+                                        "gau_gau8_groundResponseEnabled",
                                         true
                                     ];
 
@@ -807,7 +807,7 @@ if (!_workerRunning) then
                                     (
                                         _vehicle getVariable
                                         [
-                                            "big_gau8_groundResponseMaster",
+                                            "gau_gau8_groundResponseMaster",
                                             1.0
                                         ]
                                     )
@@ -966,7 +966,7 @@ if (!_workerRunning) then
                                         private _ids =
                                             _vehicle getVariable
                                             [
-                                                "big_gau8_grainIDs",
+                                                "gau_gau8_grainIDs",
                                                 []
                                             ];
 
@@ -979,7 +979,7 @@ if (!_workerRunning) then
 
                                         _vehicle setVariable
                                         [
-                                            "big_gau8_grainIDs",
+                                            "gau_gau8_grainIDs",
                                             _ids
                                         ];
                                     };
@@ -1158,7 +1158,7 @@ if (!_workerRunning) then
                                 private _reverbEnabled =
                                     _vehicle getVariable
                                     [
-                                        "big_gau8_reverbEnabled",
+                                        "gau_gau8_reverbEnabled",
                                         true
                                     ];
 
@@ -1185,14 +1185,14 @@ if (!_workerRunning) then
                                     private _lastTailBucket =
                                         _vehicle getVariable
                                         [
-                                            "big_gau8_lastTailBucket",
+                                            "gau_gau8_lastTailBucket",
                                             -1
                                         ];
 
                                     private _nextTailTick =
                                         _vehicle getVariable
                                         [
-                                            "big_gau8_nextTailTick",
+                                            "gau_gau8_nextTailTick",
                                             -1
                                         ];
 
@@ -1222,7 +1222,7 @@ if (!_workerRunning) then
                                     {
                                         _vehicle setVariable
                                         [
-                                            "big_gau8_lastTailBucket",
+                                            "gau_gau8_lastTailBucket",
                                             _eventBucket
                                         ];
 
@@ -1230,7 +1230,7 @@ if (!_workerRunning) then
                                             (
                                                 _vehicle getVariable
                                                 [
-                                                    "big_gau8_reverbIntervalMin",
+                                                    "gau_gau8_reverbIntervalMin",
                                                     0.70
                                                 ]
                                             )
@@ -1241,7 +1241,7 @@ if (!_workerRunning) then
                                             (
                                                 _vehicle getVariable
                                                 [
-                                                    "big_gau8_reverbIntervalSpread",
+                                                    "gau_gau8_reverbIntervalSpread",
                                                     0.45
                                                 ]
                                             )
@@ -1250,7 +1250,7 @@ if (!_workerRunning) then
 
                                         _vehicle setVariable
                                         [
-                                            "big_gau8_nextTailTick",
+                                            "gau_gau8_nextTailTick",
                                             diag_tickTime +
                                             _tailIntervalMin +
                                             (random _tailIntervalSpread)
@@ -1276,7 +1276,7 @@ if (!_workerRunning) then
                                         private _tailPath =
                                             format
                                             [
-                                                "z\big\addons\main\sounds\cannon\environment_tail_%1_%2.wav",
+                                                "z\gau\addons\main\sounds\cannon\environment_tail_%1_%2.wav",
                                                 _tailType,
                                                 _tailVariant
                                             ];
@@ -1366,7 +1366,7 @@ if (!_workerRunning) then
                                             (
                                                 _vehicle getVariable
                                                 [
-                                                    "big_gau8_reverbMaster",
+                                                    "gau_gau8_reverbMaster",
                                                     1.0
                                                 ]
                                             )
@@ -1377,7 +1377,7 @@ if (!_workerRunning) then
                                             (
                                                 _vehicle getVariable
                                                 [
-                                                    "big_gau8_reverbLevel",
+                                                    "gau_gau8_reverbLevel",
                                                     0.20
                                                 ]
                                             )
@@ -1461,7 +1461,7 @@ if (!_workerRunning) then
                                                             _vehicle
                                                             getVariable
                                                             [
-                                                                "big_gau8_handlerGeneration",
+                                                                "gau_gau8_handlerGeneration",
                                                                 -1
                                                             ]
                                                         ) !=
@@ -1489,7 +1489,7 @@ if (!_workerRunning) then
                                                         _vehicle
                                                         getVariable
                                                         [
-                                                            "big_gau8_reverbIDs",
+                                                            "gau_gau8_reverbIDs",
                                                             []
                                                         ];
 
@@ -1509,7 +1509,7 @@ if (!_workerRunning) then
 
                                                     _vehicle setVariable
                                                     [
-                                                        "big_gau8_reverbIDs",
+                                                        "gau_gau8_reverbIDs",
                                                         _tailIDs
                                                     ];
                                                 };
@@ -1519,7 +1519,7 @@ if (!_workerRunning) then
                                         if (
                                             _vehicle getVariable
                                             [
-                                                "big_gau8_debugReverb",
+                                                "gau_gau8_debugReverb",
                                                 false
                                             ]
                                         ) then
@@ -1560,7 +1560,7 @@ if (!_workerRunning) then
                                 if (
                                     _vehicle getVariable
                                     [
-                                        "big_gau8_debugPresence",
+                                        "gau_gau8_debugPresence",
                                         false
                                     ]
                                 ) then
@@ -1568,7 +1568,7 @@ if (!_workerRunning) then
                                     private _nextPresenceDebug =
                                         _vehicle getVariable
                                         [
-                                            "big_gau8_nextPresenceDebug",
+                                            "gau_gau8_nextPresenceDebug",
                                             -1
                                         ];
 
@@ -1582,7 +1582,7 @@ if (!_workerRunning) then
                                     {
                                         _vehicle setVariable
                                         [
-                                            "big_gau8_nextPresenceDebug",
+                                            "gau_gau8_nextPresenceDebug",
                                             _presenceDebugTick + 0.50
                                         ];
 
@@ -1608,7 +1608,7 @@ if (!_workerRunning) then
                                 if (
                                     _vehicle getVariable
                                     [
-                                        "big_gau8_debugDoppler",
+                                        "gau_gau8_debugDoppler",
                                         false
                                     ]
                                 ) then
@@ -1616,7 +1616,7 @@ if (!_workerRunning) then
                                     private _nextDopplerDebug =
                                         _vehicle getVariable
                                         [
-                                            "big_gau8_nextDopplerDebug",
+                                            "gau_gau8_nextDopplerDebug",
                                             -1
                                         ];
 
@@ -1630,7 +1630,7 @@ if (!_workerRunning) then
                                     {
                                         _vehicle setVariable
                                         [
-                                            "big_gau8_nextDopplerDebug",
+                                            "gau_gau8_nextDopplerDebug",
                                             _dopplerDebugTick + 0.25
                                         ];
 
@@ -1669,7 +1669,7 @@ if (!_workerRunning) then
                                 if (
                                     _vehicle getVariable
                                     [
-                                        "big_gau8_debugPropagation",
+                                        "gau_gau8_debugPropagation",
                                         false
                                     ]
                                 ) then
@@ -1677,7 +1677,7 @@ if (!_workerRunning) then
                                     private _nextPropagationDebug =
                                         _vehicle getVariable
                                         [
-                                            "big_gau8_nextPropagationDebug",
+                                            "gau_gau8_nextPropagationDebug",
                                             -1
                                         ];
 
@@ -1690,7 +1690,7 @@ if (!_workerRunning) then
                                     {
                                         _vehicle setVariable
                                         [
-                                            "big_gau8_nextPropagationDebug",
+                                            "gau_gau8_nextPropagationDebug",
                                             _debugTick + 0.50
                                         ];
 
@@ -1732,7 +1732,7 @@ if (!_workerRunning) then
                                 if (
                                     _vehicle getVariable
                                     [
-                                        "big_gau8_debugEnvironment",
+                                        "gau_gau8_debugEnvironment",
                                         false
                                     ]
                                 ) then
@@ -1740,7 +1740,7 @@ if (!_workerRunning) then
                                     private _nextDebug =
                                         _vehicle getVariable
                                         [
-                                            "big_gau8_nextEnvironmentDebug",
+                                            "gau_gau8_nextEnvironmentDebug",
                                             -1
                                         ];
 
@@ -1748,7 +1748,7 @@ if (!_workerRunning) then
                                     {
                                         _vehicle setVariable
                                         [
-                                            "big_gau8_nextEnvironmentDebug",
+                                            "gau_gau8_nextEnvironmentDebug",
                                             time + 0.50
                                         ];
 
@@ -1784,7 +1784,7 @@ if (!_workerRunning) then
             private _currentGeneration =
                 _vehicle getVariable
                 [
-                    "big_gau8_handlerGeneration",
+                    "gau_gau8_handlerGeneration",
                     -1
                 ];
 
@@ -1792,7 +1792,7 @@ if (!_workerRunning) then
             {
                 _vehicle setVariable
                 [
-                    "big_gau8_arrivalWorkerRunning",
+                    "gau_gau8_arrivalWorkerRunning",
                     false
                 ];
             };

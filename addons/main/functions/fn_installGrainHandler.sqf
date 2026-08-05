@@ -13,7 +13,7 @@ if (isNull _aircraft) exitWith
 private _oldHandler =
     _aircraft getVariable
     [
-        "big_gau8_firedHandler",
+        "gau_gau8_firedHandler",
         -1
     ];
 
@@ -29,7 +29,7 @@ if (_oldHandler >= 0) then
 private _oldSource =
     _aircraft getVariable
     [
-        "big_gau8_farBodySource",
+        "gau_gau8_farBodySource",
         objNull
     ];
 
@@ -41,7 +41,7 @@ if (!isNull _oldSource) then
 private _oldIDs =
     _aircraft getVariable
     [
-        "big_gau8_grainIDs",
+        "gau_gau8_grainIDs",
         []
     ];
 
@@ -57,164 +57,164 @@ private _generation =
     (
         _aircraft getVariable
         [
-            "big_gau8_handlerGeneration",
+            "gau_gau8_handlerGeneration",
             0
         ]
     ) + 1;
 
 _aircraft setVariable
 [
-    "big_gau8_handlerGeneration",
+    "gau_gau8_handlerGeneration",
     _generation
 ];
 
 _aircraft setVariable
 [
-    "big_gau8_grainPaths",
+    "gau_gau8_grainPaths",
     [
-        "z\big\addons\main\sounds\cannon\far_body_grain_1.wav",
-        "z\big\addons\main\sounds\cannon\far_body_grain_2.wav",
-        "z\big\addons\main\sounds\cannon\far_body_grain_3.wav",
-        "z\big\addons\main\sounds\cannon\far_body_grain_4.wav",
-        "z\big\addons\main\sounds\cannon\far_body_grain_5.wav",
-        "z\big\addons\main\sounds\cannon\far_body_grain_6.wav"
+        "z\gau\addons\main\sounds\cannon\far_body_grain_1.wav",
+        "z\gau\addons\main\sounds\cannon\far_body_grain_2.wav",
+        "z\gau\addons\main\sounds\cannon\far_body_grain_3.wav",
+        "z\gau\addons\main\sounds\cannon\far_body_grain_4.wav",
+        "z\gau\addons\main\sounds\cannon\far_body_grain_5.wav",
+        "z\gau\addons\main\sounds\cannon\far_body_grain_6.wav"
     ]
 ];
 
 _aircraft setVariable
 [
-    "big_gau8_startPath",
-    "z\big\addons\main\sounds\cannon\far_body_start.wav"
+    "gau_gau8_startPath",
+    "z\gau\addons\main\sounds\cannon\far_body_start.wav"
 ];
 
 _aircraft setVariable
 [
-    "big_gau8_endPath",
-    "z\big\addons\main\sounds\cannon\far_body_end.wav"
+    "gau_gau8_endPath",
+    "z\gau\addons\main\sounds\cannon\far_body_end.wav"
 ];
 
 _aircraft setVariable
 [
-    "big_gau8_midBodyPaths",
+    "gau_gau8_midBodyPaths",
     [
-        "z\big\addons\main\sounds\cannon\mid_body_grain_1.wav",
-        "z\big\addons\main\sounds\cannon\mid_body_grain_2.wav",
-        "z\big\addons\main\sounds\cannon\mid_body_grain_3.wav",
-        "z\big\addons\main\sounds\cannon\mid_body_grain_4.wav",
-        "z\big\addons\main\sounds\cannon\mid_body_grain_5.wav",
-        "z\big\addons\main\sounds\cannon\mid_body_grain_6.wav"
+        "z\gau\addons\main\sounds\cannon\mid_body_grain_1.wav",
+        "z\gau\addons\main\sounds\cannon\mid_body_grain_2.wav",
+        "z\gau\addons\main\sounds\cannon\mid_body_grain_3.wav",
+        "z\gau\addons\main\sounds\cannon\mid_body_grain_4.wav",
+        "z\gau\addons\main\sounds\cannon\mid_body_grain_5.wav",
+        "z\gau\addons\main\sounds\cannon\mid_body_grain_6.wav"
     ]
 ];
 
 _aircraft setVariable
 [
-    "big_gau8_midBodyStartPath",
-    "z\big\addons\main\sounds\cannon\mid_body_start.wav"
+    "gau_gau8_midBodyStartPath",
+    "z\gau\addons\main\sounds\cannon\mid_body_start.wav"
 ];
 
 _aircraft setVariable
 [
-    "big_gau8_midBodyEndPath",
-    "z\big\addons\main\sounds\cannon\mid_body_end.wav"
+    "gau_gau8_midBodyEndPath",
+    "z\gau\addons\main\sounds\cannon\mid_body_end.wav"
 ];
 _aircraft setVariable
 [
-    "big_gau8_closeBodyPaths",
+    "gau_gau8_closeBodyPaths",
     [
-        "z\big\addons\main\sounds\cannon\close_body_grain_1.wav",
-        "z\big\addons\main\sounds\cannon\close_body_grain_2.wav",
-        "z\big\addons\main\sounds\cannon\close_body_grain_3.wav",
-        "z\big\addons\main\sounds\cannon\close_body_grain_4.wav",
-        "z\big\addons\main\sounds\cannon\close_body_grain_5.wav",
-        "z\big\addons\main\sounds\cannon\close_body_grain_6.wav"
+        "z\gau\addons\main\sounds\cannon\close_body_grain_1.wav",
+        "z\gau\addons\main\sounds\cannon\close_body_grain_2.wav",
+        "z\gau\addons\main\sounds\cannon\close_body_grain_3.wav",
+        "z\gau\addons\main\sounds\cannon\close_body_grain_4.wav",
+        "z\gau\addons\main\sounds\cannon\close_body_grain_5.wav",
+        "z\gau\addons\main\sounds\cannon\close_body_grain_6.wav"
     ]
 ];
 
 _aircraft setVariable
 [
-    "big_gau8_closeBodyStartPath",
-    "z\big\addons\main\sounds\cannon\close_body_start.wav"
+    "gau_gau8_closeBodyStartPath",
+    "z\gau\addons\main\sounds\cannon\close_body_start.wav"
 ];
 
 _aircraft setVariable
 [
-    "big_gau8_closeBodyEndPath",
-    "z\big\addons\main\sounds\cannon\close_body_end.wav"
+    "gau_gau8_closeBodyEndPath",
+    "z\gau\addons\main\sounds\cannon\close_body_end.wav"
 ];
 
 _aircraft setVariable
 [
-    "big_gau8_closeMechanicalPaths",
+    "gau_gau8_closeMechanicalPaths",
     [
-        "z\big\addons\main\sounds\cannon\close_mechanical_grain_1.wav",
-        "z\big\addons\main\sounds\cannon\close_mechanical_grain_2.wav",
-        "z\big\addons\main\sounds\cannon\close_mechanical_grain_3.wav",
-        "z\big\addons\main\sounds\cannon\close_mechanical_grain_4.wav",
-        "z\big\addons\main\sounds\cannon\close_mechanical_grain_5.wav",
-        "z\big\addons\main\sounds\cannon\close_mechanical_grain_6.wav"
+        "z\gau\addons\main\sounds\cannon\close_mechanical_grain_1.wav",
+        "z\gau\addons\main\sounds\cannon\close_mechanical_grain_2.wav",
+        "z\gau\addons\main\sounds\cannon\close_mechanical_grain_3.wav",
+        "z\gau\addons\main\sounds\cannon\close_mechanical_grain_4.wav",
+        "z\gau\addons\main\sounds\cannon\close_mechanical_grain_5.wav",
+        "z\gau\addons\main\sounds\cannon\close_mechanical_grain_6.wav"
     ]
 ];
 
 _aircraft setVariable
 [
-    "big_gau8_closeMechanicalStartPath",
-    "z\big\addons\main\sounds\cannon\close_mechanical_start.wav"
+    "gau_gau8_closeMechanicalStartPath",
+    "z\gau\addons\main\sounds\cannon\close_mechanical_start.wav"
 ];
 
 _aircraft setVariable
 [
-    "big_gau8_closeMuzzlePath",
-    "z\big\addons\main\sounds\cannon\close_muzzle_blast.wav"
+    "gau_gau8_closeMuzzlePath",
+    "z\gau\addons\main\sounds\cannon\close_muzzle_blast.wav"
 ];
 
 _aircraft setVariable
 [
-    "big_gau8_cockpitBodyPaths",
+    "gau_gau8_cockpitBodyPaths",
     [
-        "z\big\addons\main\sounds\cannon\cockpit_body_grain_1.wav",
-        "z\big\addons\main\sounds\cannon\cockpit_body_grain_2.wav",
-        "z\big\addons\main\sounds\cannon\cockpit_body_grain_3.wav",
-        "z\big\addons\main\sounds\cannon\cockpit_body_grain_4.wav",
-        "z\big\addons\main\sounds\cannon\cockpit_body_grain_5.wav",
-        "z\big\addons\main\sounds\cannon\cockpit_body_grain_6.wav"
+        "z\gau\addons\main\sounds\cannon\cockpit_body_grain_1.wav",
+        "z\gau\addons\main\sounds\cannon\cockpit_body_grain_2.wav",
+        "z\gau\addons\main\sounds\cannon\cockpit_body_grain_3.wav",
+        "z\gau\addons\main\sounds\cannon\cockpit_body_grain_4.wav",
+        "z\gau\addons\main\sounds\cannon\cockpit_body_grain_5.wav",
+        "z\gau\addons\main\sounds\cannon\cockpit_body_grain_6.wav"
     ]
 ];
 
 _aircraft setVariable
 [
-    "big_gau8_cockpitBodyStartPath",
-    "z\big\addons\main\sounds\cannon\cockpit_body_start.wav"
+    "gau_gau8_cockpitBodyStartPath",
+    "z\gau\addons\main\sounds\cannon\cockpit_body_start.wav"
 ];
 
 _aircraft setVariable
 [
-    "big_gau8_cockpitBodyEndPath",
-    "z\big\addons\main\sounds\cannon\cockpit_body_end.wav"
+    "gau_gau8_cockpitBodyEndPath",
+    "z\gau\addons\main\sounds\cannon\cockpit_body_end.wav"
 ];
 
 _aircraft setVariable
 [
-    "big_gau8_cockpitAirframePaths",
+    "gau_gau8_cockpitAirframePaths",
     [
-        "z\big\addons\main\sounds\cannon\cockpit_airframe_grain_1.wav",
-        "z\big\addons\main\sounds\cannon\cockpit_airframe_grain_2.wav",
-        "z\big\addons\main\sounds\cannon\cockpit_airframe_grain_3.wav",
-        "z\big\addons\main\sounds\cannon\cockpit_airframe_grain_4.wav",
-        "z\big\addons\main\sounds\cannon\cockpit_airframe_grain_5.wav",
-        "z\big\addons\main\sounds\cannon\cockpit_airframe_grain_6.wav"
+        "z\gau\addons\main\sounds\cannon\cockpit_airframe_grain_1.wav",
+        "z\gau\addons\main\sounds\cannon\cockpit_airframe_grain_2.wav",
+        "z\gau\addons\main\sounds\cannon\cockpit_airframe_grain_3.wav",
+        "z\gau\addons\main\sounds\cannon\cockpit_airframe_grain_4.wav",
+        "z\gau\addons\main\sounds\cannon\cockpit_airframe_grain_5.wav",
+        "z\gau\addons\main\sounds\cannon\cockpit_airframe_grain_6.wav"
     ]
 ];
 
 _aircraft setVariable
 [
-    "big_gau8_cockpitAirframeStartPath",
-    "z\big\addons\main\sounds\cannon\cockpit_airframe_start.wav"
+    "gau_gau8_cockpitAirframeStartPath",
+    "z\gau\addons\main\sounds\cannon\cockpit_airframe_start.wav"
 ];
 
 _aircraft setVariable
 [
-    "big_gau8_cockpitAirframeEndPath",
-    "z\big\addons\main\sounds\cannon\cockpit_airframe_end.wav"
+    "gau_gau8_cockpitAirframeEndPath",
+    "z\gau\addons\main\sounds\cannon\cockpit_airframe_end.wav"
 ];
 
 /*
@@ -225,7 +225,7 @@ _aircraft setVariable
 */
 _aircraft setVariable
 [
-    "big_gau8_playCockpitSound",
+    "gau_gau8_playCockpitSound",
     {
         params
         [
@@ -258,7 +258,7 @@ _aircraft setVariable
             private _ids =
                 _vehicle getVariable
                 [
-                    "big_gau8_grainIDs",
+                    "gau_gau8_grainIDs",
                     []
                 ];
 
@@ -271,7 +271,7 @@ _aircraft setVariable
 
             _vehicle setVariable
             [
-                "big_gau8_grainIDs",
+                "gau_gau8_grainIDs",
                 _ids
             ];
         };
@@ -282,108 +282,108 @@ _aircraft setVariable
 
 _aircraft setVariable
 [
-    "big_gau8_grainIDs",
+    "gau_gau8_grainIDs",
     []
 ];
 
 _aircraft setVariable
 [
-    "big_gau8_arrivalQueue",
+    "gau_gau8_arrivalQueue",
     []
 ];
 
 _aircraft setVariable
 [
-    "big_gau8_arrivalWorkerRunning",
+    "gau_gau8_arrivalWorkerRunning",
     false
 ];
 
 _aircraft setVariable
 [
-    "big_gau8_lastGrainIndex",
+    "gau_gau8_lastGrainIndex",
     -1
 ];
 
 _aircraft setVariable
 [
-    "big_gau8_shotCount",
+    "gau_gau8_shotCount",
     0
 ];
 
 _aircraft setVariable
 [
-    "big_gau8_nextGrainShot",
+    "gau_gau8_nextGrainShot",
     9
 ];
 
 _aircraft setVariable
 [
-    "big_gau8_monitorRunning",
+    "gau_gau8_monitorRunning",
     false
 ];
 
 _aircraft setVariable
 [
-    "big_gau8_lastEmissionPositionASL",
+    "gau_gau8_lastEmissionPositionASL",
     getPosASL _aircraft
 ];
 
 _aircraft setVariable
 [
-    "big_gau8_lastArrivalTime",
+    "gau_gau8_lastArrivalTime",
     time
 ];
 
 _aircraft setVariable
 [
-    "big_gau8_cockpitMix",
+    "gau_gau8_cockpitMix",
     0.0
 ];
 
 _aircraft setVariable
 [
-    "big_gau8_lastCockpitBodyGain",
+    "gau_gau8_lastCockpitBodyGain",
     0.0
 ];
 
 _aircraft setVariable
 [
-    "big_gau8_lastCockpitAirframeGain",
+    "gau_gau8_lastCockpitAirframeGain",
     0.0
 ];
 
 _aircraft setVariable
 [
-    "big_gau8_nextCockpitGrainShot",
+    "gau_gau8_nextCockpitGrainShot",
     20
 ];
 
 _aircraft setVariable
 [
-    "big_gau8_lastCockpitGrainIndex",
+    "gau_gau8_lastCockpitGrainIndex",
     -1
 ];
 _aircraft setVariable
 [
-    "big_gau8_lastReflectionGain",
+    "gau_gau8_lastReflectionGain",
     0.0
 ];
 
 _aircraft setVariable
 [
-    "big_gau8_lastReflectionPositionASL",
+    "gau_gau8_lastReflectionPositionASL",
     getPosASL _aircraft
 ];
 
 _aircraft setVariable
 [
-    "big_gau8_lastReflectionArrivalTime",
+    "gau_gau8_lastReflectionArrivalTime",
     time
 ];
 
 _aircraft setVariable
 [
-    "big_gau8_environmentCache",
+    "gau_gau8_environmentCache",
     []
 ];
 
@@ -407,7 +407,7 @@ private _handler =
             private _weaponRegistry =
                 missionNamespace getVariable
                 [
-                    "big_gau8_weaponRegistry",
+                    "gau_gau8_weaponRegistry",
                     [
                         [
                             "Gatling_30mm_Plane_CAS_01_F",
@@ -449,14 +449,14 @@ private _handler =
 
             _vehicle setVariable
             [
-                "big_gau8_lastShotTime",
+                "gau_gau8_lastShotTime",
                 time
             ];
 
             private _shotCount =
                 _vehicle getVariable
                 [
-                    "big_gau8_shotCount",
+                    "gau_gau8_shotCount",
                     0
                 ];
 
@@ -465,7 +465,7 @@ private _handler =
                     _vehicle,
                     _projectile
                 ]
-                call big_gau8_fnc_getAcousticState;
+                call gau_gau8_fnc_getAcousticState;
 
             _acousticState params
             [
@@ -512,79 +512,79 @@ private _handler =
             */
             _vehicle setVariable
             [
-                "big_gau8_lastEmissionPositionASL",
+                "gau_gau8_lastEmissionPositionASL",
                 +_emissionPositionASL
             ];
 
             _vehicle setVariable
             [
-                "big_gau8_lastArrivalTime",
+                "gau_gau8_lastArrivalTime",
                 _arrivalTime
             ];
 
             _vehicle setVariable
             [
-                "big_gau8_lastMuzzleGain",
+                "gau_gau8_lastMuzzleGain",
                 _muzzleGain
             ];
 
             _vehicle setVariable
             [
-                "big_gau8_lastListenerDistance",
+                "gau_gau8_lastListenerDistance",
                 _listenerDistance
             ];
 
             _vehicle setVariable
             [
-                "big_gau8_lastPropagationDelay",
+                "gau_gau8_lastPropagationDelay",
                 _propagationDelay
             ];
 
             _vehicle setVariable
             [
-                "big_gau8_lastDistanceGain",
+                "gau_gau8_lastDistanceGain",
                 _distanceGain
             ];
 
             _vehicle setVariable
             [
-                "big_gau8_lastCloseGain",
+                "gau_gau8_lastCloseGain",
                 _closeBodyGain
             ];
 
             _vehicle setVariable
             [
-                "big_gau8_lastMidBodyGain",
+                "gau_gau8_lastMidBodyGain",
                 _midBodyGain
             ];
 
             _vehicle setVariable
             [
-                "big_gau8_lastFarBodyGain",
+                "gau_gau8_lastFarBodyGain",
                 _farBodyGain
             ];
 
             _vehicle setVariable
             [
-                "big_gau8_lastMechanicalGain",
+                "gau_gau8_lastMechanicalGain",
                 _mechanicalGain
             ];
 
             _vehicle setVariable
             [
-                "big_gau8_lastForwardDot",
+                "gau_gau8_lastForwardDot",
                 _forwardDot
             ];
 
             _vehicle setVariable
             [
-                "big_gau8_lastOffAxisAngle",
+                "gau_gau8_lastOffAxisAngle",
                 _offAxisAngle
             ];
 
             _vehicle setVariable
             [
-                "big_gau8_lastDirectivity",
+                "gau_gau8_lastDirectivity",
                 [
                     _closeBodyDirectivity,
                     _midBodyDirectivity,
@@ -596,19 +596,19 @@ private _handler =
 
             _vehicle setVariable
             [
-                "big_gau8_lastCockpitBodyGain",
+                "gau_gau8_lastCockpitBodyGain",
                 _cockpitBodyGain
             ];
 
             _vehicle setVariable
             [
-                "big_gau8_lastCockpitAirframeGain",
+                "gau_gau8_lastCockpitAirframeGain",
                 _cockpitAirframeGain
             ];
 
             _vehicle setVariable
             [
-                "big_gau8_lastCockpitMix",
+                "gau_gau8_lastCockpitMix",
                 _cockpitMix
             ];
 
@@ -617,7 +617,7 @@ private _handler =
 
             _vehicle setVariable
             [
-                "big_gau8_lastEnvironmentState",
+                "gau_gau8_lastEnvironmentState",
                 [
                     _terrainOcclusion,
                     _objectOcclusion,
@@ -632,19 +632,19 @@ private _handler =
 
             _vehicle setVariable
             [
-                "big_gau8_lastReflectionGain",
+                "gau_gau8_lastReflectionGain",
                 _reflectionGain
             ];
 
             _vehicle setVariable
             [
-                "big_gau8_lastReflectionPositionASL",
+                "gau_gau8_lastReflectionPositionASL",
                 +_reflectionPositionASL
             ];
 
             _vehicle setVariable
             [
-                "big_gau8_lastReflectionArrivalTime",
+                "gau_gau8_lastReflectionArrivalTime",
                 _reflectionArrivalTime
             ];
 
@@ -654,7 +654,7 @@ private _handler =
                 {
                     _vehicle getVariable
                     [
-                        "big_gau8_debugDirectivity",
+                        "gau_gau8_debugDirectivity",
                         false
                     ]
                 }
@@ -681,7 +681,7 @@ private _handler =
                 {
                     _vehicle getVariable
                     [
-                        "big_gau8_debugCockpit",
+                        "gau_gau8_debugCockpit",
                         false
                     ]
                 }
@@ -722,18 +722,18 @@ private _handler =
                         _listenerPositionASL,
                         343.0
                     ]
-                    call big_gau8_fnc_calculateShockGeometry;
+                    call gau_gau8_fnc_calculateShockGeometry;
 
                 _vehicle setVariable
                 [
-                    "big_gau8_lastShockGeometry",
+                    "gau_gau8_lastShockGeometry",
                     _shockGeometry
                 ];
 
                 if (
                     _vehicle getVariable
                     [
-                        "big_gau8_debugShock",
+                        "gau_gau8_debugShock",
                         false
                     ] &&
                     {(count _shockGeometry) == 10}
@@ -783,55 +783,55 @@ private _handler =
                 private _farStartPath =
                     _vehicle getVariable
                     [
-                        "big_gau8_startPath",
+                        "gau_gau8_startPath",
                         ""
                     ];
 
                 private _closeStartPath =
                     _vehicle getVariable
                     [
-                        "big_gau8_closeBodyStartPath",
+                        "gau_gau8_closeBodyStartPath",
                         ""
                     ];
 
                 private _midStartPath =
                     _vehicle getVariable
                     [
-                        "big_gau8_midBodyStartPath",
+                        "gau_gau8_midBodyStartPath",
                         ""
                     ];
 
                 private _mechanicalStartPath =
                     _vehicle getVariable
                     [
-                        "big_gau8_closeMechanicalStartPath",
+                        "gau_gau8_closeMechanicalStartPath",
                         ""
                     ];
 
                 private _muzzlePath =
                     _vehicle getVariable
                     [
-                        "big_gau8_closeMuzzlePath",
+                        "gau_gau8_closeMuzzlePath",
                         ""
                     ];
 
                 private _cockpitBodyStartPath =
                     _vehicle getVariable
                     [
-                        "big_gau8_cockpitBodyStartPath",
+                        "gau_gau8_cockpitBodyStartPath",
                         ""
                     ];
 
                 private _cockpitAirframeStartPath =
                     _vehicle getVariable
                     [
-                        "big_gau8_cockpitAirframeStartPath",
+                        "gau_gau8_cockpitAirframeStartPath",
                         ""
                     ];
 private _playCockpitSound =
                     _vehicle getVariable
                     [
-                        "big_gau8_playCockpitSound",
+                        "gau_gau8_playCockpitSound",
                         {}
                     ];
 
@@ -844,7 +844,7 @@ private _playCockpitSound =
                     1.0,
                     50000
                 ]
-                call big_gau8_fnc_queueSoundArrival;
+                call gau_gau8_fnc_queueSoundArrival;
 
                 [
                     _vehicle,
@@ -855,7 +855,7 @@ private _playCockpitSound =
                     1.0,
                     50000
                 ]
-                call big_gau8_fnc_queueSoundArrival;
+                call gau_gau8_fnc_queueSoundArrival;
 
                 [
                     _vehicle,
@@ -866,7 +866,7 @@ private _playCockpitSound =
                     1.0,
                     50000
                 ]
-                call big_gau8_fnc_queueSoundArrival;
+                call gau_gau8_fnc_queueSoundArrival;
 
                 [
                     _vehicle,
@@ -877,7 +877,7 @@ private _playCockpitSound =
                     1.0,
                     500
                 ]
-                call big_gau8_fnc_queueSoundArrival;
+                call gau_gau8_fnc_queueSoundArrival;
 
                 [
                     _vehicle,
@@ -888,7 +888,7 @@ private _playCockpitSound =
                     1.0,
                     2000
                 ]
-                call big_gau8_fnc_queueSoundArrival;
+                call gau_gau8_fnc_queueSoundArrival;
 [
                     _vehicle,
                     _cockpitBodyStartPath,
@@ -909,48 +909,48 @@ private _playCockpitSound =
             private _farPaths =
                 _vehicle getVariable
                 [
-                    "big_gau8_grainPaths",
+                    "gau_gau8_grainPaths",
                     []
                 ];
 
             private _closeBodyPaths =
                 _vehicle getVariable
                 [
-                    "big_gau8_closeBodyPaths",
+                    "gau_gau8_closeBodyPaths",
                     []
                 ];
 
             private _midBodyPaths =
                 _vehicle getVariable
                 [
-                    "big_gau8_midBodyPaths",
+                    "gau_gau8_midBodyPaths",
                     []
                 ];
 
             private _closeMechanicalPaths =
                 _vehicle getVariable
                 [
-                    "big_gau8_closeMechanicalPaths",
+                    "gau_gau8_closeMechanicalPaths",
                     []
                 ];
 
             private _cockpitBodyPaths =
                 _vehicle getVariable
                 [
-                    "big_gau8_cockpitBodyPaths",
+                    "gau_gau8_cockpitBodyPaths",
                     []
                 ];
 
             private _cockpitAirframePaths =
                 _vehicle getVariable
                 [
-                    "big_gau8_cockpitAirframePaths",
+                    "gau_gau8_cockpitAirframePaths",
                     []
                 ];
 private _playCockpitSound =
                 _vehicle getVariable
                 [
-                    "big_gau8_playCockpitSound",
+                    "gau_gau8_playCockpitSound",
                     {}
                 ];
 
@@ -982,7 +982,7 @@ private _playCockpitSound =
                 private _nextCockpitGrainShot =
                     _vehicle getVariable
                     [
-                        "big_gau8_nextCockpitGrainShot",
+                        "gau_gau8_nextCockpitGrainShot",
                         20
                     ];
 
@@ -991,7 +991,7 @@ private _playCockpitSound =
                     private _lastCockpitIndex =
                         _vehicle getVariable
                         [
-                            "big_gau8_lastCockpitGrainIndex",
+                            "gau_gau8_lastCockpitGrainIndex",
                             -1
                         ];
 
@@ -1037,7 +1037,7 @@ private _playCockpitSound =
                             (
                                 _vehicle getVariable
                                 [
-                                    "big_gau8_cockpitIntervalShots",
+                                    "gau_gau8_cockpitIntervalShots",
                                     22
                                 ]
                             )
@@ -1047,13 +1047,13 @@ private _playCockpitSound =
 
                     _vehicle setVariable
                     [
-                        "big_gau8_nextCockpitGrainShot",
+                        "gau_gau8_nextCockpitGrainShot",
                         _shotCount + _cockpitIntervalShots
                     ];
 
                     _vehicle setVariable
                     [
-                        "big_gau8_lastCockpitGrainIndex",
+                        "gau_gau8_lastCockpitGrainIndex",
                         _cockpitGrainIndex
                     ];
                 };
@@ -1077,7 +1077,7 @@ private _playCockpitSound =
                 private _nextGrainShot =
                     _vehicle getVariable
                     [
-                        "big_gau8_nextGrainShot",
+                        "gau_gau8_nextGrainShot",
                         9
                     ];
 
@@ -1086,7 +1086,7 @@ private _playCockpitSound =
                     private _lastIndex =
                         _vehicle getVariable
                         [
-                            "big_gau8_lastGrainIndex",
+                            "gau_gau8_lastGrainIndex",
                             -1
                         ];
 
@@ -1109,7 +1109,7 @@ private _playCockpitSound =
                         (
                             _vehicle getVariable
                             [
-                                "big_gau8_sustainBaseVolume",
+                                "gau_gau8_sustainBaseVolume",
                                 3.55
                             ]
                         )
@@ -1120,7 +1120,7 @@ private _playCockpitSound =
                         (
                             _vehicle getVariable
                             [
-                                "big_gau8_sustainVolumeVariation",
+                                "gau_gau8_sustainVolumeVariation",
                                 0.18
                             ]
                         )
@@ -1147,7 +1147,7 @@ private _playCockpitSound =
                         _pitch,
                         50000
                     ]
-                    call big_gau8_fnc_queueSoundArrival;
+                    call gau_gau8_fnc_queueSoundArrival;
 
                     [
                         _vehicle,
@@ -1158,7 +1158,7 @@ private _playCockpitSound =
                         _pitch,
                         50000
                     ]
-                    call big_gau8_fnc_queueSoundArrival;
+                    call gau_gau8_fnc_queueSoundArrival;
 
                     [
                         _vehicle,
@@ -1169,7 +1169,7 @@ private _playCockpitSound =
                         _pitch,
                         50000
                     ]
-                    call big_gau8_fnc_queueSoundArrival;
+                    call gau_gau8_fnc_queueSoundArrival;
 
                     /*
                         Ground response is synchronized to the direct body
@@ -1223,7 +1223,7 @@ private _playCockpitSound =
                                 _pitch,
                                 50000
                             ]
-                            call big_gau8_fnc_queueSoundArrival;
+                            call gau_gau8_fnc_queueSoundArrival;
 
                             [
                                 _vehicle,
@@ -1234,7 +1234,7 @@ private _playCockpitSound =
                                 _pitch,
                                 50000
                             ]
-                            call big_gau8_fnc_queueSoundArrival;
+                            call gau_gau8_fnc_queueSoundArrival;
                         };
                     };
 
@@ -1249,7 +1249,7 @@ private _playCockpitSound =
                             _pitch,
                             500
                         ]
-                        call big_gau8_fnc_queueSoundArrival;
+                        call gau_gau8_fnc_queueSoundArrival;
                     };
 
                     private _sustainGapMinShots =
@@ -1258,7 +1258,7 @@ private _playCockpitSound =
                             (
                                 _vehicle getVariable
                                 [
-                                    "big_gau8_sustainGapMinShots",
+                                    "gau_gau8_sustainGapMinShots",
                                     5
                                 ]
                             )
@@ -1272,7 +1272,7 @@ private _playCockpitSound =
                             (
                                 _vehicle getVariable
                                 [
-                                    "big_gau8_sustainGapSpreadShots",
+                                    "gau_gau8_sustainGapSpreadShots",
                                     4
                                 ]
                             )
@@ -1289,13 +1289,13 @@ private _playCockpitSound =
 
                     _vehicle setVariable
                     [
-                        "big_gau8_nextGrainShot",
+                        "gau_gau8_nextGrainShot",
                         _shotCount + _nextGap
                     ];
 
                     _vehicle setVariable
                     [
-                        "big_gau8_lastGrainIndex",
+                        "gau_gau8_lastGrainIndex",
                         _grainIndex
                     ];
                 };
@@ -1303,14 +1303,14 @@ private _playCockpitSound =
 
             _vehicle setVariable
             [
-                "big_gau8_shotCount",
+                "gau_gau8_shotCount",
                 _shotCount + 1
             ];
 
             private _running =
                 _vehicle getVariable
                 [
-                    "big_gau8_monitorRunning",
+                    "gau_gau8_monitorRunning",
                     false
                 ];
 
@@ -1318,14 +1318,14 @@ private _playCockpitSound =
             {
                 _vehicle setVariable
                 [
-                    "big_gau8_monitorRunning",
+                    "gau_gau8_monitorRunning",
                     true
                 ];
 
                 private _generation =
                     _vehicle getVariable
                     [
-                        "big_gau8_handlerGeneration",
+                        "gau_gau8_handlerGeneration",
                         0
                     ];
 
@@ -1356,7 +1356,7 @@ private _playCockpitSound =
                             private _currentGeneration =
                                 _vehicle getVariable
                                 [
-                                    "big_gau8_handlerGeneration",
+                                    "gau_gau8_handlerGeneration",
                                     -1
                                 ];
 
@@ -1369,7 +1369,7 @@ private _playCockpitSound =
                                 private _lastShot =
                                     _vehicle getVariable
                                     [
-                                        "big_gau8_lastShotTime",
+                                        "gau_gau8_lastShotTime",
                                         -1000
                                     ];
 
@@ -1386,7 +1386,7 @@ private _playCockpitSound =
                         private _currentGeneration =
                             _vehicle getVariable
                             [
-                                "big_gau8_handlerGeneration",
+                                "gau_gau8_handlerGeneration",
                                 -1
                             ];
 
@@ -1402,111 +1402,111 @@ private _playCockpitSound =
                             private _releasePosition =
                                 _vehicle getVariable
                                 [
-                                    "big_gau8_lastEmissionPositionASL",
+                                    "gau_gau8_lastEmissionPositionASL",
                                     getPosASL _vehicle
                                 ];
 
                             private _releaseArrival =
                                 _vehicle getVariable
                                 [
-                                    "big_gau8_lastArrivalTime",
+                                    "gau_gau8_lastArrivalTime",
                                     time
                                 ];
 
                             private _releaseCloseGain =
                                 _vehicle getVariable
                                 [
-                                    "big_gau8_lastCloseGain",
+                                    "gau_gau8_lastCloseGain",
                                     0
                                 ];
 
                             private _releaseMidGain =
                                 _vehicle getVariable
                                 [
-                                    "big_gau8_lastMidBodyGain",
+                                    "gau_gau8_lastMidBodyGain",
                                     0
                                 ];
 
                             private _releaseFarGain =
                                 _vehicle getVariable
                                 [
-                                    "big_gau8_lastFarBodyGain",
+                                    "gau_gau8_lastFarBodyGain",
                                     0
                                 ];
 
                             private _releaseCockpitBodyGain =
                                 _vehicle getVariable
                                 [
-                                    "big_gau8_lastCockpitBodyGain",
+                                    "gau_gau8_lastCockpitBodyGain",
                                     0
                                 ];
 
                             private _releaseCockpitAirframeGain =
                                 _vehicle getVariable
                                 [
-                                    "big_gau8_lastCockpitAirframeGain",
+                                    "gau_gau8_lastCockpitAirframeGain",
                                     0
                                 ];
 
                             private _releaseReflectionGain =
                                 _vehicle getVariable
                                 [
-                                    "big_gau8_lastReflectionGain",
+                                    "gau_gau8_lastReflectionGain",
                                     0
                                 ];
 
                             private _releaseReflectionPosition =
                                 _vehicle getVariable
                                 [
-                                    "big_gau8_lastReflectionPositionASL",
+                                    "gau_gau8_lastReflectionPositionASL",
                                     +_releasePosition
                                 ];
 
                             private _releaseReflectionArrival =
                                 _vehicle getVariable
                                 [
-                                    "big_gau8_lastReflectionArrivalTime",
+                                    "gau_gau8_lastReflectionArrivalTime",
                                     _releaseArrival
                                 ];
 
                             private _closeEndPath =
                                 _vehicle getVariable
                                 [
-                                    "big_gau8_closeBodyEndPath",
+                                    "gau_gau8_closeBodyEndPath",
                                     ""
                                 ];
 
                             private _midEndPath =
                                 _vehicle getVariable
                                 [
-                                    "big_gau8_midBodyEndPath",
+                                    "gau_gau8_midBodyEndPath",
                                     ""
                                 ];
 
                             private _farEndPath =
                                 _vehicle getVariable
                                 [
-                                    "big_gau8_endPath",
+                                    "gau_gau8_endPath",
                                     ""
                                 ];
 
                             private _cockpitBodyEndPath =
                                 _vehicle getVariable
                                 [
-                                    "big_gau8_cockpitBodyEndPath",
+                                    "gau_gau8_cockpitBodyEndPath",
                                     ""
                                 ];
 
                             private _cockpitAirframeEndPath =
                                 _vehicle getVariable
                                 [
-                                    "big_gau8_cockpitAirframeEndPath",
+                                    "gau_gau8_cockpitAirframeEndPath",
                                     ""
                                 ];
 private _playCockpitSound =
                                 _vehicle getVariable
                                 [
-                                    "big_gau8_playCockpitSound",
+                                    "gau_gau8_playCockpitSound",
                                     {}
                                 ];
 
@@ -1519,7 +1519,7 @@ private _playCockpitSound =
                                 1.0,
                                 50000
                             ]
-                            call big_gau8_fnc_queueSoundArrival;
+                            call gau_gau8_fnc_queueSoundArrival;
 
                             [
                                 _vehicle,
@@ -1530,7 +1530,7 @@ private _playCockpitSound =
                                 1.0,
                                 50000
                             ]
-                            call big_gau8_fnc_queueSoundArrival;
+                            call gau_gau8_fnc_queueSoundArrival;
 
                             [
                                 _vehicle,
@@ -1541,7 +1541,7 @@ private _playCockpitSound =
                                 1.0,
                                 50000
                             ]
-                            call big_gau8_fnc_queueSoundArrival;
+                            call gau_gau8_fnc_queueSoundArrival;
 [
                                 _vehicle,
                                 _cockpitBodyEndPath,
@@ -1565,36 +1565,36 @@ private _playCockpitSound =
                             */
                             _vehicle setVariable
                             [
-                                "big_gau8_shotCount",
+                                "gau_gau8_shotCount",
                                 0
                             ];
 
                             _vehicle setVariable
                             [
-                                "big_gau8_nextGrainShot",
+                                "gau_gau8_nextGrainShot",
                                 9
                             ];
 
                             _vehicle setVariable
                             [
-                                "big_gau8_nextCockpitGrainShot",
+                                "gau_gau8_nextCockpitGrainShot",
                                 20
                             ];
 
                             _vehicle setVariable
                             [
-                                "big_gau8_lastCockpitGrainIndex",
+                                "gau_gau8_lastCockpitGrainIndex",
                                 -1
                             ];
 _vehicle setVariable
                             [
-                                "big_gau8_lastGrainIndex",
+                                "gau_gau8_lastGrainIndex",
                                 -1
                             ];
 
                             _vehicle setVariable
                             [
-                                "big_gau8_monitorRunning",
+                                "gau_gau8_monitorRunning",
                                 false
                             ];
                         };
@@ -1606,7 +1606,7 @@ _vehicle setVariable
 
 _aircraft setVariable
 [
-    "big_gau8_firedHandler",
+    "gau_gau8_firedHandler",
     _handler
 ];
 

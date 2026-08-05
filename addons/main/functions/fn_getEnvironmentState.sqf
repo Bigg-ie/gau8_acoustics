@@ -100,7 +100,7 @@ private _sampleCurve =
 private _cache =
     _vehicle getVariable
     [
-        "big_gau8_environmentCache",
+        "gau_gau8_environmentCache",
         []
     ];
 
@@ -125,7 +125,7 @@ private _checkInterval =
     (
         _vehicle getVariable
         [
-            "big_gau8_environmentCheckInterval",
+            "gau_gau8_environmentCheckInterval",
             0.12
         ]
     )
@@ -430,7 +430,7 @@ if (_needsCheck && {_distance > 4}) then
 
     _vehicle setVariable
     [
-        "big_gau8_environmentCache",
+        "gau_gau8_environmentCache",
         [
             time + _checkInterval,
             +_listenerPositionASL,

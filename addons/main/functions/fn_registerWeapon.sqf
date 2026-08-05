@@ -17,7 +17,7 @@ if (_modes isEqualTo []) then
 private _registry =
     missionNamespace getVariable
     [
-        "big_gau8_weaponRegistry",
+        "gau_gau8_weaponRegistry",
         []
     ];
 
@@ -63,7 +63,7 @@ else
 
 missionNamespace setVariable
 [
-    "big_gau8_weaponRegistry",
+    "gau_gau8_weaponRegistry",
     _registry
 ];
 

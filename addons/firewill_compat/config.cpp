@@ -1,13 +1,13 @@
 class CfgPatches
 {
-    class big_gau8_firewill_compat
+    class gau_gau8_firewill_compat
     {
         name = "GAU-8 Acoustic Simulation - Firewill Compatibility";
-        author = "BIG";
+        author = "Biggie";
         requiredVersion = 2.14;
         requiredAddons[] =
         {
-            "big_gau8_main",
+            "gau_gau8_main",
             "FIR_AirWeaponSystem_US"
         };
         skipWhenMissingDependencies = 1;
@@ -18,13 +18,13 @@ class CfgPatches
 
 class CfgFunctions
 {
-    class big_gau8_firewill_compat
+    class gau_gau8_firewill_compat
     {
-        tag = "big_gau8_firewill_compat";
+        tag = "gau_gau8_firewill_compat";
 
         class main
         {
-            file = "\z\big\addons\firewill_compat\functions";
+            file = "\z\gau\addons\firewill_compat\functions";
 
             class preInit
             {
