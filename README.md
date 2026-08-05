@@ -1,4 +1,4 @@
-# GAU-8 Acoustic Simulation
+# GAU-8 Acoustic Overhaul
 
 A sound replacement mod for the **GAU-8/A Avenger** in **Arma 3**.
 
