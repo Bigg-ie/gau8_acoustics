@@ -403,27 +403,49 @@ private _handler =
                 "_projectile",
                 "_gunner"
             ];
-
-            if (
-                _weapon !=
-                "Gatling_30mm_Plane_CAS_01_F"
-            ) exitWith {};
-            /*
-                V9.7 AI fire-mode support.
-
-                Human gunners normally use LowROF. AI gunners select the
-                hidden range modes according to engagement distance.
-            */
-            if !(
-                _mode in
+            /* V11.0 compatibility weapon registry */
+            private _weaponRegistry =
+                missionNamespace getVariable
                 [
-                    "LowROF",
-                    "close",
-                    "short",
-                    "medium",
-                    "far"
-                ]
-            ) exitWith {};
+                    "big_gau8_weaponRegistry",
+                    [
+                        [
+                            "Gatling_30mm_Plane_CAS_01_F",
+                            [
+                                "LowROF",
+                                "close",
+                                "short",
+                                "medium",
+                                "far"
+                            ]
+                        ]
+                    ]
+                ];
+
+            private _weaponEntryIndex =
+                _weaponRegistry findIf
+                {
+                    (_x select 0) isEqualTo _weapon
+                };
+
+            if (_weaponEntryIndex < 0) exitWith {};
+
+            private _allowedModes =
+                (
+                    _weaponRegistry
+                    select _weaponEntryIndex
+                )
+                select 1;
+            private _modeAccepted =
+                "*" in _allowedModes;
+
+            if (!_modeAccepted) then
+            {
+                _modeAccepted =
+                    _mode in _allowedModes;
+            };
+
+            if (!_modeAccepted) exitWith {};
 
             _vehicle setVariable
             [

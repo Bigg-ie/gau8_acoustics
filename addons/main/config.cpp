@@ -477,6 +477,9 @@ class CfgFunctions
             {
                 postInit = 1;
             };
+            class registerWeapon
+            {
+            };
             class installGrainHandler
             {
             };

@@ -1,24 +1,82 @@
-/*
-    Client bootstrap for the scripted GAU-8 acoustic scheduler.
-
-    Every listening client attaches the local Fired handler because the
-    accepted long-form cannon recordings are emitted through playSound3D.
-*/
 if (!hasInterface) exitWith {};
 
-private _installOnAircraft =
+[
+    "Gatling_30mm_Plane_CAS_01_F",
+    [
+        "LowROF",
+        "close",
+        "short",
+        "medium",
+        "far"
+    ]
+]
+call big_gau8_fnc_registerWeapon;
+
+private _installOnSupportedAircraft =
 {
     params ["_aircraft"];
 
     if (isNull _aircraft) exitWith {};
+    if !(_aircraft isKindOf "Air") exitWith {};
 
-    if !(
-        "Gatling_30mm_Plane_CAS_01_F" in
-        (weapons _aircraft)
-    ) exitWith {};
+    private _weaponClasses =
+        weapons _aircraft;
+
+    private _turrets =
+        [[-1]];
+
+    {
+        _turrets pushBackUnique _x;
+    }
+    forEach
+    (
+        allTurrets
+        [
+            _aircraft,
+            true
+        ]
+    );
+
+    {
+        {
+            _weaponClasses pushBackUnique _x;
+        }
+        forEach
+        (
+            _aircraft weaponsTurret _x
+        );
+    }
+    forEach _turrets;
+
+    private _registry =
+        missionNamespace getVariable
+        [
+            "big_gau8_weaponRegistry",
+            []
+        ];
+
+    private _supported =
+        _weaponClasses findIf
+        {
+            private _weapon = _x;
+
+            _registry findIf
+            {
+                (_x select 0) isEqualTo _weapon
+            }
+            >= 0
+        };
+
+    if (_supported < 0) exitWith {};
 
     [_aircraft] call big_gau8_fnc_installGrainHandler;
 };
+
+missionNamespace setVariable
+[
+    "big_gau8_installOnSupportedAircraft",
+    _installOnSupportedAircraft
+];
 
 private _oldEntityCreatedHandler =
     missionNamespace getVariable
@@ -43,24 +101,21 @@ private _entityCreatedHandler =
         {
             params ["_entity"];
 
-            if (
-                !isNull _entity &&
-                {
-                    "Gatling_30mm_Plane_CAS_01_F" in
-                    (weapons _entity)
-                }
-            ) then
-            {
-                _entity spawn
-                {
-                    sleep 0.01;
+            if (isNull _entity) exitWith {};
+            if !(_entity isKindOf "Air") exitWith {};
 
-                    if (!isNull _this) then
-                    {
-                        [_this] call
-                            big_gau8_fnc_installGrainHandler;
-                    };
-                };
+            _entity spawn
+            {
+                uiSleep 0.05;
+
+                private _installer =
+                    missionNamespace getVariable
+                    [
+                        "big_gau8_installOnSupportedAircraft",
+                        {}
+                    ];
+
+                [_this] call _installer;
             };
         }
     ];
@@ -72,12 +127,17 @@ missionNamespace setVariable
 ];
 
 {
-    [_x] call _installOnAircraft;
+    [_x] call _installOnSupportedAircraft;
 }
 forEach vehicles;
 
 diag_log format
 [
-    "GAU8: client bootstrap active; scanned %1 vehicles",
-    count vehicles
+    "GAU8: compatibility-aware client bootstrap active; scanned %1 vehicles; registry=%2",
+    count vehicles,
+    missionNamespace getVariable
+    [
+        "big_gau8_weaponRegistry",
+        []
+    ]
 ];
