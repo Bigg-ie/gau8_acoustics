@@ -312,8 +312,8 @@ _aircraft setVariable
 
 _aircraft setVariable
 [
-    "gau_gau8_nextGrainShot",
-    9
+    "gau_gau8_nextGrainTick",
+    -1
 ];
 
 _aircraft setVariable
@@ -354,8 +354,8 @@ _aircraft setVariable
 
 _aircraft setVariable
 [
-    "gau_gau8_nextCockpitGrainShot",
-    20
+    "gau_gau8_nextCockpitGrainTick",
+    -1
 ];
 
 _aircraft setVariable
@@ -447,10 +447,12 @@ private _handler =
 
             if (!_modeAccepted) exitWith {};
 
+            private _shotTick = diag_tickTime;
+
             _vehicle setVariable
             [
-                "gau_gau8_lastShotTime",
-                time
+                "gau_gau8_lastShotTick",
+                _shotTick
             ];
 
             private _shotCount =
@@ -459,6 +461,31 @@ private _handler =
                     "gau_gau8_shotCount",
                     0
                 ];
+
+            if (_shotCount == 0) then
+            {
+                /*
+                    Schedule sustain by elapsed real time. Firewill reports
+                    grouped firing events roughly every 75-101 ms, so event
+                    counts cannot be treated as individual 3,900 RPM rounds.
+                */
+                _vehicle setVariable
+                [
+                    "gau_gau8_nextGrainTick",
+                    _shotTick + (9 / 65)
+                ];
+
+                /*
+                    The first cockpit sustain event is scheduled early enough
+                    to absorb Firewill callback quantization while retaining
+                    overlap with the 0.36-second cockpit start recordings.
+                */
+                _vehicle setVariable
+                [
+                    "gau_gau8_nextCockpitGrainTick",
+                    _shotTick + 0.24
+                ];
+            };
 
             private _acousticState =
                 [
@@ -955,16 +982,15 @@ private _playCockpitSound =
                 ];
 
             /*
-                Cockpit sustain has its own shot-count clock. Checking a
-                time gate only when the randomized external scheduler fired
-                produced actual gaps longer than the 0.48-second samples.
+                Cockpit sustain uses a real-time cadence rather than reported
+                projectile-event count. Firewill emits grouped Fired events
+                roughly every 75-101 ms, so counting those callbacks produces
+                multi-second gaps.
 
-                At 3,900 RPM, 22 rounds is approximately 0.338 seconds. The
-                first sustain pair begins after 20 rounds, overlapping the
-                0.36-second start files by approximately 52 milliseconds.
-                Later pairs overlap the 0.48-second grains by approximately
-                140 milliseconds, giving stable continuity without the heavy
-                six-voice stacking of the original V8 scheduler.
+                The first pair is targeted at 0.24 seconds. Later pairs retain
+                the nominal 22-round interval at 3,900 RPM, approximately
+                0.338 seconds. The time gate is serviced by accepted Fired
+                events, but callback density no longer determines the cadence.
             */
             private _cockpitGrainCount =
                 (count _cockpitBodyPaths)
@@ -979,14 +1005,14 @@ private _playCockpitSound =
                 )
             ) then
             {
-                private _nextCockpitGrainShot =
+                private _nextCockpitGrainTick =
                     _vehicle getVariable
                     [
-                        "gau_gau8_nextCockpitGrainShot",
-                        20
+                        "gau_gau8_nextCockpitGrainTick",
+                        _shotTick + 0.24
                     ];
 
-                if (_shotCount >= _nextCockpitGrainShot) then
+                if (_shotTick >= _nextCockpitGrainTick) then
                 {
                     private _lastCockpitIndex =
                         _vehicle getVariable
@@ -1031,24 +1057,22 @@ private _playCockpitSound =
                     ]
                     call _playCockpitSound;
 
-                    private _cockpitIntervalShots =
-                        round
+                    private _cockpitIntervalSeconds =
                         (
-                            (
-                                _vehicle getVariable
-                                [
-                                    "gau_gau8_cockpitIntervalShots",
-                                    22
-                                ]
-                            )
-                            max 19
-                            min 25
-                        );
+                            _vehicle getVariable
+                            [
+                                "gau_gau8_cockpitIntervalSeconds",
+                                22 / 65
+                            ]
+                        )
+                        max 0.25
+                        min 0.45;
 
                     _vehicle setVariable
                     [
-                        "gau_gau8_nextCockpitGrainShot",
-                        _shotCount + _cockpitIntervalShots
+                        "gau_gau8_nextCockpitGrainTick",
+                        _nextCockpitGrainTick +
+                        _cockpitIntervalSeconds
                     ];
 
                     _vehicle setVariable
@@ -1074,14 +1098,14 @@ private _playCockpitSound =
                 )
             ) then
             {
-                private _nextGrainShot =
+                private _nextGrainTick =
                     _vehicle getVariable
                     [
-                        "gau_gau8_nextGrainShot",
-                        9
+                        "gau_gau8_nextGrainTick",
+                        _shotTick + (9 / 65)
                     ];
 
-                if (_shotCount >= _nextGrainShot) then
+                if (_shotTick >= _nextGrainTick) then
                 {
                     private _lastIndex =
                         _vehicle getVariable
@@ -1287,10 +1311,13 @@ private _playCockpitSound =
                             random _sustainGapSpreadShots
                         );
 
+                    private _nextGapSeconds =
+                        _nextGap / 65;
+
                     _vehicle setVariable
                     [
-                        "gau_gau8_nextGrainShot",
-                        _shotCount + _nextGap
+                        "gau_gau8_nextGrainTick",
+                        _nextGrainTick + _nextGapSeconds
                     ];
 
                     _vehicle setVariable
@@ -1345,7 +1372,7 @@ private _playCockpitSound =
 
                     while {!_finished} do
                     {
-                        sleep 0.02;
+                        uiSleep 0.02;
 
                         if (isNull _vehicle) then
                         {
@@ -1366,14 +1393,28 @@ private _playCockpitSound =
                             }
                             else
                             {
-                                private _lastShot =
+                                private _lastShotTick =
                                     _vehicle getVariable
                                     [
-                                        "gau_gau8_lastShotTime",
+                                        "gau_gau8_lastShotTick",
                                         -1000
                                     ];
 
-                                if ((time - _lastShot) > 0.08) then
+                                private _burstTimeout =
+                                    (
+                                        _vehicle getVariable
+                                        [
+                                            "gau_gau8_burstTimeout",
+                                            0.18
+                                        ]
+                                    )
+                                    max 0.14
+                                    min 0.35;
+
+                                if (
+                                    (diag_tickTime - _lastShotTick) >
+                                    _burstTimeout
+                                ) then
                                 {
                                     _finished = true;
                                 };
@@ -1571,14 +1612,14 @@ private _playCockpitSound =
 
                             _vehicle setVariable
                             [
-                                "gau_gau8_nextGrainShot",
-                                9
+                                "gau_gau8_nextGrainTick",
+                                -1
                             ];
 
                             _vehicle setVariable
                             [
-                                "gau_gau8_nextCockpitGrainShot",
-                                20
+                                "gau_gau8_nextCockpitGrainTick",
+                                -1
                             ];
 
                             _vehicle setVariable
