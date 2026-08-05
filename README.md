@@ -92,6 +92,15 @@ Signed PBOs and their matching `.bisign` files are located in `addons/`. The pub
 
 ## Optional compatibility
 
+<!-- gau8-compat-start -->
+### USAF and CUP A-10 Compatibility
+
+| Component | Registered weapon | Required addon |
+| --- | --- | --- |
+| `gau_gau8_usaf_compat` | Registers `USAF_GAU8_GUN` and suppresses the original USAF A-10C cannon report | `USAF_A10_C` |
+| `gau_gau8_cup_compat` | Registers `CUP_Vacannon_GAU8_veh` and suppresses the original CUP GAU-8 cannon report | `CUP_Weapons_VehicleWeapons` |
+<!-- gau8-compat-end -->
+
 ### RHSUSAF
 
 Supports the RHS A-10A and both GAU-8 firing modes while preserving the original RHS magazines, ammunition, projectiles, and impacts.
