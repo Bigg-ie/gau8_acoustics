@@ -387,6 +387,16 @@ _aircraft setVariable
     []
 ];
 
+private _emitSustain =
+    compile preprocessFileLineNumbers
+    "z\gau\addons\main\functions\fn_emitSustain.sqf";
+
+_aircraft setVariable
+[
+    "gau_gau8_emitSustain",
+    _emitSustain
+];
+
 private _handler =
     _aircraft addEventHandler
     [
@@ -933,401 +943,6 @@ private _playCockpitSound =
                 call _playCockpitSound;
             };
 
-            private _farPaths =
-                _vehicle getVariable
-                [
-                    "gau_gau8_grainPaths",
-                    []
-                ];
-
-            private _closeBodyPaths =
-                _vehicle getVariable
-                [
-                    "gau_gau8_closeBodyPaths",
-                    []
-                ];
-
-            private _midBodyPaths =
-                _vehicle getVariable
-                [
-                    "gau_gau8_midBodyPaths",
-                    []
-                ];
-
-            private _closeMechanicalPaths =
-                _vehicle getVariable
-                [
-                    "gau_gau8_closeMechanicalPaths",
-                    []
-                ];
-
-            private _cockpitBodyPaths =
-                _vehicle getVariable
-                [
-                    "gau_gau8_cockpitBodyPaths",
-                    []
-                ];
-
-            private _cockpitAirframePaths =
-                _vehicle getVariable
-                [
-                    "gau_gau8_cockpitAirframePaths",
-                    []
-                ];
-private _playCockpitSound =
-                _vehicle getVariable
-                [
-                    "gau_gau8_playCockpitSound",
-                    {}
-                ];
-
-            /*
-                Cockpit sustain uses a real-time cadence rather than reported
-                projectile-event count. Firewill emits grouped Fired events
-                roughly every 75-101 ms, so counting those callbacks produces
-                multi-second gaps.
-
-                The first pair is targeted at 0.24 seconds. Later pairs retain
-                the nominal 22-round interval at 3,900 RPM, approximately
-                0.338 seconds. The time gate is serviced by accepted Fired
-                events, but callback density no longer determines the cadence.
-            */
-            private _cockpitGrainCount =
-                (count _cockpitBodyPaths)
-                min
-                (count _cockpitAirframePaths);
-
-            if (
-                (_cockpitGrainCount > 0) &&
-                (
-                    (_cockpitBodyGain > 0.000001) ||
-                    (_cockpitAirframeGain > 0.000001)
-                )
-            ) then
-            {
-                private _nextCockpitGrainTick =
-                    _vehicle getVariable
-                    [
-                        "gau_gau8_nextCockpitGrainTick",
-                        _shotTick + 0.24
-                    ];
-
-                if (_shotTick >= _nextCockpitGrainTick) then
-                {
-                    private _lastCockpitIndex =
-                        _vehicle getVariable
-                        [
-                            "gau_gau8_lastCockpitGrainIndex",
-                            -1
-                        ];
-
-                    private _cockpitGrainIndex =
-                        floor (random _cockpitGrainCount);
-
-                    if (_cockpitGrainIndex == _lastCockpitIndex) then
-                    {
-                        _cockpitGrainIndex =
-                            (_cockpitGrainIndex + 1)
-                            mod
-                            _cockpitGrainCount;
-                    };
-
-                    private _cockpitPitch =
-                        0.990 + random 0.020;
-
-                    private _cockpitBodyVolume =
-                        1.55 + random 0.20;
-
-                    private _cockpitAirframeVolume =
-                        1.75 + random 0.25;
-
-                    [
-                        _vehicle,
-                        _cockpitBodyPaths select _cockpitGrainIndex,
-                        _cockpitBodyVolume * _cockpitBodyGain,
-                        _cockpitPitch
-                    ]
-                    call _playCockpitSound;
-
-                    [
-                        _vehicle,
-                        _cockpitAirframePaths select _cockpitGrainIndex,
-                        _cockpitAirframeVolume * _cockpitAirframeGain,
-                        _cockpitPitch
-                    ]
-                    call _playCockpitSound;
-
-                    private _cockpitIntervalSeconds =
-                        (
-                            _vehicle getVariable
-                            [
-                                "gau_gau8_cockpitIntervalSeconds",
-                                22 / 65
-                            ]
-                        )
-                        max 0.25
-                        min 0.45;
-
-                    _vehicle setVariable
-                    [
-                        "gau_gau8_nextCockpitGrainTick",
-                        _nextCockpitGrainTick +
-                        _cockpitIntervalSeconds
-                    ];
-
-                    _vehicle setVariable
-                    [
-                        "gau_gau8_lastCockpitGrainIndex",
-                        _cockpitGrainIndex
-                    ];
-                };
-            };
-
-            private _grainCount =
-                ((count _farPaths) min (count _closeBodyPaths))
-                min
-                (count _midBodyPaths);
-
-            if (
-                (_grainCount > 0) &&
-                (
-                    (_farBodyGain > 0.000001) ||
-                    (_midBodyGain > 0.000001) ||
-                    (_closeBodyGain > 0.000001) ||
-                    (_mechanicalGain > 0.000001)
-                )
-            ) then
-            {
-                private _nextGrainTick =
-                    _vehicle getVariable
-                    [
-                        "gau_gau8_nextGrainTick",
-                        _shotTick + (9 / 65)
-                    ];
-
-                if (_shotTick >= _nextGrainTick) then
-                {
-                    private _lastIndex =
-                        _vehicle getVariable
-                        [
-                            "gau_gau8_lastGrainIndex",
-                            -1
-                        ];
-
-                    private _grainIndex =
-                        floor
-                        (
-                            random _grainCount
-                        );
-
-                    if (_grainIndex == _lastIndex) then
-                    {
-                        _grainIndex =
-                            (_grainIndex + 1) mod _grainCount;
-                    };
-
-                    private _pitch =
-                        0.985 + random 0.030;
-
-                    private _sustainBaseVolume =
-                        (
-                            _vehicle getVariable
-                            [
-                                "gau_gau8_sustainBaseVolume",
-                                3.55
-                            ]
-                        )
-                        max 0
-                        min 12;
-
-                    private _sustainVolumeVariation =
-                        (
-                            _vehicle getVariable
-                            [
-                                "gau_gau8_sustainVolumeVariation",
-                                0.18
-                            ]
-                        )
-                        max 0
-                        min 2;
-
-                    /*
-                        V10.1 sustain-density smoothing.
-
-                        The scheduler runs more frequently and compensates
-                        per-grain gain to preserve approximately the same
-                        aggregate sustain level.
-                    */
-                    private _baseVolume =
-                        _sustainBaseVolume +
-                        (random _sustainVolumeVariation);
-
-                    [
-                        _vehicle,
-                        _farPaths select _grainIndex,
-                        _emissionPositionASL,
-                        _arrivalTime,
-                        _baseVolume * _farBodyGain,
-                        _pitch,
-                        50000
-                    ]
-                    call gau_gau8_fnc_queueSoundArrival;
-
-                    [
-                        _vehicle,
-                        _closeBodyPaths select _grainIndex,
-                        _emissionPositionASL,
-                        _arrivalTime,
-                        _baseVolume * _closeBodyGain,
-                        _pitch,
-                        50000
-                    ]
-                    call gau_gau8_fnc_queueSoundArrival;
-
-                    [
-                        _vehicle,
-                        _midBodyPaths select _grainIndex,
-                        _emissionPositionASL,
-                        _arrivalTime,
-                        _baseVolume * _midBodyGain,
-                        _pitch,
-                        50000
-                    ]
-                    call gau_gau8_fnc_queueSoundArrival;
-
-                    /*
-                        Ground response is synchronized to the direct body
-                        grain. It uses the same index and pitch, with only the
-                        geometric reflected-path delay added by the arrival
-                        queue. This prevents the reflection from becoming an
-                        independent second cannon report.
-
-                        Reflection spectrum follows the active distance mix:
-                        close energy is shifted into the mid recording, mid
-                        energy is split between mid and far, and far energy
-                        remains in the far recording. No close-derived
-                        reflection asset is used at mid or far distance.
-                    */
-                    if (_reflectionGain > 0.000001) then
-                    {
-                        private _reflectionMidNumerator =
-                            (0.85 * _closeBodyGain) +
-                            (0.75 * _midBodyGain);
-
-                        private _reflectionFarNumerator =
-                            (0.25 * _midBodyGain) +
-                            _farBodyGain;
-
-                        private _reflectionSpectralTotal =
-                            _reflectionMidNumerator +
-                            _reflectionFarNumerator;
-
-                        if (_reflectionSpectralTotal > 0.000001) then
-                        {
-                            private _reflectionMidGain =
-                                _reflectionGain *
-                                (
-                                    _reflectionMidNumerator /
-                                    _reflectionSpectralTotal
-                                );
-
-                            private _reflectionFarGain =
-                                _reflectionGain *
-                                (
-                                    _reflectionFarNumerator /
-                                    _reflectionSpectralTotal
-                                );
-
-                            [
-                                _vehicle,
-                                _midBodyPaths select _grainIndex,
-                                _reflectionPositionASL,
-                                _reflectionArrivalTime,
-                                _baseVolume * _reflectionMidGain,
-                                _pitch,
-                                50000
-                            ]
-                            call gau_gau8_fnc_queueSoundArrival;
-
-                            [
-                                _vehicle,
-                                _farPaths select _grainIndex,
-                                _reflectionPositionASL,
-                                _reflectionArrivalTime,
-                                _baseVolume * _reflectionFarGain,
-                                _pitch,
-                                50000
-                            ]
-                            call gau_gau8_fnc_queueSoundArrival;
-                        };
-                    };
-
-                    if (_grainIndex < (count _closeMechanicalPaths)) then
-                    {
-                        [
-                            _vehicle,
-                            _closeMechanicalPaths select _grainIndex,
-                            _emissionPositionASL,
-                            _arrivalTime,
-                            _baseVolume * _mechanicalGain,
-                            _pitch,
-                            500
-                        ]
-                        call gau_gau8_fnc_queueSoundArrival;
-                    };
-
-                    private _sustainGapMinShots =
-                        floor
-                        (
-                            (
-                                _vehicle getVariable
-                                [
-                                    "gau_gau8_sustainGapMinShots",
-                                    5
-                                ]
-                            )
-                            max 1
-                            min 20
-                        );
-
-                    private _sustainGapSpreadShots =
-                        floor
-                        (
-                            (
-                                _vehicle getVariable
-                                [
-                                    "gau_gau8_sustainGapSpreadShots",
-                                    4
-                                ]
-                            )
-                            max 1
-                            min 20
-                        );
-
-                    private _nextGap =
-                        _sustainGapMinShots +
-                        floor
-                        (
-                            random _sustainGapSpreadShots
-                        );
-
-                    private _nextGapSeconds =
-                        _nextGap / 65;
-
-                    _vehicle setVariable
-                    [
-                        "gau_gau8_nextGrainTick",
-                        _nextGrainTick + _nextGapSeconds
-                    ];
-
-                    _vehicle setVariable
-                    [
-                        "gau_gau8_lastGrainIndex",
-                        _grainIndex
-                    ];
-                };
-            };
-
             _vehicle setVariable
             [
                 "gau_gau8_shotCount",
@@ -1372,7 +987,7 @@ private _playCockpitSound =
 
                     while {!_finished} do
                     {
-                        uiSleep 0.02;
+                        uiSleep 0.01;
 
                         if (isNull _vehicle) then
                         {
@@ -1393,6 +1008,20 @@ private _playCockpitSound =
                             }
                             else
                             {
+                                private _emitSustain =
+                                    _vehicle getVariable
+                                    [
+                                        "gau_gau8_emitSustain",
+                                        {}
+                                    ];
+
+                                /*
+                                    Service sustain before evaluating release.
+                                    This allows the final due grain to overlap
+                                    the end stage during the debounce interval.
+                                */
+                                [_vehicle] call _emitSustain;
+
                                 private _lastShotTick =
                                     _vehicle getVariable
                                     [
@@ -1434,9 +1063,9 @@ private _playCockpitSound =
                         if (_currentGeneration == _generation) then
                         {
                             /*
-                                Emit the recorded trigger-release phase at
-                                the acoustic arrival time of the final shot.
-                                Existing sustain grains are allowed to decay;
+                                Emit the recorded trigger-release phase from
+                                the final sustain state. Existing sustain
+                                grains are allowed to decay;
                                 the release layer supplies the real stop
                                 character instead of hard-stopping voices.
                             */
