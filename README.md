@@ -68,7 +68,7 @@ Native Arma or third-party projectile cracks, fly-bys, and impacts are retained.
 
 ### Steam Workshop
 
-1. Subscribe to the mod.
+1. Subscribe to the mod [here](https://steamcommunity.com/sharedfiles/filedetails/?id=3777865854).
 2. Enable it in the Arma 3 Launcher.
 3. Enable any optional supported aircraft or sound mods.
 4. Start Arma 3.
