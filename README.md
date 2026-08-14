@@ -98,7 +98,15 @@ Supports the RHS A-10A and both GAU-8 firing modes while preserving the original
 
 ### Firewill
 
-Supports the Firewill A-10C and its GAU-8/A Avenger implementation while preserving Firewill loadout and ammunition behavior.
+Supports the Firewill A-10C and its GAU-8/A Avenger implementation while preserving Firewill loadouts and ammunition behavior.
+
+### USAF Mod - Fighters
+
+Supports the USAF Mod A-10C and its GAU-8/A Avenger implementation while preserving USAF Mod loadouts and ammunition behavior.
+
+### CUP Vehicles
+
+Supports the CUP A-10 variants and their GAU-8/A Avenger implementation while preserving CUP loadouts and ammunition behavior.
 
 ### JSRS Soundmod 2025
 
