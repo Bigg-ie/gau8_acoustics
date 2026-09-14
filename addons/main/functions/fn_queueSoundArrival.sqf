@@ -1969,6 +1969,105 @@ if (!_workerRunning) then
                                         };
                                     };
 
+                                    if (
+                                        _isRip &&
+                                        {
+                                            _vehicle getVariable
+                                            [
+                                                "gau_gau8_crackDistanceTimbreEnabled",
+                                                true
+                                            ]
+                                        }
+                                    ) then
+                                    {
+                                        private _crackMidDistance =
+                                            (
+                                                _vehicle getVariable
+                                                [
+                                                    "gau_gau8_crackMidDistance",
+                                                    600
+                                                ]
+                                            )
+                                            max 300
+                                            min 1500;
+
+                                        private _crackFarDistance =
+                                            (
+                                                (
+                                                    _vehicle getVariable
+                                                    [
+                                                        "gau_gau8_crackFarDistance",
+                                                        1200
+                                                    ]
+                                                )
+                                                max
+                                                (
+                                                    _crackMidDistance +
+                                                    100
+                                                )
+                                            )
+                                            min 2600;
+
+                                        private _crackDistantDistance =
+                                            (
+                                                (
+                                                    _vehicle getVariable
+                                                    [
+                                                        "gau_gau8_crackDistantDistance",
+                                                        2200
+                                                    ]
+                                                )
+                                                max
+                                                (
+                                                    _crackFarDistance +
+                                                    100
+                                                )
+                                            )
+                                            min 4000;
+
+                                        private _crackBank =
+                                            "";
+
+                                        if (
+                                            _currentDistance >=
+                                            _crackMidDistance
+                                        ) then
+                                        {
+                                            _crackBank = "mid";
+                                        };
+
+                                        if (
+                                            _currentDistance >=
+                                            _crackFarDistance
+                                        ) then
+                                        {
+                                            _crackBank = "far";
+                                        };
+
+                                        if (
+                                            _currentDistance >=
+                                            _crackDistantDistance
+                                        ) then
+                                        {
+                                            _crackBank = "distant";
+                                        };
+
+                                        if (_crackBank isNotEqualTo "") then
+                                        {
+                                            _resolvedPath =
+                                                [
+                                                    _resolvedPath,
+                                                    "sounds\rip\",
+                                                    format
+                                                    [
+                                                        "sounds\rip\%1\",
+                                                        _crackBank
+                                                    ]
+                                                ]
+                                                call _replaceToken;
+                                        };
+                                    };
+
                                     private _outputMaxDistance =
                                         _eventMaxDistance;
 
