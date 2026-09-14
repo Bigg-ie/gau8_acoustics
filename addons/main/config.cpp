@@ -2,7 +2,7 @@ class CfgPatches
 {
     class gau_gau8_main
     {
-        name = "GAU-8 Acoustic Simulation";
+        name = "GAU-8 Acoustic Overhaul";
         author = "Biggie";
 
         requiredVersion = 2.18;
@@ -32,7 +32,7 @@ class CfgDistanceFilters
 
 class CfgSoundCurves
 {
-    // Far layer fades in between approximately 300 and 750 metres.
+
     class gau_GAU8_FarShaderCurve
     {
         points[] =
@@ -42,8 +42,7 @@ class CfgSoundCurves
         };
     };
 
-    // Far-layer output remains strong through the middle distance,
-    // then falls to zero at the configured maximum range.
+
     class gau_GAU8_FarSetCurve
     {
         points[] =
@@ -123,6 +122,51 @@ class CfgSoundCurves
 
 class CfgSoundShaders
 {
+
+    class gau_GAU8_ImpactHE_SoundShader
+    {
+        samples[] =
+        {
+            {"A3\Sounds_F\arsenal\explosives\shells\30mm40mm_shell_explosion_01.wss", 1},
+            {"A3\Sounds_F\arsenal\explosives\shells\30mm40mm_shell_explosion_02.wss", 1},
+            {"A3\Sounds_F\arsenal\explosives\shells\30mm40mm_shell_explosion_03.wss", 1},
+            {"A3\Sounds_F\arsenal\explosives\shells\30mm40mm_shell_explosion_04.wss", 1}
+        };
+
+        volume = 0.90;
+        range = 1100;
+        rangeCurve = "closeShotCurve";
+    };
+
+    class gau_GAU8_ImpactLight_SoundShader
+    {
+        samples[] =
+        {
+            {"A3\Sounds_F\arsenal\explosives\shells\30mm40mm_shell_explosion_01.wss", 1},
+            {"A3\Sounds_F\arsenal\explosives\shells\30mm40mm_shell_explosion_02.wss", 1},
+            {"A3\Sounds_F\arsenal\explosives\shells\30mm40mm_shell_explosion_03.wss", 1},
+            {"A3\Sounds_F\arsenal\explosives\shells\30mm40mm_shell_explosion_04.wss", 1}
+        };
+
+        volume = 0.80;
+        range = 950;
+        rangeCurve = "closeShotCurve";
+    };
+
+    class gau_GAU8_ImpactAP_SoundShader
+    {
+        samples[] =
+        {
+            {"A3\Sounds_F\arsenal\explosives\shells\30mm40mm_shell_explosion_01.wss", 1},
+            {"A3\Sounds_F\arsenal\explosives\shells\30mm40mm_shell_explosion_02.wss", 1},
+            {"A3\Sounds_F\arsenal\explosives\shells\30mm40mm_shell_explosion_03.wss", 1},
+            {"A3\Sounds_F\arsenal\explosives\shells\30mm40mm_shell_explosion_04.wss", 1}
+        };
+
+        volume = 0.70;
+        range = 850;
+        rangeCurve = "closeShotCurve";
+    };
     class gau_GAU8_CloseBody_SoundShader
     {
         samples[] =
@@ -257,6 +301,45 @@ class CfgSoundShaders
 
 class CfgSoundSets
 {
+
+    class gau_GAU8_ImpactHE_SoundSet
+    {
+        soundShaders[] =
+        {
+            "gau_GAU8_ImpactHE_SoundShader"
+        };
+
+        volumeFactor = 1.0;
+        spatial = 1;
+        doppler = 0;
+        loop = 0;
+    };
+
+    class gau_GAU8_ImpactLight_SoundSet
+    {
+        soundShaders[] =
+        {
+            "gau_GAU8_ImpactLight_SoundShader"
+        };
+
+        volumeFactor = 1.0;
+        spatial = 1;
+        doppler = 0;
+        loop = 0;
+    };
+
+    class gau_GAU8_ImpactAP_SoundSet
+    {
+        soundShaders[] =
+        {
+            "gau_GAU8_ImpactAP_SoundShader"
+        };
+
+        volumeFactor = 1.0;
+        spatial = 1;
+        doppler = 0;
+        loop = 0;
+    };
     class gau_GAU8_CloseBody_SoundSet
     {
         soundShaders[] =
@@ -421,6 +504,12 @@ class CfgWeapons
     {
         displayName = "GAU-8/A Avenger";
 
+        magazines[] =
+        {
+            "gau_gau8_1000Rnd_Gatling_30mm_Plane_CAS_01_F_ripSilent",
+            "1000Rnd_Gatling_30mm_Plane_CAS_01_F"
+        };
+
         class LowROF: Mode_FullAuto
         {
             displayName = "GAU-8/A Avenger Low ROF";
@@ -429,24 +518,22 @@ class CfgWeapons
             soundContinuous = 0;
             soundBurst = 0;
 
-            // 3,900 RPM / 65 rounds per second.
+
             reloadTime = 0.0153846;
 
-            // Preserve an approximately 0.6-second minimum burst.
+
             burst = 39;
 
             class StandardSound: BaseSoundModeType
             {
-                /*
-                    Accepted body, mechanical, and muzzle files are emitted
-                    by the scripted propagation scheduler. Per-projectile
-                    SoundSets would stack 0.48-second grains at 65 Hz.
-                */
+
+
                 soundSetShot[] = {};
             };
         };
     };
 };
+
 class CfgFunctions
 {
     class gau_gau8
@@ -456,6 +543,16 @@ class CfgFunctions
         class main
         {
             file = "\z\gau\addons\main\functions";
+
+            class preInit
+            {
+                preInit = 1;
+            };
+
+            class vanillaPostInit
+            {
+                postInit = 1;
+            };
 
             class calculateShockGeometry
             {
@@ -469,10 +566,24 @@ class CfgFunctions
             {
             };
 
+            class playRipReflectionField
+            {
+            };
+
             class queueSoundArrival
             {
             };
 
+            class cancelMRPending
+            {
+            };
+class registerRipShot {};
+
+            class runRipStream {};
+
+
+            class runRipMagazineSwapWorker {};
+            class registerRipMagazineMapping {};
             class clientInit
             {
                 postInit = 1;
@@ -480,9 +591,55 @@ class CfgFunctions
             class registerWeapon
             {
             };
+
+            class registerRipAmmo
+            {
+            };
+
             class installGrainHandler
             {
             };
         };
+    };
+};
+
+class CfgAmmo
+{
+    class Gatling_30mm_HE_Plane_CAS_01_F;
+
+    class gau_gau8_Gatling_30mm_HE_Plane_CAS_01_F_ripSilent:
+        Gatling_30mm_HE_Plane_CAS_01_F
+    {
+        soundSetSonicCrack[] = {};
+        soundSetBulletFly[] = {};
+        soundFly[] = {"", 0, 1};
+        supersonicCrackNear[] = {"", 0, 1, 1};
+        supersonicCrackFar[] = {"", 0, 1, 1};
+
+        soundSetExplosion[] =
+        {
+            "gau_GAU8_ImpactHE_SoundSet"
+        };
+
+        soundHit[] = {"", 0, 1};
+        soundHit1[] = {"", 0, 1};
+        soundHit2[] = {"", 0, 1};
+        soundHit3[] = {"", 0, 1};
+        soundHit4[] = {"", 0, 1};
+        soundHit5[] = {"", 0, 1};
+
+        gau_gau8_ripCrackSuppression = 40;
+    };
+};
+
+class CfgMagazines
+{
+    class 1000Rnd_Gatling_30mm_Plane_CAS_01_F;
+
+    class gau_gau8_1000Rnd_Gatling_30mm_Plane_CAS_01_F_ripSilent:
+        1000Rnd_Gatling_30mm_Plane_CAS_01_F
+    {
+        ammo =
+            "gau_gau8_Gatling_30mm_HE_Plane_CAS_01_F_ripSilent";
     };
 };

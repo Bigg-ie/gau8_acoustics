@@ -33,6 +33,11 @@ class CfgFunctions
             {
                 preInit = 1;
             };
+
+            class postInit
+            {
+                postInit = 1;
+            };
         };
     };
 };
@@ -43,6 +48,12 @@ class CfgWeapons
 
     class USAF_GAU8_GUN: CannonCore
     {
+        magazines[] =
+        {
+            "gau_gau8_USAF_GAU8_1150Rnd_ripSilent",
+            "USAF_GAU8_1150Rnd"
+        };
+
         class manual;
 
         class burst1: manual
@@ -116,5 +127,45 @@ class CfgWeapons
                 soundSetShot[] = {};
             };
         };
+    };
+};
+
+class CfgAmmo
+{
+    class USAF_GAU8_30mm_CM;
+
+    class gau_gau8_USAF_GAU8_30mm_CM_ripSilent:
+        USAF_GAU8_30mm_CM
+    {
+
+        soundSetExplosion[] =
+        {
+            "gau_GAU8_ImpactLight_SoundSet"
+        };
+
+        soundHit[] = {"", 0, 1};
+        soundHit1[] = {"", 0, 1};
+        soundHit2[] = {"", 0, 1};
+        soundHit3[] = {"", 0, 1};
+        soundHit4[] = {"", 0, 1};
+        soundHit5[] = {"", 0, 1};
+        soundSetSonicCrack[] = {};
+        soundSetBulletFly[] = {};
+        soundFly[] = {"", 0, 1};
+        supersonicCrackNear[] = {"", 0, 1, 1};
+        supersonicCrackFar[] = {"", 0, 1, 1};
+
+        gau_gau8_ripCrackSuppression = 40;
+    };
+};
+
+class CfgMagazines
+{
+    class USAF_GAU8_1150Rnd;
+
+    class gau_gau8_USAF_GAU8_1150Rnd_ripSilent:
+        USAF_GAU8_1150Rnd
+    {
+        ammo = "gau_gau8_USAF_GAU8_30mm_CM_ripSilent";
     };
 };

@@ -1,25 +1,3 @@
-/*
-    Estimate external acoustic obstruction and a first-order ground
-    reflection for one emitted GAU-8 event.
-
-    Expensive geometry checks are cached and smoothed per aircraft. The
-    reflection geometry is inexpensive and is recalculated for each emitted
-    event so its arrival position follows the historical source position.
-
-    Return value:
-    [
-        terrainOcclusion,
-        objectOcclusion,
-        combinedOcclusion,
-        reflectionPresence,
-        reflectionPositionASL,
-        reflectionPropagationDelaySeconds,
-        reflectionExtraDelaySeconds,
-        sourceHeightAGL,
-        listenerHeightAGL,
-        objectHitCount
-    ]
-*/
 params
 [
     "_vehicle",
@@ -132,7 +110,7 @@ private _checkInterval =
     max 0.08
     min 0.50;
 
-/* V9.5 relocation-sensitive environment cache. */
+
 private _listenerMoved =
     (_listenerPositionASL vectorDistance _cachedListener) > 12;
 
@@ -150,18 +128,8 @@ private _objectHitCount = _previousHitCount;
 
 if (_needsCheck && {_distance > 4}) then
 {
-    /*
-        V9.4 weighted direct-path and enclosure occlusion.
 
-        The centre ray represents the acoustic line of sight and therefore
-        carries most of the weight. Two narrow rays prevent a single tiny
-        gap from producing a hard binary result without allowing a large
-        rock or wall to be bypassed by metre-scale offsets.
 
-        A short listener-local enclosure probe detects rooms and other
-        substantially enclosed spaces even when the direct source ray happens
-        to pass through a window or doorway.
-    */
     private _sourceToListener =
         _emissionPositionASL vectorFromTo _listenerPositionASL;
 
@@ -261,11 +229,7 @@ if (_needsCheck && {_distance > 4}) then
                 max 0
                 min 1;
 
-            /*
-                Emphasise partial coverage. A rock covering half the ray's
-                visibility should sound substantially obstructed rather than
-                only half of a weak linear effect.
-            */
+
             private _rayOcclusion =
                 sqrt ((1 - _visibility) max 0);
 
@@ -307,11 +271,7 @@ if (_needsCheck && {_distance > 4}) then
     }
     forEach _rayDefinitions;
 
-    /*
-        Listener enclosure probe: four horizontal rays and one upward ray.
-        There is deliberately no downward ray, so ordinary ground proximity
-        does not classify an outdoor listener as enclosed.
-    */
+
     private _localStart =
         _listenerPositionASL vectorAdd [0, 0, 0.05];
 
@@ -408,7 +368,7 @@ if (_needsCheck && {_distance > 4}) then
             "_target"
         ];
 
-        /* Fast obstruction attack, slower release. */
+
         private _response =
             [0.35, 0.88] select (_target > _previous);
 

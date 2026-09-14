@@ -30,6 +30,11 @@ class CfgFunctions
             {
                 preInit = 1;
             };
+
+            class postInit
+            {
+                postInit = 1;
+            };
         };
     };
 };
@@ -49,6 +54,18 @@ class CfgWeapons
 
     class RHS_weap_gau8: Gatling_30mm_Plane_CAS_01_F
     {
+        magazines[] =
+        {
+            "gau_gau8_rhs_mag_1150Rnd_30x173_ripSilent",
+            "gau_gau8_rhs_mag_1150Rnd_30x173_mixed_ripSilent",
+            "gau_gau8_rhs_mag_1000Rnd_30x173_ripSilent",
+            "gau_gau8_rhs_mag_1000Rnd_30x173_mixed_ripSilent",
+            "rhs_mag_1150Rnd_30x173",
+            "rhs_mag_1150Rnd_30x173_mixed",
+            "rhs_mag_1000Rnd_30x173",
+            "rhs_mag_1000Rnd_30x173_mixed"
+        };
+
         class LowROF: LowROF
         {
             class BaseSoundModeType;
@@ -72,5 +89,121 @@ class CfgWeapons
                 soundSetShot[] = {};
             };
         };
+    };
+};
+
+class CfgAmmo
+{
+    class rhs_ammo_PGU14B_API;
+    class rhs_ammo_PGU13B_HE;
+    class rhs_ammo_30x173mm_GAU8_mixed;
+
+    class gau_gau8_rhs_ammo_PGU14B_API_ripSilent:
+        rhs_ammo_PGU14B_API
+    {
+
+        soundSetExplosion[] =
+        {
+            "gau_GAU8_ImpactAP_SoundSet"
+        };
+
+        soundHit[] = {"", 0, 1};
+        soundHit1[] = {"", 0, 1};
+        soundHit2[] = {"", 0, 1};
+        soundHit3[] = {"", 0, 1};
+        soundHit4[] = {"", 0, 1};
+        soundHit5[] = {"", 0, 1};
+        soundSetSonicCrack[] = {};
+        soundSetBulletFly[] = {};
+        soundFly[] = {"", 0, 1};
+        supersonicCrackNear[] = {"", 0, 1, 1};
+        supersonicCrackFar[] = {"", 0, 1, 1};
+
+        gau_gau8_ripCrackSuppression = 40;
+    };
+
+    class gau_gau8_rhs_ammo_PGU13B_HE_ripSilent:
+        rhs_ammo_PGU13B_HE
+    {
+
+        soundSetExplosion[] =
+        {
+            "gau_GAU8_ImpactHE_SoundSet"
+        };
+
+        soundHit[] = {"", 0, 1};
+        soundHit1[] = {"", 0, 1};
+        soundHit2[] = {"", 0, 1};
+        soundHit3[] = {"", 0, 1};
+        soundHit4[] = {"", 0, 1};
+        soundHit5[] = {"", 0, 1};
+        soundSetSonicCrack[] = {};
+        soundSetBulletFly[] = {};
+        soundFly[] = {"", 0, 1};
+        supersonicCrackNear[] = {"", 0, 1, 1};
+        supersonicCrackFar[] = {"", 0, 1, 1};
+
+        gau_gau8_ripCrackSuppression = 40;
+    };
+
+    class gau_gau8_rhs_ammo_30x173mm_GAU8_mixed_ripSilent:
+        rhs_ammo_30x173mm_GAU8_mixed
+    {
+
+        soundSetExplosion[] = {};
+        soundHit[] = {"", 0, 1};
+        soundHit1[] = {"", 0, 1};
+        soundHit2[] = {"", 0, 1};
+        soundHit3[] = {"", 0, 1};
+        soundHit4[] = {"", 0, 1};
+        soundHit5[] = {"", 0, 1};
+
+        soundSetSonicCrack[] = {};
+        soundSetBulletFly[] = {};
+        soundFly[] = {"", 0, 1};
+        supersonicCrackNear[] = {"", 0, 1, 1};
+        supersonicCrackFar[] = {"", 0, 1, 1};
+
+        submunitionAmmo[] =
+        {
+            "gau_gau8_rhs_ammo_PGU14B_API_ripSilent", 0.8,
+            "gau_gau8_rhs_ammo_PGU13B_HE_ripSilent", 0.2
+        };
+
+        gau_gau8_ripCrackSuppression = 40;
+    };
+};
+
+class CfgMagazines
+{
+    class rhs_mag_1150Rnd_30x173;
+    class rhs_mag_1150Rnd_30x173_mixed;
+    class rhs_mag_1000Rnd_30x173;
+    class rhs_mag_1000Rnd_30x173_mixed;
+
+    class gau_gau8_rhs_mag_1150Rnd_30x173_ripSilent:
+        rhs_mag_1150Rnd_30x173
+    {
+        ammo = "gau_gau8_rhs_ammo_PGU14B_API_ripSilent";
+    };
+
+    class gau_gau8_rhs_mag_1150Rnd_30x173_mixed_ripSilent:
+        rhs_mag_1150Rnd_30x173_mixed
+    {
+        ammo =
+            "gau_gau8_rhs_ammo_30x173mm_GAU8_mixed_ripSilent";
+    };
+
+    class gau_gau8_rhs_mag_1000Rnd_30x173_ripSilent:
+        rhs_mag_1000Rnd_30x173
+    {
+        ammo = "gau_gau8_rhs_ammo_PGU14B_API_ripSilent";
+    };
+
+    class gau_gau8_rhs_mag_1000Rnd_30x173_mixed_ripSilent:
+        rhs_mag_1000Rnd_30x173_mixed
+    {
+        ammo =
+            "gau_gau8_rhs_ammo_30x173mm_GAU8_mixed_ripSilent";
     };
 };

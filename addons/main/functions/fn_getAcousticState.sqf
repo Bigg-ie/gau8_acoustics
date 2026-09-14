@@ -1,44 +1,3 @@
-/*
-    Returns the listener/source geometry and the runtime mix for one
-    emitted GAU-8 event.
-
-    Return value:
-    [
-        listenerPositionASL,
-        emissionPositionASL,
-        distanceMetres,
-        propagationDelaySeconds,
-        distanceGain,
-        closeBodyGain,
-        midBodyGain,
-        farBodyGain,
-        mechanicalGain,
-        muzzleGain,
-        forwardDot,
-        offAxisAngleDegrees,
-        closeBodyDirectivity,
-        midBodyDirectivity,
-        farBodyDirectivity,
-        mechanicalDirectivity,
-        muzzleDirectivity,
-        cameraMode,
-        cockpitTarget,
-        cockpitMix,
-        externalMix,
-        cockpitBodyGain,
-        cockpitAirframeGain,
-        terrainOcclusion,
-        objectOcclusion,
-        combinedOcclusion,
-        reflectionGain,
-        reflectionPositionASL,
-        reflectionPropagationDelaySeconds,
-        reflectionExtraDelaySeconds,
-        sourceHeightAGL,
-        listenerHeightAGL,
-        objectHitCount
-    ]
-*/
 params
 [
     "_vehicle",
@@ -114,14 +73,7 @@ private _sampleCurve =
     _value
 };
 
-/*
-    Game-calibrated pressure envelope.
 
-    The near field is deliberately compressed relative to literal 1/r
-    propagation so the cannon can be forceful without consuming the whole
-    game mix. The close/far recordings provide timbre; this curve controls
-    absolute level.
-*/
 private _distanceGain =
     [
         _distance,
@@ -147,31 +99,22 @@ private _distanceGain =
     ]
     call _sampleCurve;
 
-/*
-    Three-zone spectral model.
 
-    0-150 m:
-        Accepted close recording only.
-
-    150-500 m:
-        Constant-sum close-to-mid transition. The mid assets are filtered
-        derivatives of the close source, so constant-sum mixing avoids
-        correlated reinforcement.
-
-    500-800 m:
-        Equal-power mid-to-far transition. The far recording is independent,
-        so square-root weights prevent the usual -3 dB midpoint dip.
-*/
 private _closeToMid =
-    linearConversion
     [
-        150,
-        500,
         _distance,
-        0,
-        1,
-        true
-    ];
+        [
+            [0,   0.00],
+            [25,  0.00],
+            [50,  0.10],
+            [75,  0.30],
+            [100, 0.50],
+            [140, 0.72],
+            [190, 0.90],
+            [250, 1.00]
+        ]
+    ]
+    call _sampleCurve;
 
 private _midToFar =
     linearConversion
@@ -214,10 +157,7 @@ private _farWeight =
         sqrt _midToFar
     };
 
-/*
-    Mechanical texture remains local. Its files already sit roughly 17 dB
-    below the body, and this presence curve removes it completely by 250 m.
-*/
+
 private _mechanicalPresence =
     [
         _distance,
@@ -231,16 +171,7 @@ private _mechanicalPresence =
     ]
     call _sampleCurve;
 
-/*
-    Cockpit context is listener-local and view-dependent.
 
-    INTERNAL and GUNNER views from the firing aircraft use the structural
-    cockpit path. EXTERNAL, GROUP, Zeus, spectator, and remote cameras retain
-    the accepted external V7 model.
-
-    A short constant-sum transition prevents a hard switch if the player
-    changes view during a firing run. A new run snaps to the current view.
-*/
 private _cameraObject = cameraOn;
 private _cameraVehicle =
     if (isNull _cameraObject) then
@@ -320,12 +251,7 @@ private _toListener =
         vectorDir _vehicle
     };
 
-/*
-    Use the projectile's initial velocity as the cannon axis. This follows
-    the actual shot direction during diving, climbing, and banked attacks.
-    Fall back to the airframe forward vector when the projectile is missing
-    or has not received a useful velocity yet.
-*/
+
 private _sourceForward = vectorDir _vehicle;
 
 if (!isNull _projectile) then
@@ -343,19 +269,7 @@ private _forwardDot =
 
 private _offAxisAngle = acos _forwardDot;
 
-/*
-    Axisymmetric source directivity, sampled as smooth angle curves.
 
-    Angle convention:
-        0 degrees   = directly in front of the cannon
-        90 degrees  = broadside
-        180 degrees = directly behind the cannon
-
-    Close body retains the strongest front/aft contrast because it carries
-    the near-field harshness. Mid body is broader. Far body is deliberately
-    close to omnidirectional because terrain and atmospheric scattering
-    dominate at long range. Mechanical texture is omnidirectional.
-*/
 private _closeBodyDirectivity =
     [
         _offAxisAngle,
@@ -403,11 +317,7 @@ private _farBodyDirectivity =
 
 private _mechanicalDirectivity = 1.00;
 
-/*
-    Muzzle pressure is the most directional element. Forward listeners get
-    a modest boost over v6; broadside and aft listeners receive a smooth,
-    substantial reduction without a hard cone boundary.
-*/
+
 private _muzzleDirectivity =
     [
         _offAxisAngle,
@@ -424,13 +334,7 @@ private _muzzleDirectivity =
     ]
     call _sampleCurve;
 
-/*
-    V9.5 arrival-time obstruction handoff.
 
-    External obstruction is evaluated by fn_queueSoundArrival when the
-    emitted wavefront reaches the listener. These values remain in the
-    acoustic-state return contract for compatibility.
-*/
 private _terrainOcclusion = 0.0;
 private _objectOcclusion = 0.0;
 private _combinedOcclusion = 0.0;
@@ -444,10 +348,7 @@ private _objectHitCount = 0;
 private _baseCloseBodyGain =
     _distanceGain * _closeWeight * _closeBodyDirectivity * 1.25 * _externalMix;
 
-/*
-    Mid files are rendered 1 dB below the close files to retain headroom.
-    The 1.12 multiplier restores nominal crossover loudness.
-*/
+
 private _baseMidBodyGain =
     _distanceGain * _midWeight * _midBodyDirectivity * 1.12 * _externalMix;
 
@@ -460,23 +361,14 @@ private _baseMechanicalGain =
 private _baseMuzzleGain =
     _distanceGain * _closeWeight * _muzzleDirectivity * 0.90 * _externalMix;
 
-/*
-    Queue unoccluded external gains. Arrival-time terrain/object transfer is
-    applied in fn_queueSoundArrival using the listener's current position.
-*/
+
 private _closeBodyGain = _baseCloseBodyGain;
 private _midBodyGain = _baseMidBodyGain;
 private _farBodyGain = _baseFarBodyGain;
 private _mechanicalGain = _baseMechanicalGain;
 private _muzzleGain = _baseMuzzleGain;
-/*
-    Discrete ground-reflection playback is disabled.
 
-    A second 0.48-second playSound3D body voice is perceived as a separate
-    cannon report, especially around the first sustain grain. V9 retains the
-    terrain/object obstruction model; ground interaction can be revisited as
-    a baked spectral variant or engine-native environmental effect.
-*/
+
 private _reflectionGain = 0.0;
 
 [

@@ -1,10 +1,18 @@
 *.pbo
-.hemttout
+.hemttout/
 hemtt
 hemtt.exe
 *.biprivatekey
 *.hemttprivatekey
-# Local recorded-source media
+
+.gau8_backups/
+.gau8_patch_backups/
+.gau8_*_backup.txt
+backups/
+releases/
+cfgammo_context.txt
+addons/main/functions/*.sqf.*_backup_*
+
 sources/recorded/*.wav
 sources/recorded/*.mp4
 sources/recorded/*.wmv

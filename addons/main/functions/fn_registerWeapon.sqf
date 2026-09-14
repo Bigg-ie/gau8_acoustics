@@ -1,7 +1,8 @@
 params
 [
     ["_weapon", "", [""]],
-    ["_modes", ["*"], [[]]]
+    ["_modes", ["*"], [[]]],
+    ["_impactAmmoClasses", [], [[]]]
 ];
 
 if (_weapon isEqualTo "") exitWith
@@ -32,7 +33,8 @@ if (_index < 0) then
     _registry pushBack
     [
         _weapon,
-        +_modes
+        +_modes,
+        +_impactAmmoClasses
     ];
 }
 else
@@ -52,6 +54,24 @@ else
     [
         1,
         _registeredModes
+    ];
+
+    private _registeredImpactAmmoClasses =
+        _entry param
+        [
+            2,
+            []
+        ];
+
+    {
+        _registeredImpactAmmoClasses pushBackUnique _x;
+    }
+    forEach _impactAmmoClasses;
+
+    _entry set
+    [
+        2,
+        _registeredImpactAmmoClasses
     ];
 
     _registry set

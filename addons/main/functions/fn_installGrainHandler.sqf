@@ -141,6 +141,238 @@ _aircraft setVariable
     "gau_gau8_closeBodyEndPath",
     "z\gau\addons\main\sounds\cannon\close_body_end.wav"
 ];
+_aircraft setVariable
+[
+    "gau_gau8_mrCloseStartPath",
+    "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_start_close.wav"
+];
+_aircraft setVariable
+[
+    "gau_gau8_mrCloseGrainPaths",
+    [
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_v27_23_grain_close_00.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_v27_23_grain_close_01.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_v27_23_grain_close_02.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_v27_23_grain_close_03.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_v27_23_grain_close_04.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_v27_23_grain_close_05.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_v27_23_grain_close_06.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_v27_23_grain_close_07.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_v27_23_grain_close_08.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_v27_23_grain_close_09.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_v27_23_grain_close_10.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_v27_23_grain_close_11.wav"
+    ]
+];
+_aircraft setVariable
+[
+    "gau_gau8_mrCloseReleasePaths",
+    [
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_close_p00.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_close_p01.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_close_p02.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_close_p03.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_close_p04.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_close_p05.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_close_p06.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_close_p07.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_close_p08.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_close_p09.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_close_p10.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_close_p11.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_close_p12.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_close_p13.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_close_p14.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_close_p15.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_close_p16.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_close_p17.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_close_p18.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_close_p19.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_close_p20.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_close_p21.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_close_p22.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_close_p23.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_close_p24.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_close_p25.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_close_p26.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_close_p27.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_close_p28.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_close_p29.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_close_p30.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_close_p31.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_close_p32.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_close_p33.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_close_p34.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_close_p35.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_close_p36.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_close_p37.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_close_p38.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_close_p39.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_close_p40.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_close_p41.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_close_p42.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_close_p43.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_close_p44.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_close_p45.wav"
+    ]
+];
+_aircraft setVariable
+[
+    "gau_gau8_mrMidStartPath",
+    "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_start_mid.wav"
+];
+_aircraft setVariable
+[
+    "gau_gau8_mrMidGrainPaths",
+    [
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_v27_23_grain_mid_00.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_v27_23_grain_mid_01.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_v27_23_grain_mid_02.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_v27_23_grain_mid_03.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_v27_23_grain_mid_04.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_v27_23_grain_mid_05.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_v27_23_grain_mid_06.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_v27_23_grain_mid_07.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_v27_23_grain_mid_08.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_v27_23_grain_mid_09.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_v27_23_grain_mid_10.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_v27_23_grain_mid_11.wav"
+    ]
+];
+_aircraft setVariable
+[
+    "gau_gau8_mrMidReleasePaths",
+    [
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_mid_p00.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_mid_p01.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_mid_p02.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_mid_p03.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_mid_p04.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_mid_p05.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_mid_p06.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_mid_p07.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_mid_p08.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_mid_p09.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_mid_p10.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_mid_p11.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_mid_p12.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_mid_p13.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_mid_p14.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_mid_p15.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_mid_p16.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_mid_p17.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_mid_p18.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_mid_p19.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_mid_p20.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_mid_p21.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_mid_p22.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_mid_p23.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_mid_p24.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_mid_p25.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_mid_p26.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_mid_p27.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_mid_p28.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_mid_p29.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_mid_p30.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_mid_p31.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_mid_p32.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_mid_p33.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_mid_p34.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_mid_p35.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_mid_p36.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_mid_p37.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_mid_p38.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_mid_p39.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_mid_p40.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_mid_p41.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_mid_p42.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_mid_p43.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_mid_p44.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_mid_p45.wav"
+    ]
+];
+_aircraft setVariable
+[
+    "gau_gau8_mrFarStartPath",
+    "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_start_far.wav"
+];
+_aircraft setVariable
+[
+    "gau_gau8_mrFarGrainPaths",
+    [
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_v27_23_grain_far_00.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_v27_23_grain_far_01.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_v27_23_grain_far_02.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_v27_23_grain_far_03.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_v27_23_grain_far_04.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_v27_23_grain_far_05.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_v27_23_grain_far_06.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_v27_23_grain_far_07.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_v27_23_grain_far_08.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_v27_23_grain_far_09.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_v27_23_grain_far_10.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_v27_23_grain_far_11.wav"
+    ]
+];
+_aircraft setVariable
+[
+    "gau_gau8_mrFarReleasePaths",
+    [
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_far_p00.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_far_p01.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_far_p02.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_far_p03.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_far_p04.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_far_p05.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_far_p06.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_far_p07.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_far_p08.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_far_p09.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_far_p10.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_far_p11.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_far_p12.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_far_p13.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_far_p14.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_far_p15.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_far_p16.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_far_p17.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_far_p18.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_far_p19.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_far_p20.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_far_p21.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_far_p22.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_far_p23.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_far_p24.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_far_p25.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_far_p26.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_far_p27.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_far_p28.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_far_p29.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_far_p30.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_far_p31.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_far_p32.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_far_p33.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_far_p34.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_far_p35.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_far_p36.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_far_p37.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_far_p38.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_far_p39.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_far_p40.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_far_p41.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_far_p42.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_far_p43.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_far_p44.wav",
+        "z\gau\addons\main\sounds\cannon\mr_v27_11\mr_body_release_far_p45.wav"
+    ]
+];
+
+
+_aircraft setVariable
+[
+    "gau_gau8_v27_23MRSourceOffsets",
+    [0.000000000, 0.427416667, 0.854833333, 1.282250000, 1.709666667, 2.137083333, 2.564500000, 2.991916667, 3.419333333, 3.846750000, 4.274166667, 4.701583333]
+];
 
 _aircraft setVariable
 [
@@ -217,12 +449,7 @@ _aircraft setVariable
     "z\gau\addons\main\sounds\cannon\cockpit_airframe_end.wav"
 ];
 
-/*
-    Cockpit audio is listener-relative rather than world-positioned. Raw
-    playSound3D events remain fixed at their creation position, which is
-    correct for external reports but incorrect for a moving cockpit. The UI
-    command is routed through the effects channel and returns a stopSound ID.
-*/
+
 _aircraft setVariable
 [
     "gau_gau8_playCockpitSound",
@@ -300,9 +527,26 @@ _aircraft setVariable
 
 _aircraft setVariable
 [
+    "gau_gau8_arrivalWorkerToken",
+    0
+];
+
+_aircraft setVariable
+[
+    "gau_gau8_reportBurstClock",
+    []
+];
+
+_aircraft setVariable
+[
     "gau_gau8_lastGrainIndex",
     -1
 ];
+
+_aircraft setVariable ["gau_gau8_v27_23LastMRGrainTick", -1];
+_aircraft setVariable ["gau_gau8_v27_23LastMRSourceOffset", 0];
+_aircraft setVariable ["gau_gau8_v27_23LastMRPitch", 1.0];
+_aircraft setVariable ["gau_gau8_v27_23MRCycleDuration", 5.129];
 
 _aircraft setVariable
 [
@@ -314,6 +558,71 @@ _aircraft setVariable
 [
     "gau_gau8_nextGrainTick",
     -1
+];
+_aircraft setVariable
+[
+    "gau_gau8_nextMechanicalGrainTick",
+    -1
+];
+
+_aircraft setVariable
+[
+    "gau_gau8_mrBurstToken",
+    0
+];
+
+_aircraft setVariable
+[
+    "gau_gau8_mrBurstStartTick",
+    -1
+];
+
+_aircraft setVariable
+[
+    "gau_gau8_mrNextOrdinal",
+    0
+];
+
+_aircraft setVariable
+[
+    "gau_gau8_mrSustainArmed",
+    false
+];
+
+_aircraft setVariable
+[
+    "gau_gau8_mrReleasePending",
+    false
+];
+
+_aircraft setVariable
+[
+    "gau_gau8_mrReleaseBoundaryTick",
+    -1
+];
+
+_aircraft setVariable
+[
+    "gau_gau8_mrCancelSerial",
+    0
+];
+
+_aircraft setVariable
+[
+    "gau_gau8_mrPhase0Offset",
+    0.6493333333333333
+];
+
+_aircraft setVariable
+[
+    "gau_gau8_mrPhaseStep",
+    0.1115
+];
+
+_aircraft setVariable
+[
+    "gau_gau8_mrReleaseGuard",
+    0.14
 ];
 
 _aircraft setVariable
@@ -397,6 +706,19 @@ _aircraft setVariable
     _emitSustain
 ];
 
+
+_aircraft setVariable
+[
+    "gau_gau8_impactClusterRunning",
+    false
+];
+
+_aircraft setVariable
+[
+    "gau_gau8_impactEventCount",
+    0
+];
+
 private _handler =
     _aircraft addEventHandler
     [
@@ -413,7 +735,7 @@ private _handler =
                 "_projectile",
                 "_gunner"
             ];
-            /* V11.0 compatibility weapon registry */
+
             private _weaponRegistry =
                 missionNamespace getVariable
                 [
@@ -456,6 +778,30 @@ private _handler =
             };
 
             if (!_modeAccepted) exitWith {};
+            private _impactAmmoClasses =
+                (
+                    _weaponRegistry
+                    select _weaponEntryIndex
+                )
+                param
+                [
+                    2,
+                    []
+                ];
+
+            if (
+                !isNull _projectile &&
+                {_ammo in _impactAmmoClasses}
+            ) then
+            {
+                _projectile setVariable
+                [
+                    "gau_gau8_impactVehicle",
+                    _vehicle
+                ];
+
+
+            };
 
             private _shotTick = diag_tickTime;
 
@@ -474,27 +820,20 @@ private _handler =
 
             if (_shotCount == 0) then
             {
-                /*
-                    Schedule sustain by elapsed real time. Firewill reports
-                    grouped firing events roughly every 75-101 ms, so event
-                    counts cannot be treated as individual 3,900 RPM rounds.
-                */
-                _vehicle setVariable
-                [
-                    "gau_gau8_nextGrainTick",
-                    _shotTick + (9 / 65)
-                ];
+                private _newBurstToken =
+                    (_vehicle getVariable ["gau_gau8_mrBurstToken", 0]) + 1;
 
-                /*
-                    The first cockpit sustain event is scheduled early enough
-                    to absorb Firewill callback quantization while retaining
-                    overlap with the 0.36-second cockpit start recordings.
-                */
-                _vehicle setVariable
-                [
-                    "gau_gau8_nextCockpitGrainTick",
-                    _shotTick + 0.24
-                ];
+                _vehicle setVariable ["gau_gau8_mrBurstToken", _newBurstToken];
+                _vehicle setVariable ["gau_gau8_mrBurstStartTick", _shotTick];
+                _vehicle setVariable ["gau_gau8_lastGrainIndex", -1];
+                _vehicle setVariable ["gau_gau8_v27_23LastMRGrainTick", -1];
+                _vehicle setVariable ["gau_gau8_v27_23LastMRSourceOffset", 0];
+                _vehicle setVariable ["gau_gau8_v27_23LastMRPitch", 1.0];
+
+
+                _vehicle setVariable ["gau_gau8_nextGrainTick", _shotTick + (9 / 65)];
+                _vehicle setVariable ["gau_gau8_nextMechanicalGrainTick", _shotTick + (9 / 65)];
+                _vehicle setVariable ["gau_gau8_nextCockpitGrainTick", _shotTick + 0.24];
             };
 
             private _acousticState =
@@ -543,10 +882,7 @@ private _handler =
 
             private _arrivalTime = time + _propagationDelay;
 
-            /*
-                Preserve the final emission state so the release recording
-                can arrive from the last-shot position at the correct time.
-            */
+
             _vehicle setVariable
             [
                 "gau_gau8_lastEmissionPositionASL",
@@ -738,15 +1074,8 @@ private _handler =
                 systemChat _cockpitMessage;
                 diag_log _cockpitMessage;
             };
-            /*
-                Environment diagnostics are emitted by the arrival worker,
-                after listener position and obstruction are resampled.
-            */
-/*
-                Retain one Mach-cone geometry solution at the beginning of
-                each firing run for diagnostics only. Arma's ammunition
-                system owns the accepted supersonic-crack playback.
-            */
+
+
             if (
                 _shotCount == 0 &&
                 {!isNull _projectile}
@@ -817,27 +1146,6 @@ private _handler =
 
             if (_shotCount == 0) then
             {
-                private _farStartPath =
-                    _vehicle getVariable
-                    [
-                        "gau_gau8_startPath",
-                        ""
-                    ];
-
-                private _closeStartPath =
-                    _vehicle getVariable
-                    [
-                        "gau_gau8_closeBodyStartPath",
-                        ""
-                    ];
-
-                private _midStartPath =
-                    _vehicle getVariable
-                    [
-                        "gau_gau8_midBodyStartPath",
-                        ""
-                    ];
-
                 private _mechanicalStartPath =
                     _vehicle getVariable
                     [
@@ -851,7 +1159,6 @@ private _handler =
                         "gau_gau8_closeMuzzlePath",
                         ""
                     ];
-
                 private _cockpitBodyStartPath =
                     _vehicle getVariable
                     [
@@ -872,38 +1179,43 @@ private _playCockpitSound =
                         {}
                     ];
 
-                [
-                    _vehicle,
-                    _farStartPath,
-                    _emissionPositionASL,
-                    _arrivalTime,
-                    4.8 * _farBodyGain,
-                    1.0,
-                    50000
-                ]
-                call gau_gau8_fnc_queueSoundArrival;
+                private _mrMaster =
+                    (
+                        _vehicle getVariable
+                        [
+                            "gau_gau8_mrAttackMaster",
+                            missionNamespace getVariable ["gau_gau8_mrAttackMasterDefault", 5.0]
+                        ]
+                    ) max 0 min 5;
 
+                private _mrAttackVoices =
                 [
-                    _vehicle,
-                    _closeStartPath,
-                    _emissionPositionASL,
-                    _arrivalTime,
-                    4.8 * _closeBodyGain,
-                    1.0,
-                    50000
-                ]
-                call gau_gau8_fnc_queueSoundArrival;
+                    ["gau_gau8_mrCloseStartPath", _closeBodyGain],
+                    ["gau_gau8_mrMidStartPath", _midBodyGain],
+                    ["gau_gau8_mrFarStartPath", _farBodyGain]
+                ];
 
-                [
-                    _vehicle,
-                    _midStartPath,
-                    _emissionPositionASL,
-                    _arrivalTime,
-                    4.8 * _midBodyGain,
-                    1.0,
-                    50000
-                ]
-                call gau_gau8_fnc_queueSoundArrival;
+                {
+                    _x params ["_pathVariable", "_bodyGain"];
+
+                    if (_bodyGain > 0.000001) then
+                    {
+                        private _mrStartPath =
+                            _vehicle getVariable [_pathVariable, ""];
+
+                        [
+                            _vehicle,
+                            _mrStartPath,
+                            _emissionPositionASL,
+                            _arrivalTime,
+                            _mrMaster * _bodyGain,
+                            1.0,
+                            50000
+                        ]
+                        call gau_gau8_fnc_queueSoundArrival;
+                    };
+                }
+                forEach _mrAttackVoices;
 
                 [
                     _vehicle,
@@ -950,38 +1262,18 @@ private _playCockpitSound =
             ];
 
             private _running =
-                _vehicle getVariable
-                [
-                    "gau_gau8_monitorRunning",
-                    false
-                ];
+                _vehicle getVariable ["gau_gau8_monitorRunning", false];
 
             if (!_running) then
             {
-                _vehicle setVariable
-                [
-                    "gau_gau8_monitorRunning",
-                    true
-                ];
+                _vehicle setVariable ["gau_gau8_monitorRunning", true];
 
                 private _generation =
-                    _vehicle getVariable
-                    [
-                        "gau_gau8_handlerGeneration",
-                        0
-                    ];
+                    _vehicle getVariable ["gau_gau8_handlerGeneration", 0];
 
-                [
-                    _vehicle,
-                    _generation
-                ]
-                spawn
+                [_vehicle, _generation] spawn
                 {
-                    params
-                    [
-                        "_vehicle",
-                        "_generation"
-                    ];
+                    params ["_vehicle", "_generation"];
 
                     private _finished = false;
 
@@ -996,11 +1288,7 @@ private _playCockpitSound =
                         else
                         {
                             private _currentGeneration =
-                                _vehicle getVariable
-                                [
-                                    "gau_gau8_handlerGeneration",
-                                    -1
-                                ];
+                                _vehicle getVariable ["gau_gau8_handlerGeneration", -1];
 
                             if (_currentGeneration != _generation) then
                             {
@@ -1008,42 +1296,21 @@ private _playCockpitSound =
                             }
                             else
                             {
-                                private _emitSustain =
-                                    _vehicle getVariable
-                                    [
-                                        "gau_gau8_emitSustain",
-                                        {}
-                                    ];
 
-                                /*
-                                    Service sustain before evaluating release.
-                                    This allows the final due grain to overlap
-                                    the end stage during the debounce interval.
-                                */
+
+                                private _emitSustain =
+                                    _vehicle getVariable ["gau_gau8_emitSustain", {}];
+
                                 [_vehicle] call _emitSustain;
 
                                 private _lastShotTick =
-                                    _vehicle getVariable
-                                    [
-                                        "gau_gau8_lastShotTick",
-                                        -1000
-                                    ];
+                                    _vehicle getVariable ["gau_gau8_lastShotTick", -1000];
 
                                 private _burstTimeout =
-                                    (
-                                        _vehicle getVariable
-                                        [
-                                            "gau_gau8_burstTimeout",
-                                            0.18
-                                        ]
-                                    )
-                                    max 0.14
-                                    min 0.35;
+                                    (_vehicle getVariable ["gau_gau8_burstTimeout", 0.18])
+                                    max 0.14 min 0.35;
 
-                                if (
-                                    (diag_tickTime - _lastShotTick) >
-                                    _burstTimeout
-                                ) then
+                                if ((diag_tickTime - _lastShotTick) > _burstTimeout) then
                                 {
                                     _finished = true;
                                 };
@@ -1054,21 +1321,12 @@ private _playCockpitSound =
                     if (!isNull _vehicle) then
                     {
                         private _currentGeneration =
-                            _vehicle getVariable
-                            [
-                                "gau_gau8_handlerGeneration",
-                                -1
-                            ];
+                            _vehicle getVariable ["gau_gau8_handlerGeneration", -1];
 
                         if (_currentGeneration == _generation) then
                         {
-                            /*
-                                Emit the recorded trigger-release phase from
-                                the final sustain state. Existing sustain
-                                grains are allowed to decay;
-                                the release layer supplies the real stop
-                                character instead of hard-stopping voices.
-                            */
+
+
                             private _releasePosition =
                                 _vehicle getVariable
                                 [
@@ -1077,196 +1335,144 @@ private _playCockpitSound =
                                 ];
 
                             private _releaseArrival =
-                                _vehicle getVariable
-                                [
-                                    "gau_gau8_lastArrivalTime",
-                                    time
-                                ];
+                                _vehicle getVariable ["gau_gau8_lastArrivalTime", time];
 
                             private _releaseCloseGain =
-                                _vehicle getVariable
-                                [
-                                    "gau_gau8_lastCloseGain",
-                                    0
-                                ];
+                                _vehicle getVariable ["gau_gau8_lastCloseGain", 0];
 
                             private _releaseMidGain =
-                                _vehicle getVariable
-                                [
-                                    "gau_gau8_lastMidBodyGain",
-                                    0
-                                ];
+                                _vehicle getVariable ["gau_gau8_lastMidBodyGain", 0];
+
+                            if (_releaseMidGain <= 0.000001) then
+                            {
+                                _releaseMidGain =
+                                    _vehicle getVariable ["gau_gau8_lastMidGain", 0];
+                            };
 
                             private _releaseFarGain =
-                                _vehicle getVariable
+                                _vehicle getVariable ["gau_gau8_lastFarBodyGain", 0];
+
+                            if (_releaseFarGain <= 0.000001) then
+                            {
+                                _releaseFarGain =
+                                    _vehicle getVariable ["gau_gau8_lastFarGain", 0];
+                            };
+
+                            private _lastMRGrainTick =
+                                _vehicle getVariable ["gau_gau8_v27_23LastMRGrainTick", -1];
+
+                            private _sourceOffset =
+                                _vehicle getVariable ["gau_gau8_v27_23LastMRSourceOffset", 0];
+
+                            private _lastMRPitch =
+                                _vehicle getVariable ["gau_gau8_v27_23LastMRPitch", 1.0];
+
+                            private _cycleDuration =
+                                _vehicle getVariable ["gau_gau8_v27_23MRCycleDuration", 5.129];
+
+                            private _phaseStep = 0.1115;
+                            private _phaseTime = 0;
+
+                            if (_lastMRGrainTick >= 0) then
+                            {
+                                _phaseTime =
+                                    _sourceOffset +
+                                    (((diag_tickTime - _lastMRGrainTick) max 0) * _lastMRPitch);
+                            };
+
+                            if (_cycleDuration > 0.001) then
+                            {
+                                _phaseTime = _phaseTime mod _cycleDuration;
+                            };
+
+                            private _phaseIndex = floor (_phaseTime / _phaseStep);
+                            _phaseIndex = _phaseIndex max 0 min 45;
+
+                            private _releaseClosePaths =
+                                _vehicle getVariable ["gau_gau8_mrCloseReleasePaths", []];
+                            private _releaseMidPaths =
+                                _vehicle getVariable ["gau_gau8_mrMidReleasePaths", []];
+                            private _releaseFarPaths =
+                                _vehicle getVariable ["gau_gau8_mrFarReleasePaths", []];
+
+                            private _phaseCount =
+                                (count _releaseClosePaths) min
+                                (count _releaseMidPaths) min
+                                (count _releaseFarPaths);
+
+                            if (_phaseCount > 0) then
+                            {
+                                _phaseIndex = _phaseIndex mod _phaseCount;
+
+                                private _mrMaster =
+                                    (
+                                        _vehicle getVariable
+                                        [
+                                            "gau_gau8_mrDirectMaster",
+                                            missionNamespace getVariable ["gau_gau8_mrDirectMasterDefault", 5.0]
+                                        ]
+                                    ) max 0 min 5;
+
+                                private _releaseVoices =
                                 [
-                                    "gau_gau8_lastFarBodyGain",
-                                    0
+                                    [_releaseClosePaths select _phaseIndex, _releaseCloseGain],
+                                    [_releaseMidPaths select _phaseIndex, _releaseMidGain],
+                                    [_releaseFarPaths select _phaseIndex, _releaseFarGain]
                                 ];
+
+                                {
+                                    _x params ["_releasePath", "_releaseGain"];
+
+                                    if (_releaseGain > 0.000001) then
+                                    {
+                                        [
+                                            _vehicle,
+                                            _releasePath,
+                                            _releasePosition,
+                                            _releaseArrival,
+                                            _mrMaster * _releaseGain,
+                                            1.0,
+                                            50000
+                                        ]
+                                        call gau_gau8_fnc_queueSoundArrival;
+                                    };
+                                }
+                                forEach _releaseVoices;
+                            };
 
                             private _releaseCockpitBodyGain =
-                                _vehicle getVariable
-                                [
-                                    "gau_gau8_lastCockpitBodyGain",
-                                    0
-                                ];
-
+                                _vehicle getVariable ["gau_gau8_lastCockpitBodyGain", 0];
                             private _releaseCockpitAirframeGain =
-                                _vehicle getVariable
-                                [
-                                    "gau_gau8_lastCockpitAirframeGain",
-                                    0
-                                ];
-
-                            private _releaseReflectionGain =
-                                _vehicle getVariable
-                                [
-                                    "gau_gau8_lastReflectionGain",
-                                    0
-                                ];
-
-                            private _releaseReflectionPosition =
-                                _vehicle getVariable
-                                [
-                                    "gau_gau8_lastReflectionPositionASL",
-                                    +_releasePosition
-                                ];
-
-                            private _releaseReflectionArrival =
-                                _vehicle getVariable
-                                [
-                                    "gau_gau8_lastReflectionArrivalTime",
-                                    _releaseArrival
-                                ];
-
-                            private _closeEndPath =
-                                _vehicle getVariable
-                                [
-                                    "gau_gau8_closeBodyEndPath",
-                                    ""
-                                ];
-
-                            private _midEndPath =
-                                _vehicle getVariable
-                                [
-                                    "gau_gau8_midBodyEndPath",
-                                    ""
-                                ];
-
-                            private _farEndPath =
-                                _vehicle getVariable
-                                [
-                                    "gau_gau8_endPath",
-                                    ""
-                                ];
-
+                                _vehicle getVariable ["gau_gau8_lastCockpitAirframeGain", 0];
                             private _cockpitBodyEndPath =
-                                _vehicle getVariable
-                                [
-                                    "gau_gau8_cockpitBodyEndPath",
-                                    ""
-                                ];
-
+                                _vehicle getVariable ["gau_gau8_cockpitBodyEndPath", ""];
                             private _cockpitAirframeEndPath =
-                                _vehicle getVariable
-                                [
-                                    "gau_gau8_cockpitAirframeEndPath",
-                                    ""
-                                ];
-private _playCockpitSound =
-                                _vehicle getVariable
-                                [
-                                    "gau_gau8_playCockpitSound",
-                                    {}
-                                ];
+                                _vehicle getVariable ["gau_gau8_cockpitAirframeEndPath", ""];
+                            private _playCockpitSound =
+                                _vehicle getVariable ["gau_gau8_playCockpitSound", {}];
 
                             [
-                                _vehicle,
-                                _farEndPath,
-                                _releasePosition,
-                                _releaseArrival,
-                                4.2 * _releaseFarGain,
-                                1.0,
-                                50000
-                            ]
-                            call gau_gau8_fnc_queueSoundArrival;
-
-                            [
-                                _vehicle,
-                                _closeEndPath,
-                                _releasePosition,
-                                _releaseArrival,
-                                4.2 * _releaseCloseGain,
-                                1.0,
-                                50000
-                            ]
-                            call gau_gau8_fnc_queueSoundArrival;
-
-                            [
-                                _vehicle,
-                                _midEndPath,
-                                _releasePosition,
-                                _releaseArrival,
-                                4.2 * _releaseMidGain,
-                                1.0,
-                                50000
-                            ]
-                            call gau_gau8_fnc_queueSoundArrival;
-[
                                 _vehicle,
                                 _cockpitBodyEndPath,
                                 1.55 * _releaseCockpitBodyGain,
                                 1.0
-                            ]
-                            call _playCockpitSound;
+                            ] call _playCockpitSound;
 
                             [
                                 _vehicle,
                                 _cockpitAirframeEndPath,
                                 1.70 * _releaseCockpitAirframeGain,
                                 1.0
-                            ]
-                            call _playCockpitSound;
+                            ] call _playCockpitSound;
 
-                            /*
-                                Reset only the emission scheduler. Already
-                                emitted sounds and queued arrivals continue
-                                naturally and are never truncated here.
-                            */
-                            _vehicle setVariable
-                            [
-                                "gau_gau8_shotCount",
-                                0
-                            ];
-
-                            _vehicle setVariable
-                            [
-                                "gau_gau8_nextGrainTick",
-                                -1
-                            ];
-
-                            _vehicle setVariable
-                            [
-                                "gau_gau8_nextCockpitGrainTick",
-                                -1
-                            ];
-
-                            _vehicle setVariable
-                            [
-                                "gau_gau8_lastCockpitGrainIndex",
-                                -1
-                            ];
-_vehicle setVariable
-                            [
-                                "gau_gau8_lastGrainIndex",
-                                -1
-                            ];
-
-                            _vehicle setVariable
-                            [
-                                "gau_gau8_monitorRunning",
-                                false
-                            ];
+                            _vehicle setVariable ["gau_gau8_shotCount", 0];
+                            _vehicle setVariable ["gau_gau8_nextGrainTick", -1];
+                            _vehicle setVariable ["gau_gau8_nextMechanicalGrainTick", -1];
+                            _vehicle setVariable ["gau_gau8_nextCockpitGrainTick", -1];
+                            _vehicle setVariable ["gau_gau8_lastCockpitGrainIndex", -1];
+                            _vehicle setVariable ["gau_gau8_lastGrainIndex", -1];
+                            _vehicle setVariable ["gau_gau8_v27_23LastMRGrainTick", -1];
+                            _vehicle setVariable ["gau_gau8_monitorRunning", false];
                         };
                     };
                 };

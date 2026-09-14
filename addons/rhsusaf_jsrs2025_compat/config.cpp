@@ -31,6 +31,18 @@ class CfgWeapons
 
     class RHS_weap_gau8: Gatling_30mm_Plane_CAS_01_F
     {
+        magazines[] =
+        {
+            "gau_gau8_rhs_mag_1150Rnd_30x173_ripSilent",
+            "gau_gau8_rhs_mag_1150Rnd_30x173_mixed_ripSilent",
+            "gau_gau8_rhs_mag_1000Rnd_30x173_ripSilent",
+            "gau_gau8_rhs_mag_1000Rnd_30x173_mixed_ripSilent",
+            "rhs_mag_1150Rnd_30x173",
+            "rhs_mag_1150Rnd_30x173_mixed",
+            "rhs_mag_1000Rnd_30x173",
+            "rhs_mag_1000Rnd_30x173_mixed"
+        };
+
         class LowROF: LowROF
         {
         };

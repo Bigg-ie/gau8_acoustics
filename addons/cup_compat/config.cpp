@@ -33,6 +33,11 @@ class CfgFunctions
             {
                 preInit = 1;
             };
+
+            class postInit
+            {
+                postInit = 1;
+            };
         };
     };
 };
@@ -43,6 +48,12 @@ class CfgWeapons
 
     class CUP_Vacannon_GAU8_veh: CannonCore
     {
+        magazines[] =
+        {
+            "gau_gau8_CUP_1350Rnd_TE1_Red_Tracer_30mm_GAU8_M_ripSilent",
+            "CUP_1350Rnd_TE1_Red_Tracer_30mm_GAU8_M"
+        };
+
         class halfsec: CannonCore
         {
             weaponSoundEffect = "";
@@ -126,5 +137,45 @@ class CfgWeapons
                 soundSetShot[] = {};
             };
         };
+    };
+};
+
+class CfgAmmo
+{
+    class CUP_B_30mm_CAS_Red_Tracer;
+
+    class gau_gau8_CUP_B_30mm_CAS_Red_Tracer_ripSilent:
+        CUP_B_30mm_CAS_Red_Tracer
+    {
+
+        soundSetExplosion[] =
+        {
+            "gau_GAU8_ImpactLight_SoundSet"
+        };
+
+        soundHit[] = {"", 0, 1};
+        soundHit1[] = {"", 0, 1};
+        soundHit2[] = {"", 0, 1};
+        soundHit3[] = {"", 0, 1};
+        soundHit4[] = {"", 0, 1};
+        soundHit5[] = {"", 0, 1};
+        soundSetSonicCrack[] = {};
+        soundSetBulletFly[] = {};
+        soundFly[] = {"", 0, 1};
+        supersonicCrackNear[] = {"", 0, 1, 1};
+        supersonicCrackFar[] = {"", 0, 1, 1};
+
+        gau_gau8_ripCrackSuppression = 40;
+    };
+};
+
+class CfgMagazines
+{
+    class CUP_1350Rnd_TE1_Red_Tracer_30mm_GAU8_M;
+
+    class gau_gau8_CUP_1350Rnd_TE1_Red_Tracer_30mm_GAU8_M_ripSilent:
+        CUP_1350Rnd_TE1_Red_Tracer_30mm_GAU8_M
+    {
+        ammo = "gau_gau8_CUP_B_30mm_CAS_Red_Tracer_ripSilent";
     };
 };

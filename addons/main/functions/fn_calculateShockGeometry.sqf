@@ -1,25 +1,3 @@
-/*
-    Calculates ideal constant-velocity Mach-cone geometry.
-
-    Parameters:
-        0: Muzzle position, PositionASL
-        1: Initial projectile velocity, Vector3D in m/s
-        2: Listener position, PositionASL
-        3: Speed of sound in m/s; default 343
-
-    Returns:
-        0: Distinct shock is geometrically eligible
-        1: Listener distance downrange along projectile axis
-        2: Listener perpendicular distance from projectile axis
-        3: Projectile speed
-        4: Mach number
-        5: Minimum downrange distance for a distinct shock
-        6: Muzzle-report arrival time
-        7: Shock arrival time
-        8: Shock-to-muzzle separation time
-        9: Retarded shock-emission position, PositionASL
-*/
-
 params
 [
     "_muzzlePositionASL",
@@ -105,12 +83,7 @@ private _machRoot =
         (_mach * _mach) - 1
     );
 
-/*
-    A distinct shock requires a non-negative retarded
-    emission point after the projectile leaves the muzzle.
 
-        x >= d / sqrt(M^2 - 1)
-*/
 private _minimumDownrange =
     _crossTrackDistance /
     _machRoot;
@@ -135,12 +108,7 @@ if (!_isDistinct) exitWith
     ]
 };
 
-/*
-    Retarded-time arrival of the Mach front:
 
-        t_shock =
-            (x + d * sqrt(M^2 - 1)) / v
-*/
 private _shockArrival =
     (
         _downrange +

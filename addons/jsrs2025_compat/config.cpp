@@ -24,6 +24,12 @@ class CfgWeapons
 
     class Gatling_30mm_Plane_CAS_01_F: CannonCore
     {
+        magazines[] =
+        {
+            "gau_gau8_1000Rnd_Gatling_30mm_Plane_CAS_01_F_ripSilent",
+            "1000Rnd_Gatling_30mm_Plane_CAS_01_F"
+        };
+
         class LowROF: Mode_FullAuto
         {
             class BaseSoundModeType;

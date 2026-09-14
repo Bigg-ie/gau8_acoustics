@@ -1,65 +1,22 @@
-/*
-    Emits one due sustain step for an active GAU-8 burst.
-
-    The burst worker calls this independently of weapon Fired callbacks.
-    This keeps external and cockpit grains running through sparse Firewill
-    callbacks and across the release-debounce interval.
-*/
 params ["_vehicle"];
 
-if (isNull _vehicle) exitWith
-{
-    false
-};
+if (isNull _vehicle) exitWith { false };
 
-private _shotCount =
-    _vehicle getVariable
-    [
-        "gau_gau8_shotCount",
-        0
-    ];
-
-if (_shotCount <= 0) exitWith
-{
-    false
-};
+private _shotCount = _vehicle getVariable ["gau_gau8_shotCount", 0];
+if (_shotCount <= 0) exitWith { false };
 
 private _now = diag_tickTime;
+private _nextGrainTick = _vehicle getVariable ["gau_gau8_nextGrainTick", -1];
+private _nextMechanicalGrainTick = _vehicle getVariable ["gau_gau8_nextMechanicalGrainTick", -1];
+private _nextCockpitGrainTick = _vehicle getVariable ["gau_gau8_nextCockpitGrainTick", -1];
 
-private _nextGrainTick =
-    _vehicle getVariable
-    [
-        "gau_gau8_nextGrainTick",
-        -1
-    ];
+private _mrDue = (_nextGrainTick >= 0) && {_now >= _nextGrainTick};
+private _mechanicalDue = (_nextMechanicalGrainTick >= 0) && {_now >= _nextMechanicalGrainTick};
+private _cockpitDue = (_nextCockpitGrainTick >= 0) && {_now >= _nextCockpitGrainTick};
 
-private _nextCockpitGrainTick =
-    _vehicle getVariable
-    [
-        "gau_gau8_nextCockpitGrainTick",
-        -1
-    ];
+if (!_mrDue && {!_mechanicalDue} && {!_cockpitDue}) exitWith { false };
 
-private _externalDue =
-    (_nextGrainTick >= 0) &&
-    {_now >= _nextGrainTick};
-
-private _cockpitDue =
-    (_nextCockpitGrainTick >= 0) &&
-    {_now >= _nextCockpitGrainTick};
-
-if (!_externalDue && {!_cockpitDue}) exitWith
-{
-    false
-};
-
-private _acousticState =
-    [
-        _vehicle,
-        objNull
-    ]
-    call gau_gau8_fnc_getAcousticState;
-
+private _acousticState = [_vehicle, objNull] call gau_gau8_fnc_getAcousticState;
 _acousticState params
 [
     "_listenerPositionASL",
@@ -97,447 +54,176 @@ _acousticState params
     "_objectHitCount"
 ];
 
-private _arrivalTime =
-    time + _propagationDelay;
+private _arrivalTime = time + _propagationDelay;
 
-private _reflectionArrivalTime =
-    time + _reflectionPropagationDelay;
+_vehicle setVariable ["gau_gau8_lastEmissionPositionASL", +_emissionPositionASL];
+_vehicle setVariable ["gau_gau8_lastArrivalTime", _arrivalTime];
+_vehicle setVariable ["gau_gau8_lastCloseGain", _closeBodyGain];
+_vehicle setVariable ["gau_gau8_lastMidBodyGain", _midBodyGain];
+_vehicle setVariable ["gau_gau8_lastFarBodyGain", _farBodyGain];
+_vehicle setVariable ["gau_gau8_lastMechanicalGain", _mechanicalGain];
+_vehicle setVariable ["gau_gau8_lastCockpitBodyGain", _cockpitBodyGain];
+_vehicle setVariable ["gau_gau8_lastCockpitAirframeGain", _cockpitAirframeGain];
 
-/*
-    Keep the release stage attached to the most recently emitted sustain
-    state rather than the last sparse Firewill projectile callback.
-*/
-_vehicle setVariable
-[
-    "gau_gau8_lastEmissionPositionASL",
-    +_emissionPositionASL
-];
+if (_mrDue) then
+{
+    private _gapMin = floor ((_vehicle getVariable ["gau_gau8_sustainGapMinShots", 5]) max 1 min 20);
+    private _gapSpread = floor ((_vehicle getVariable ["gau_gau8_sustainGapSpreadShots", 4]) max 1 min 20);
+    private _nextGapShots = _gapMin + floor (random _gapSpread);
 
-_vehicle setVariable
-[
-    "gau_gau8_lastArrivalTime",
-    _arrivalTime
-];
+    _vehicle setVariable ["gau_gau8_nextGrainTick", _now + (_nextGapShots / 65)];
 
-_vehicle setVariable
-[
-    "gau_gau8_lastCloseGain",
-    _closeBodyGain
-];
+    private _closePaths = _vehicle getVariable ["gau_gau8_mrCloseGrainPaths", []];
+    private _midPaths = _vehicle getVariable ["gau_gau8_mrMidGrainPaths", []];
+    private _farPaths = _vehicle getVariable ["gau_gau8_mrFarGrainPaths", []];
+    private _sourceOffsets = _vehicle getVariable ["gau_gau8_v27_23MRSourceOffsets", []];
 
-_vehicle setVariable
-[
-    "gau_gau8_lastMidBodyGain",
-    _midBodyGain
-];
+    private _grainCount = (count _closePaths) min (count _midPaths) min (count _farPaths);
 
-_vehicle setVariable
-[
-    "gau_gau8_lastFarBodyGain",
-    _farBodyGain
-];
+    if (
+        (_grainCount > 0) &&
+        {(_closeBodyGain > 0.000001) || (_midBodyGain > 0.000001) || (_farBodyGain > 0.000001)}
+    ) then
+    {
+        private _lastIndex = _vehicle getVariable ["gau_gau8_lastGrainIndex", -1];
+        private _grainIndex = floor (random _grainCount);
 
-_vehicle setVariable
-[
-    "gau_gau8_lastMechanicalGain",
-    _mechanicalGain
-];
+        if (_grainIndex == _lastIndex) then
+        {
+            _grainIndex = (_grainIndex + 1) mod _grainCount;
+        };
 
-_vehicle setVariable
-[
-    "gau_gau8_lastCockpitBodyGain",
-    _cockpitBodyGain
-];
+        private _mrMaster =
+            (
+                _vehicle getVariable
+                [
+                    "gau_gau8_mrDirectMaster",
+                    missionNamespace getVariable ["gau_gau8_mrDirectMasterDefault", 5.0]
+                ]
+            ) max 0 min 5;
 
-_vehicle setVariable
-[
-    "gau_gau8_lastCockpitAirframeGain",
-    _cockpitAirframeGain
-];
+        private _pitchVariation =
+            (
+                missionNamespace getVariable ["gau_gau8_v27_23MRPitchVariation", 0.0]
+            ) max 0 min 0.02;
 
-_vehicle setVariable
-[
-    "gau_gau8_lastReflectionGain",
-    _reflectionGain
-];
+        private _pitch = 1.0;
+        if (_pitchVariation > 0.000001) then
+        {
+            _pitch = 1.0 - _pitchVariation + random (2 * _pitchVariation);
+        };
 
-_vehicle setVariable
-[
-    "gau_gau8_lastReflectionPositionASL",
-    +_reflectionPositionASL
-];
+        private _voices =
+        [
+            [_closePaths select _grainIndex, _closeBodyGain],
+            [_midPaths select _grainIndex, _midBodyGain],
+            [_farPaths select _grainIndex, _farBodyGain]
+        ];
 
-_vehicle setVariable
-[
-    "gau_gau8_lastReflectionArrivalTime",
-    _reflectionArrivalTime
-];
+        {
+            _x params ["_path", "_gain"];
 
-/*
-    Cockpit sustain.
-*/
+            if (_gain > 0.000001) then
+            {
+                [
+                    _vehicle,
+                    _path,
+                    _emissionPositionASL,
+                    _arrivalTime,
+                    _mrMaster * _gain,
+                    _pitch,
+                    50000
+                ]
+                call gau_gau8_fnc_queueSoundArrival;
+            };
+        }
+        forEach _voices;
+
+        _vehicle setVariable ["gau_gau8_lastGrainIndex", _grainIndex];
+        _vehicle setVariable ["gau_gau8_v27_23LastMRGrainTick", _now];
+        _vehicle setVariable ["gau_gau8_v27_23LastMRPitch", _pitch];
+        _vehicle setVariable
+        [
+            "gau_gau8_v27_23LastMRSourceOffset",
+            _sourceOffsets param [_grainIndex, 0]
+        ];
+    };
+};
+
 if (_cockpitDue) then
 {
     private _cockpitIntervalSeconds =
-        (
-            _vehicle getVariable
-            [
-                "gau_gau8_cockpitIntervalSeconds",
-                22 / 65
-            ]
-        )
-        max 0.25
-        min 0.45;
+        (_vehicle getVariable ["gau_gau8_cockpitIntervalSeconds", 22 / 65]) max 0.25 min 0.45;
 
-    /*
-        Advance from the actual emission tick rather than the previous
-        deadline. This prevents catch-up stacking after a frame stall.
-    */
-    _vehicle setVariable
-    [
-        "gau_gau8_nextCockpitGrainTick",
-        _now + _cockpitIntervalSeconds
-    ];
+    _vehicle setVariable ["gau_gau8_nextCockpitGrainTick", _now + _cockpitIntervalSeconds];
 
-    private _cockpitBodyPaths =
-        _vehicle getVariable
-        [
-            "gau_gau8_cockpitBodyPaths",
-            []
-        ];
-
-    private _cockpitAirframePaths =
-        _vehicle getVariable
-        [
-            "gau_gau8_cockpitAirframePaths",
-            []
-        ];
-
-    private _cockpitGrainCount =
-        (count _cockpitBodyPaths)
-        min
-        (count _cockpitAirframePaths);
+    private _cockpitBodyPaths = _vehicle getVariable ["gau_gau8_cockpitBodyPaths", []];
+    private _cockpitAirframePaths = _vehicle getVariable ["gau_gau8_cockpitAirframePaths", []];
+    private _cockpitGrainCount = (count _cockpitBodyPaths) min (count _cockpitAirframePaths);
 
     if (
         (_cockpitGrainCount > 0) &&
-        {
-            (_cockpitBodyGain > 0.000001) ||
-            (_cockpitAirframeGain > 0.000001)
-        }
+        {(_cockpitBodyGain > 0.000001) || (_cockpitAirframeGain > 0.000001)}
     ) then
     {
-        private _lastCockpitIndex =
-            _vehicle getVariable
-            [
-                "gau_gau8_lastCockpitGrainIndex",
-                -1
-            ];
-
-        private _cockpitGrainIndex =
-            floor
-            (
-                random _cockpitGrainCount
-            );
+        private _lastCockpitIndex = _vehicle getVariable ["gau_gau8_lastCockpitGrainIndex", -1];
+        private _cockpitGrainIndex = floor (random _cockpitGrainCount);
 
         if (_cockpitGrainIndex == _lastCockpitIndex) then
         {
-            _cockpitGrainIndex =
-                (_cockpitGrainIndex + 1)
-                mod
-                _cockpitGrainCount;
+            _cockpitGrainIndex = (_cockpitGrainIndex + 1) mod _cockpitGrainCount;
         };
 
-        private _cockpitPitch =
-            0.990 + random 0.020;
-
-        private _cockpitBodyVolume =
-            1.55 + random 0.20;
-
-        private _cockpitAirframeVolume =
-            1.75 + random 0.25;
-
-        private _playCockpitSound =
-            _vehicle getVariable
-            [
-                "gau_gau8_playCockpitSound",
-                {}
-            ];
+        private _cockpitPitch = 0.990 + random 0.020;
+        private _cockpitBodyVolume = 1.55 + random 0.20;
+        private _cockpitAirframeVolume = 1.75 + random 0.25;
+        private _playCockpitSound = _vehicle getVariable ["gau_gau8_playCockpitSound", {}];
 
         [
             _vehicle,
             _cockpitBodyPaths select _cockpitGrainIndex,
             _cockpitBodyVolume * _cockpitBodyGain,
             _cockpitPitch
-        ]
-        call _playCockpitSound;
+        ] call _playCockpitSound;
 
         [
             _vehicle,
             _cockpitAirframePaths select _cockpitGrainIndex,
             _cockpitAirframeVolume * _cockpitAirframeGain,
             _cockpitPitch
-        ]
-        call _playCockpitSound;
+        ] call _playCockpitSound;
 
-        _vehicle setVariable
-        [
-            "gau_gau8_lastCockpitGrainIndex",
-            _cockpitGrainIndex
-        ];
+        _vehicle setVariable ["gau_gau8_lastCockpitGrainIndex", _cockpitGrainIndex];
     };
 };
 
-/*
-    External sustain.
-*/
-if (_externalDue) then
+if (_mechanicalDue) then
 {
-    private _sustainGapMinShots =
-        floor
-        (
-            (
-                _vehicle getVariable
-                [
-                    "gau_gau8_sustainGapMinShots",
-                    5
-                ]
-            )
-            max 1
-            min 20
-        );
+    private _gapMin = floor ((_vehicle getVariable ["gau_gau8_sustainGapMinShots", 5]) max 1 min 20);
+    private _gapSpread = floor ((_vehicle getVariable ["gau_gau8_sustainGapSpreadShots", 4]) max 1 min 20);
+    private _nextGapShots = _gapMin + floor (random _gapSpread);
 
-    private _sustainGapSpreadShots =
-        floor
-        (
-            (
-                _vehicle getVariable
-                [
-                    "gau_gau8_sustainGapSpreadShots",
-                    4
-                ]
-            )
-            max 1
-            min 20
-        );
+    _vehicle setVariable ["gau_gau8_nextMechanicalGrainTick", _now + (_nextGapShots / 65)];
 
-    private _nextGapShots =
-        _sustainGapMinShots +
-        floor
-        (
-            random _sustainGapSpreadShots
-        );
+    private _mechanicalPaths = _vehicle getVariable ["gau_gau8_closeMechanicalPaths", []];
+    private _mechanicalCount = count _mechanicalPaths;
 
-    private _nextGapSeconds =
-        _nextGapShots / 65;
-
-    _vehicle setVariable
-    [
-        "gau_gau8_nextGrainTick",
-        _now + _nextGapSeconds
-    ];
-
-    private _farPaths =
-        _vehicle getVariable
-        [
-            "gau_gau8_grainPaths",
-            []
-        ];
-
-    private _closeBodyPaths =
-        _vehicle getVariable
-        [
-            "gau_gau8_closeBodyPaths",
-            []
-        ];
-
-    private _midBodyPaths =
-        _vehicle getVariable
-        [
-            "gau_gau8_midBodyPaths",
-            []
-        ];
-
-    private _closeMechanicalPaths =
-        _vehicle getVariable
-        [
-            "gau_gau8_closeMechanicalPaths",
-            []
-        ];
-
-    private _grainCount =
-        ((count _farPaths) min (count _closeBodyPaths))
-        min
-        (count _midBodyPaths);
-
-    if (
-        (_grainCount > 0) &&
-        {
-            (_farBodyGain > 0.000001) ||
-            (_midBodyGain > 0.000001) ||
-            (_closeBodyGain > 0.000001) ||
-            (_mechanicalGain > 0.000001)
-        }
-    ) then
+    if ((_mechanicalCount > 0) && {_mechanicalGain > 0.000001}) then
     {
-        private _lastIndex =
-            _vehicle getVariable
-            [
-                "gau_gau8_lastGrainIndex",
-                -1
-            ];
-
-        private _grainIndex =
-            floor
-            (
-                random _grainCount
-            );
-
-        if (_grainIndex == _lastIndex) then
-        {
-            _grainIndex =
-                (_grainIndex + 1)
-                mod
-                _grainCount;
-        };
-
-        private _pitch =
-            0.985 + random 0.030;
-
-        private _sustainBaseVolume =
-            (
-                _vehicle getVariable
-                [
-                    "gau_gau8_sustainBaseVolume",
-                    3.55
-                ]
-            )
-            max 0
-            min 12;
-
-        private _sustainVolumeVariation =
-            (
-                _vehicle getVariable
-                [
-                    "gau_gau8_sustainVolumeVariation",
-                    0.18
-                ]
-            )
-            max 0
-            min 2;
-
-        private _baseVolume =
-            _sustainBaseVolume +
-            (random _sustainVolumeVariation);
+        private _mechanicalIndex = floor (random _mechanicalCount);
+        private _mechanicalPitch = 0.985 + random 0.030;
+        private _mechanicalVolume = 3.55 + random 0.18;
 
         [
             _vehicle,
-            _farPaths select _grainIndex,
+            _mechanicalPaths select _mechanicalIndex,
             _emissionPositionASL,
             _arrivalTime,
-            _baseVolume * _farBodyGain,
-            _pitch,
-            50000
+            _mechanicalVolume * _mechanicalGain,
+            _mechanicalPitch,
+            500
         ]
         call gau_gau8_fnc_queueSoundArrival;
-
-        [
-            _vehicle,
-            _closeBodyPaths select _grainIndex,
-            _emissionPositionASL,
-            _arrivalTime,
-            _baseVolume * _closeBodyGain,
-            _pitch,
-            50000
-        ]
-        call gau_gau8_fnc_queueSoundArrival;
-
-        [
-            _vehicle,
-            _midBodyPaths select _grainIndex,
-            _emissionPositionASL,
-            _arrivalTime,
-            _baseVolume * _midBodyGain,
-            _pitch,
-            50000
-        ]
-        call gau_gau8_fnc_queueSoundArrival;
-
-        /*
-            Preserve the existing synchronized ground-response layer.
-        */
-        if (_reflectionGain > 0.000001) then
-        {
-            private _reflectionMidNumerator =
-                (0.85 * _closeBodyGain) +
-                (0.75 * _midBodyGain);
-
-            private _reflectionFarNumerator =
-                (0.25 * _midBodyGain) +
-                _farBodyGain;
-
-            private _reflectionSpectralTotal =
-                _reflectionMidNumerator +
-                _reflectionFarNumerator;
-
-            if (_reflectionSpectralTotal > 0.000001) then
-            {
-                private _reflectionMidGain =
-                    _reflectionGain *
-                    (
-                        _reflectionMidNumerator /
-                        _reflectionSpectralTotal
-                    );
-
-                private _reflectionFarGain =
-                    _reflectionGain *
-                    (
-                        _reflectionFarNumerator /
-                        _reflectionSpectralTotal
-                    );
-
-                [
-                    _vehicle,
-                    _midBodyPaths select _grainIndex,
-                    _reflectionPositionASL,
-                    _reflectionArrivalTime,
-                    _baseVolume * _reflectionMidGain,
-                    _pitch,
-                    50000
-                ]
-                call gau_gau8_fnc_queueSoundArrival;
-
-                [
-                    _vehicle,
-                    _farPaths select _grainIndex,
-                    _reflectionPositionASL,
-                    _reflectionArrivalTime,
-                    _baseVolume * _reflectionFarGain,
-                    _pitch,
-                    50000
-                ]
-                call gau_gau8_fnc_queueSoundArrival;
-            };
-        };
-
-        if (_grainIndex < (count _closeMechanicalPaths)) then
-        {
-            [
-                _vehicle,
-                _closeMechanicalPaths select _grainIndex,
-                _emissionPositionASL,
-                _arrivalTime,
-                _baseVolume * _mechanicalGain,
-                _pitch,
-                500
-            ]
-            call gau_gau8_fnc_queueSoundArrival;
-        };
-
-        _vehicle setVariable
-        [
-            "gau_gau8_lastGrainIndex",
-            _grainIndex
-        ];
     };
 };
 
