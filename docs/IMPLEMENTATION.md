@@ -2,7 +2,7 @@
 
 ## External cannon report
 
-The external report uses overlapping long grains derived from the current MR source material. Close, medium, and far banks are scheduled independently of the projectile rip. Each sustain emission recalculates source position, distance weighting, directivity, obstruction, and propagation delay.
+The external report uses overlapping long grains derived from the current MR source material. Close, medium, and far banks are scheduled independently of the supersonic projectile crack field. Each sustain emission recalculates source position, distance weighting, directivity, obstruction, and propagation delay.
 
 Sustain grains are 480 ms source files. Emission spacing is randomized over five to eight 65 Hz firing intervals. Attack audio overlaps the first sustain emissions, and release audio starts while existing sustain grains decay. No sustain voice is hard-stopped at trigger release.
 
@@ -25,15 +25,15 @@ Close, medium, and far report gains are recalculated for every emission. The med
 
 Terrain and object obstruction are evaluated at arrival. Ground-interference coloration is applied as a single-voice gain response; the default MR ground-response depth is `0.30`. Sparse environmental tails are selected from the existing open and enclosed tail banks.
 
-## Ballistic rip
+## Supersonic projectile cracks
 
-The rip system uses projectile shock geometry rather than the cannon report's close/mid/far weights. It includes direct crack, body/detail support, reflection field, scatter, and terminal/environmental tails.
+The supersonic crack system uses Mach-wave geometry rather than the cannon report's close/mid/far weights. It includes the direct N-wave crack, body/detail support, reflection field, scatter, and terminal/environmental tails.
 
-Default rip output master:
+Default supersonic-crack output master:
 
 - `gau_gau8_ripOutputMaster = 0.40`
 
-The internal balance of dry crack, body, detail, reflections, scatter, and tails is unchanged from the working pre-1.2.0 mix.
+The internal balance of the direct crack, body, detail, reflections, scatter, and tails is unchanged from the working pre-1.2.0 mix.
 
 ## Cockpit audio
 

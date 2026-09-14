@@ -1,68 +1,51 @@
 # GAU-8 Acoustic Simulation
 
-A sound replacement mod for the **GAU-8/A Avenger** in **Arma 3**.
+Current release: **1.2.0**
 
-The mod replaces the standard cannon report with a scripted acoustic system designed to give sustained GAU-8 fire more convincing scale, distance, direction, and duration. It preserves the original aircraft, weapons, ammunition, projectiles, impacts, and ballistics.
+A client-side acoustic replacement for the **GAU-8/A Avenger** in **Arma 3**. The mod replaces the audible cannon report and supersonic projectile crack field for supported GAU-8 weapons while leaving aircraft systems, weapon ballistics, damage, magazines, projectiles, and impact behavior under the control of Arma 3 or the originating aircraft mod.
 
 ## Features
 
-- Speed-of-sound propagation delay
-- Close, medium, and distant sound layers
-- Smooth distance-dependent spectral transitions
+- Speed-of-sound propagation delay for the external cannon report
+- Continuous long-grain cannon body with close, medium, and far distance banks
+- Per-emission distance weighting and moving-source positioning
+- 65 Hz stationary firing-pulse reference
+- Source-referenced Doppler: full receding shift and an approaching shift capped at the source-recording pitch
 - Muzzle directivity
-- Approaching and receding Doppler shift
 - Terrain and object obstruction
-- Ground-interference response
-- Environmental decay and diffuse tails
-- Dedicated internal cockpit audio
-- Sustained-burst start, body, and end behavior
-- Native projectile cracks and impact sounds
+- Ground-interference coloration
+- Sparse environmental decay and reflection tails
+- Independent supersonic projectile crack model with Mach-wave geometry
+- Dedicated cockpit mix
+- Burst attack, sustain, and release behavior without hard voice cutoffs
 - AI firing-mode support
-- Optional compatibility with RHSUSAF, Firewill, and JSRS Soundmod 2025
+- Optional compatibility with RHSUSAF, Firewill, USAF, CUP, and JSRS Soundmod 2025
 
-## Supported aircraft
+## Supported weapons
 
-| Mod | Aircraft | Weapon |
-|---|---|---|
+| Source | Aircraft / family | Weapon |
+| --- | --- | --- |
 | Arma 3 | A-164 Wipeout | `Gatling_30mm_Plane_CAS_01_F` |
 | RHSUSAF | A-10A | `RHS_weap_gau8` |
-| Firewill | A-10C Warthog | `FIR_GAU8` |
+| Firewill | A-10C | `FIR_GAU8` |
+| USAF | A-10C family | `USAF_GAU8_GUN` |
+| CUP | A-10 variants | `CUP_Vacannon_GAU8_veh` |
 
-The base mod does not require RHSUSAF, Firewill, or JSRS. Compatibility components activate only when their corresponding addons are loaded.
+Compatibility components load only when their required addons are present.
 
-## What the mod changes
+## Acoustic model
 
-The mod replaces the audible cannon report for supported GAU-8 weapons.
+The external report is emitted from the historical firing position and delayed using a nominal sound speed of 343 m/s. Close, medium, and far report banks are recalculated as the aircraft moves, so a pass can migrate through the distance field without freezing the first-shot geometry.
 
-It does not intentionally modify:
+The stationary cannon pulse reference is 65 Hz. The current source recording contains a higher pulse rate because it was captured from an aircraft moving toward the target. Runtime pitch therefore derives the stationary state downward from the source and allows approaching Doppler to rise back toward the source pitch. Receding Doppler remains fully active.
 
-- Rate of fire
-- Ammunition capacity
-- Damage or penetration
-- Muzzle velocity
-- Dispersion
-- Recoil
-- Tracers
-- Projectile behavior
-- Impact effects
-- Aircraft flight models
-- Aircraft systems or loadouts
+The supersonic projectile crack field is modeled independently of the cannon-body level and distance-bank system. Its default output master in 1.2.0 is `0.40`.
 
-Third-party weapon modes, magazines, ammunition, and impact behavior remain controlled by their original mods.
+Cockpit listeners use a separate internal mix and do not receive the same free-field presentation as external listeners.
 
-## Acoustic behavior
+## What the mod does not change
 
-External cannon audio is emitted from the weapon's firing position and delayed according to distance using a nominal sound speed of 343 m/s. This means distant observers see the aircraft fire before the main report arrives.
-
-The sound changes with distance:
-
-- Close range emphasizes mechanical detail and a brighter cannon body.
-- Medium range transitions toward a heavier and broader report.
-- Long range emphasizes the distant body and environmental decay.
-
-The system also accounts for listener angle, source motion, obstruction, and ground interaction. Cockpit listeners receive a separate internal mix without the external free-field delay.
-
-Native Arma or third-party projectile cracks, fly-bys, and impacts are retained.
+The mod does not intentionally alter rate of fire, ammunition capacity, damage, penetration, muzzle velocity, dispersion, recoil, tracers, projectile physics, aircraft flight models, aircraft systems, or loadouts.
 
 ## Installation
 
@@ -70,62 +53,22 @@ Native Arma or third-party projectile cracks, fly-bys, and impacts are retained.
 
 1. Subscribe to the mod.
 2. Enable it in the Arma 3 Launcher.
-3. Enable any optional supported aircraft or sound mods.
+3. Enable any supported optional aircraft or sound mods.
 4. Start Arma 3.
 
-Do not load a local development build and the Steam Workshop copy at the same time.
+Do not load a local development build and the Workshop copy at the same time.
 
 ### Manual installation
 
-Place the release folder in the Arma 3 directory or another Launcher-monitored location, then add it through the Arma 3 Launcher.
-
-A normal release contains:
-
-```text
-addons/
-keys/
-mod.cpp
-LICENSE
-```
-
-Signed PBOs and their matching `.bisign` files are located in `addons/`. The public `.bikey` is located in `keys/`.
-
-## Optional compatibility
-
-<!-- gau8-compat-start -->
-### USAF and CUP A-10 Compatibility
-
-| Component | Registered weapon | Required addon |
-| --- | --- | --- |
-| `gau_gau8_usaf_compat` | Registers `USAF_GAU8_GUN` and suppresses the original USAF A-10C cannon report | `USAF_A10_C` |
-| `gau_gau8_cup_compat` | Registers `CUP_Vacannon_GAU8_veh` and suppresses the original CUP GAU-8 cannon report | `CUP_Weapons_VehicleWeapons` |
-<!-- gau8-compat-end -->
-
-### RHSUSAF
-
-Supports the RHS A-10A and both GAU-8 firing modes while preserving the original RHS magazines, ammunition, projectiles, and impacts.
-
-### Firewill
-
-Supports the Firewill A-10C and its GAU-8/A Avenger implementation while preserving Firewill loadout and ammunition behavior.
-
-### JSRS Soundmod 2025
-
-An optional compatibility component suppresses overlapping JSRS cannon reports so the scripted GAU-8 sound is not doubled.
-
-Third-party updates may change weapon or sound configuration. Report compatibility regressions with the affected mod versions and loadout.
+Use the contents of the HEMTT release directory or the packaged release ZIP. A signed release contains the built PBOs, signatures, public key, and license generated by the release process.
 
 ## Multiplayer
 
-Clients that should hear the replacement acoustic system need the mod loaded.
-
-For servers using signature verification, install the included public key in the server's `keys` directory and distribute the signed release files to clients.
-
-Matching client and server modsets are recommended for predictable behavior.
+Clients that should hear the replacement acoustic system need the mod loaded. Servers using signature verification should install the included public key and distribute the matching signed release.
 
 ## Building from source
 
-### Requirements
+Requirements:
 
 - Arma 3
 - Arma 3 Tools
@@ -140,11 +83,11 @@ git clone https://github.com/Bigg-ie/gau8_acoustics.git
 Set-Location .\gau8_acoustics
 ```
 
-Development build:
+Development validation:
 
 ```powershell
 hemtt check
-hemtt dev
+hemtt build
 ```
 
 Release build:
@@ -154,41 +97,28 @@ hemtt check
 hemtt release
 ```
 
-Use `.hemttout\release` for distribution. Do not distribute `.hemttout\dev`.
+Release output is written under `.hemttout\release`.
+
+## Repository versioning
+
+Public releases use semantic versioning. The current source release is **1.2.0** and should be tagged `v1.2.0`. Internal V27 development numbers are not part of the public release version.
 
 ## Known limitations
 
-- The acoustic model is a gameplay-oriented approximation, not a full wave-propagation simulation.
+- The model is a gameplay-oriented acoustic approximation rather than a full wave-propagation simulation.
 - Sound speed is fixed at approximately 343 m/s.
-- Obstruction and ground interaction depend on Arma's available world geometry and scripting precision.
-- Extremely low or unstable frame rates may reduce timing precision.
-- Third-party updates can require compatibility changes.
-- The current compatibility list is limited to the supported vanilla, RHSUSAF, Firewill, and JSRS configurations.
+- Obstruction and ground response depend on Arma world geometry and script timing.
+- Very low or unstable frame rates can reduce timing precision.
+- Third-party updates can require compatibility maintenance.
 
 ## Reporting issues
 
-Include the following when reporting a problem:
+Include the Arma 3 version, mod version or commit, loaded mod list, aircraft and weapon, firing mode, listener position, approximate distance, and relevant RPT errors.
 
-- Arma 3 version
-- Mod version or commit
-- Loaded mod list
-- Aircraft and weapon used
-- Firing mode
-- Whether the problem occurs internally, externally, or both
-- Approximate listener distance
-- Relevant RPT errors
-- Whether another cannon report is audible underneath the replacement
-
-Repository:
-
-https://github.com/Bigg-ie/gau8_acoustics
+Repository: https://github.com/Bigg-ie/gau8_acoustics
 
 ## Credits and licensing
 
-Arma 3 and Bohemia Interactive names and assets belong to their respective owners.
+Arma 3 and Bohemia Interactive names and assets belong to their respective owners. RHSUSAF, Firewill, USAF, CUP, and JSRS are third-party projects owned by their respective authors.
 
-RHSUSAF, Firewill, and JSRS are third-party projects owned by their respective authors. This project provides optional compatibility and does not claim ownership of those projects.
-
-Only assets with appropriate redistribution rights should be included in public releases.
-
-See the repository's `LICENSE` file for the terms covering this project. Audio assets may have separate restrictions where noted.
+Only assets with appropriate redistribution rights should be included in public releases. See `LICENSE` for project terms.
