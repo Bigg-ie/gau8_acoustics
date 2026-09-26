@@ -928,12 +928,12 @@ if (!_workerRunning) then
                                             missionNamespace getVariable
                                             [
                                                 "gau_gau8_reportDopplerApproachMasterDefault",
-                                                1.0
+                                                1.45
                                             ]
                                         ]
                                     )
                                     max 0
-                                    min 1;
+                                    min 2.5;
 
                                 private _reportApproachPitchCap =
                                     (
@@ -943,12 +943,12 @@ if (!_workerRunning) then
                                             missionNamespace getVariable
                                             [
                                                 "gau_gau8_reportApproachPitchCapDefault",
-                                                1.0
+                                                1.03
                                             ]
                                         ]
                                     )
                                     max _reportBasePitch
-                                    min 1.10;
+                                    min 1.50;
 
                                 private _applyEventDoppler =
                                     _dopplerEnabled &&
@@ -4379,10 +4379,14 @@ if (!_workerRunning) then
                                             _dopplerDebugTick + 0.25
                                         ];
 
+                                        private _effectiveReportHz =
+                                            _reportSourcePulseHz *
+                                            _eventPlaybackPitch;
+
                                         private _dopplerMessage =
                                             format
                                             [
-                                                "GAU-8 Doppler: sourceRadial=%1 m/s listenerRadial=%2 m/s raw=%3 applied=%4 basePitch=%5 playbackPitch=%6",
+                                                "GAU-8 Doppler: sourceRadial=%1 m/s listenerRadial=%2 m/s raw=%3 applied=%4 mrBase=%5 playbackPitch=%6 effectiveHz=%7 approachMaster=%8 cap=%9",
                                                 (
                                                     _sourceVelocityAlongRay
                                                     toFixed 1
@@ -4399,10 +4403,25 @@ if (!_workerRunning) then
                                                     _dopplerFactor
                                                     toFixed 3
                                                 ),
-                                                (_eventPitch toFixed 3),
+                                                (
+                                                    _reportBasePitch
+                                                    toFixed 3
+                                                ),
                                                 (
                                                     _eventPlaybackPitch
                                                     toFixed 3
+                                                ),
+                                                (
+                                                    _effectiveReportHz
+                                                    toFixed 1
+                                                ),
+                                                (
+                                                    _reportApproachMaster
+                                                    toFixed 2
+                                                ),
+                                                (
+                                                    _reportApproachPitchCap
+                                                    toFixed 2
                                                 )
                                             ];
 
