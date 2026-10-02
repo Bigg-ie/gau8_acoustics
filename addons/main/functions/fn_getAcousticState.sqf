@@ -172,59 +172,22 @@ private _mechanicalPresence =
     call _sampleCurve;
 
 
-private _cameraObject = cameraOn;
-private _cameraVehicle =
-    if (isNull _cameraObject) then
-    {
-        objNull
-    }
-    else
-    {
-        vehicle _cameraObject
-    };
-
-private _cameraMode = toUpper cameraView;
-
-private _cockpitTarget =
-    (_cameraVehicle isEqualTo _vehicle) &&
-    {_cameraMode in ["INTERNAL", "GUNNER"]};
-
-private _targetCockpitMix = parseNumber _cockpitTarget;
-
-private _shotCount =
-    _vehicle getVariable
+private _listenerState =
     [
-        "gau_gau8_shotCount",
-        0
-    ];
+        _vehicle,
+        true
+    ]
+    call gau_gau8_fnc_getListenerState;
 
-private _previousCockpitMix =
-    _vehicle getVariable
-    [
-        "gau_gau8_cockpitMix",
-        _targetCockpitMix
-    ];
-
-private _cockpitMix =
-    if (_shotCount == 0) then
-    {
-        _targetCockpitMix
-    }
-    else
-    {
-        _previousCockpitMix +
-        ((_targetCockpitMix - _previousCockpitMix) * 0.28)
-    };
-
-_cockpitMix = (_cockpitMix max 0) min 1;
-
-_vehicle setVariable
+_listenerState params
 [
-    "gau_gau8_cockpitMix",
-    _cockpitMix
+    "_cameraMode",
+    "_listenerVehicle",
+    "_sameSourceVehicle",
+    "_interiorTarget",
+    "_interiorMix",
+    "_exteriorMix"
 ];
-
-private _externalMix = 1 - _cockpitMix;
 
 private _cockpitMaster =
     (
@@ -236,10 +199,10 @@ private _cockpitMaster =
     ) max 0 min 2;
 
 private _cockpitBodyGain =
-    _cockpitMix * _cockpitMaster;
+    _interiorMix * _cockpitMaster;
 
 private _cockpitAirframeGain =
-    _cockpitMix * _cockpitMaster;
+    _interiorMix * _cockpitMaster;
 
 private _toListener =
     if (_distance > 0.01) then
@@ -346,20 +309,20 @@ private _sourceHeightAGL = 0.0;
 private _listenerHeightAGL = 0.0;
 private _objectHitCount = 0;
 private _baseCloseBodyGain =
-    _distanceGain * _closeWeight * _closeBodyDirectivity * 1.25 * _externalMix;
+    _distanceGain * _closeWeight * _closeBodyDirectivity * 1.25 * _exteriorMix;
 
 
 private _baseMidBodyGain =
-    _distanceGain * _midWeight * _midBodyDirectivity * 1.12 * _externalMix;
+    _distanceGain * _midWeight * _midBodyDirectivity * 1.12 * _exteriorMix;
 
 private _baseFarBodyGain =
-    _distanceGain * _farWeight * _farBodyDirectivity * _externalMix;
+    _distanceGain * _farWeight * _farBodyDirectivity * _exteriorMix;
 
 private _baseMechanicalGain =
-    _distanceGain * _mechanicalPresence * _mechanicalDirectivity * 0.35 * _externalMix;
+    _distanceGain * _mechanicalPresence * _mechanicalDirectivity * 0.35 * _exteriorMix;
 
 private _baseMuzzleGain =
-    _distanceGain * _closeWeight * _muzzleDirectivity * 0.90 * _externalMix;
+    _distanceGain * _closeWeight * _muzzleDirectivity * 0.90 * _exteriorMix;
 
 
 private _closeBodyGain = _baseCloseBodyGain;
@@ -390,9 +353,9 @@ private _reflectionGain = 0.0;
     _mechanicalDirectivity,
     _muzzleDirectivity,
     _cameraMode,
-    _cockpitTarget,
-    _cockpitMix,
-    _externalMix,
+    _interiorTarget,
+    _interiorMix,
+    _exteriorMix,
     _cockpitBodyGain,
     _cockpitAirframeGain,
     _terrainOcclusion,

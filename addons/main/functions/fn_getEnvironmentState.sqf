@@ -4,14 +4,14 @@ params
     "_emissionPositionASL",
     "_listenerPositionASL",
     "_distance",
-    ["_externalMix", 1.0]
+    ["_exteriorMix", 1.0]
 ];
 
 if (
     isNull _vehicle ||
     {(count _emissionPositionASL) != 3} ||
     {(count _listenerPositionASL) != 3} ||
-    {_externalMix <= 0.000001}
+    {_exteriorMix <= 0.000001}
 ) exitWith
 {
     [
@@ -553,7 +553,7 @@ private _reflectionPresence =
     _listenerHeightPresence *
     _delayPresence *
     _occlusionClear *
-    _externalMix;
+    _exteriorMix;
 
 _reflectionPresence = (_reflectionPresence max 0) min 0.18;
 

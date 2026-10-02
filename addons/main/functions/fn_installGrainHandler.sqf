@@ -645,6 +645,18 @@ _aircraft setVariable
 
 _aircraft setVariable
 [
+    "gau_gau8_interiorMix",
+    0.0
+];
+
+_aircraft setVariable
+[
+    "gau_gau8_exteriorMix",
+    1.0
+];
+
+_aircraft setVariable
+[
     "gau_gau8_cockpitMix",
     0.0
 ];
@@ -863,9 +875,9 @@ private _handler =
                 "_mechanicalDirectivity",
                 "_muzzleDirectivity",
                 "_cameraMode",
-                "_cockpitTarget",
-                "_cockpitMix",
-                "_externalMix",
+                "_interiorTarget",
+                "_interiorMix",
+                "_exteriorMix",
                 "_cockpitBodyGain",
                 "_cockpitAirframeGain",
                 "_terrainOcclusion",
@@ -981,8 +993,20 @@ private _handler =
 
             _vehicle setVariable
             [
+                "gau_gau8_lastInteriorMix",
+                _interiorMix
+            ];
+
+            _vehicle setVariable
+            [
+                "gau_gau8_lastExteriorMix",
+                _exteriorMix
+            ];
+
+            _vehicle setVariable
+            [
                 "gau_gau8_lastCockpitMix",
-                _cockpitMix
+                _interiorMix
             ];
 
             private _reflectionArrivalTime =
@@ -1060,19 +1084,19 @@ private _handler =
                 }
             ) then
             {
-                private _cockpitMessage = format
+                private _listenerStateMessage = format
                 [
-                    "GAU-8 cockpit: mode=%1 target=%2 mix=%3 external=%4 body=%5 airframe=%6",
+                    "GAU-8 listener space: mode=%1 interior=%2 interiorMix=%3 exteriorMix=%4 cockpitBody=%5 cockpitAirframe=%6",
                     _cameraMode,
-                    _cockpitTarget,
-                    (_cockpitMix toFixed 3),
-                    (_externalMix toFixed 3),
+                    _interiorTarget,
+                    (_interiorMix toFixed 3),
+                    (_exteriorMix toFixed 3),
                     (_cockpitBodyGain toFixed 3),
                     (_cockpitAirframeGain toFixed 3)
                 ];
 
-                systemChat _cockpitMessage;
-                diag_log _cockpitMessage;
+                systemChat _listenerStateMessage;
+                diag_log _listenerStateMessage;
             };
 
 

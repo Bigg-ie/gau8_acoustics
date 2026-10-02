@@ -1272,6 +1272,23 @@ if (!_workerRunning) then
                                 private _isRipRelease =
                                     (_pathLower find "rip_release.wav") >= 0;
 
+                                if (_isRip) then
+                                {
+                                    private _listenerState =
+                                        [
+                                            _vehicle,
+                                            false
+                                        ]
+                                        call gau_gau8_fnc_getListenerState;
+
+                                    private _listenerExteriorMix =
+                                        _listenerState param [5, 1.0];
+
+                                    _eventVolume =
+                                        _eventVolume *
+                                        _listenerExteriorMix;
+                                };
+
                                 if (_isRipAttack) then
                                 {
                                     _vehicle setVariable ["gau_gau8_ripHandoffAttackArrivalTick",diag_tickTime];

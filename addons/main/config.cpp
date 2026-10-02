@@ -558,6 +558,10 @@ class CfgFunctions
             {
             };
 
+            class getListenerState
+            {
+            };
+
             class getAcousticState
             {
             };
