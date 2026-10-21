@@ -1,0 +1,208 @@
+[h1]GAU-8 Acoustic Overhaul[/h1]
+
+A physically informed acoustic replacement for the GAU-8/A Avenger in Arma 3.
+
+This mod replaces the standard GAU-8 firing audio with a scripted acoustic system designed to reproduce the scale, propagation delay, directionality, distance character, sustained report, and supersonic projectile cracks associated with the weapon.
+
+The system models two major external acoustic components independently:
+
+[list]
+[*] The cannon report produced at the aircraft
+[*] The supersonic projectile crack field produced along the projectile flight path
+[/list]
+
+Only the audible presentation is changed. Weapon handling, ammunition, projectile physics, rate of fire, damage, penetration, dispersion, tracers, impacts, aircraft systems, and flight models remain controlled by Arma 3 or the original aircraft mod.
+
+
+[h1]Features[/h1]
+
+[list]
+[*] Speed-of-sound propagation delay
+[*] Close, medium, and distant cannon-report layers
+[*] Distance-dependent report timbre and spectral balance
+[*] Directional muzzle and cannon report
+[*] Source-motion Doppler behavior for approaching and receding aircraft
+[*] Terrain and object obstruction
+[*] Ground-interference response
+[*] Environmental reflections, decay, and diffuse tails
+[*] Dedicated internal cockpit presentation
+[*] Continuous support for short and long bursts
+[*] Supersonic projectile cracks based on Mach-wave geometry
+[*] Distance-dependent spectral attenuation of projectile cracks
+[*] Projectile-crack reflections, scatter, and environmental decay
+[*] AI firing-mode support
+[/list]
+
+External observers see the aircraft fire before the cannon report reaches them. Propagation delay is calculated from the aircraft's position when the sound was emitted rather than from its position when the sound is finally heard.
+
+The cannon report changes character with range. Close observers retain more transient and mechanical detail, while medium and distant observers receive a broader, heavier report with reduced high-frequency content.
+
+Aircraft motion also affects the report. Approaching and receding passes are pitch-shifted according to source motion, with the approaching response constrained to preserve the characteristic GAU-8 cadence rather than exaggerating it into a much higher-rate rotary-cannon sound.
+
+
+[h1]Supersonic Projectile Cracks[/h1]
+
+The projectile crack is modeled separately from the cannon report.
+
+Supersonic rounds generate an acoustic disturbance along their flight path. Listeners near the projectile Mach wave can therefore hear a sharp crack independently of the delayed report arriving from the aircraft.
+
+The system includes:
+
+[list]
+[*] Direct supersonic N-wave crack
+[*] Mach-wave and cross-track geometry
+[*] Independent propagation timing
+[*] Distance-dependent crack level
+[*] Distance-dependent high-frequency attenuation
+[*] Body and detail components
+[*] Reflection and scatter fields
+[*] Terminal and environmental decay
+[/list]
+
+The crack becomes progressively less sharp with distance. Near-field cracks retain the strongest transient detail, while medium and distant cracks lose high-frequency energy and become less unnaturally close-sounding.
+
+The projectile crack system does not alter projectile trajectory, velocity, damage, penetration, or impact behavior.
+
+
+[h1]Cockpit Audio[/h1]
+
+Cockpit listeners receive a separate internal presentation.
+
+The internal sound is not treated as a delayed external free-field observation. This prevents the cockpit experience from behaving like an observer positioned hundreds of meters away from the aircraft while still retaining the character of sustained GAU-8 fire.
+
+
+[h1]Supported Aircraft[/h1]
+
+[b]Arma 3[/b]
+
+[list]
+[*] A-164 Wipeout
+[*] Weapon: Gatling_30mm_Plane_CAS_01_F
+[/list]
+
+[b]RHSUSAF[/b]
+
+[list]
+[*] RHS A-10A
+[*] Weapon: RHS_weap_gau8
+[*] Supports LowROF and HighROF
+[/list]
+
+[b]Firewill[/b]
+
+[list]
+[*] Firewill A-10C Warthog
+[*] Weapon: FIR_GAU8
+[/list]
+
+[b]USAF Mod – Fighters[/b]
+
+[list]
+[*] USAF A-10C Thunderbolt II
+[*] Weapon: USAF_GAU8_GUN
+[/list]
+
+[b]CUP Vehicles[/b]
+
+[list]
+[*] CUP A-10C Thunderbolt II (AT)
+[*] CUP A-10C Thunderbolt II (CAS)
+[*] CUP A-10A Thunderbolt II
+[*] Weapon: CUP_Vacannon_GAU8_veh
+[/list]
+
+Demo footage may use individual supported aircraft, but the same acoustic architecture is used across compatible GAU-8 implementations.
+
+
+[h1]Optional Compatibility[/h1]
+
+The base mod does not require RHSUSAF, Firewill, CUP, USAF, A-10-tastic, or JSRS.
+
+Compatibility components activate only when their corresponding third-party addons are present.
+
+[list]
+[*] RHSUSAF A-10A compatibility
+[*] Firewill A-10C compatibility
+[*] CUP A-10 compatibility
+[*] USAF A-10C compatibility
+[*] A-10-tastic compatibility
+[*] JSRS Soundmod 2025 compatibility
+[*] RHSUSAF with JSRS Soundmod 2025 compatibility
+[/list]
+
+JSRS compatibility suppresses overlapping third-party cannon reports where necessary so the replacement GAU-8 acoustic system is not doubled.
+
+RHSUSAF, Firewill, CUP, USAF, A-10-tastic, and JSRS remain the property of their respective authors. This project provides configuration compatibility only.
+
+
+[h1]What This Mod Does Not Change[/h1]
+
+[list]
+[*] Rate of fire
+[*] Magazine capacity
+[*] Damage
+[*] Penetration
+[*] Muzzle velocity
+[*] Dispersion
+[*] Recoil
+[*] Tracers
+[*] Projectile trajectory
+[*] Projectile simulation
+[*] Impact effects
+[*] Aircraft flight models
+[*] Aircraft systems
+[*] Third-party loadout systems
+[/list]
+
+
+[h1]Multiplayer[/h1]
+
+Clients that should hear the replacement acoustic system need the mod loaded.
+
+Signed PBOs and a public server key are included for servers using signature verification.
+
+Matching client and server modsets are recommended for predictable behavior.
+
+
+[h1]Known Limitations[/h1]
+
+[list]
+[*] The acoustic model is a real-time gameplay approximation rather than a full atmospheric wave-propagation simulation.
+[*] Sound speed is fixed at approximately 343 m/s.
+[*] Atmospheric temperature, humidity, wind, and pressure are not currently used to vary sound speed.
+[*] Terrain obstruction, object obstruction, and ground interaction depend on Arma world geometry and scripting precision.
+[*] Supersonic crack propagation is an approximation of Mach-wave behavior within the limitations of the Arma audio and scripting engines.
+[*] Very low or unstable frame rates may reduce event-timing precision.
+[*] Major updates to supported third-party aircraft may require compatibility changes.
+[/list]
+
+
+[h1]Issue Reports[/h1]
+
+When reporting a problem, include:
+
+[list]
+[*] Arma 3 version
+[*] GAU-8 Acoustic Overhaul version
+[*] Loaded mod list
+[*] Aircraft and weapon used
+[*] Firing mode
+[*] Whether the issue occurs internally, externally, or both
+[*] Approximate listener distance
+[*] Whether the issue concerns the cannon report, supersonic projectile crack, or both
+[*] Relevant RPT errors
+[*] Whether another cannon report is audible underneath the replacement
+[/list]
+
+Source repository:
+
+https://github.com/Bigg-ie/gau8_acoustics
+
+
+[h1]Credits[/h1]
+
+Arma 3 and Bohemia Interactive names and assets belong to their respective owners.
+
+RHSUSAF, Firewill, CUP, USAF, A-10-tastic, and JSRS are third-party projects owned by their respective authors.
+
+This project does not claim ownership of those projects or their assets.

@@ -104,14 +104,15 @@ private _closeToMid =
     [
         _distance,
         [
-            [0,   0.00],
-            [25,  0.00],
-            [50,  0.10],
-            [75,  0.30],
-            [100, 0.50],
-            [140, 0.72],
-            [190, 0.90],
-            [250, 1.00]
+            [0,    0.00],
+            [400,  0.00],
+            [500,  0.05],
+            [600,  0.15],
+            [700,  0.35],
+            [800,  0.55],
+            [950,  0.75],
+            [1100, 0.90],
+            [1250, 1.00]
         ]
     ]
     call _sampleCurve;
@@ -119,8 +120,8 @@ private _closeToMid =
 private _midToFar =
     linearConversion
     [
-        500,
-        800,
+        1500,
+        3000,
         _distance,
         0,
         1,
@@ -128,7 +129,7 @@ private _midToFar =
     ];
 
 private _closeWeight =
-    if (_distance < 500) then
+    if (_distance < 1500) then
     {
         1 - _closeToMid
     }
@@ -138,7 +139,7 @@ private _closeWeight =
     };
 
 private _midWeight =
-    if (_distance < 500) then
+    if (_distance < 1500) then
     {
         _closeToMid
     }
@@ -148,7 +149,7 @@ private _midWeight =
     };
 
 private _farWeight =
-    if (_distance <= 500) then
+    if (_distance <= 1500) then
     {
         0
     }
@@ -156,6 +157,23 @@ private _farWeight =
     {
         sqrt _midToFar
     };
+
+
+private _muzzlePresence =
+    [
+        _distance,
+        [
+            [0,   1.00],
+            [25,  1.00],
+            [50,  0.90],
+            [75,  0.70],
+            [100, 0.50],
+            [140, 0.28],
+            [190, 0.10],
+            [250, 0.00]
+        ]
+    ]
+    call _sampleCurve;
 
 
 private _mechanicalPresence =
@@ -308,21 +326,84 @@ private _reflectionExtraDelay = 0.0;
 private _sourceHeightAGL = 0.0;
 private _listenerHeightAGL = 0.0;
 private _objectHitCount = 0;
+private _singleCloseBankEnabled =
+    _vehicle getVariable
+    [
+        "gau_gau8_singleCloseBankEnabled",
+        missionNamespace getVariable
+        [
+            "gau_gau8_singleCloseBankEnabledDefault",
+            false
+        ]
+    ];
+
+private _bodyWeightSum =
+    (_closeWeight + _midWeight + _farWeight) max 0.000001;
+
+private _distanceBodyDirectivity =
+    (
+        (_closeWeight * _closeBodyDirectivity) +
+        (_midWeight * _midBodyDirectivity) +
+        (_farWeight * _farBodyDirectivity)
+    ) / _bodyWeightSum;
+
+private _distanceBodyTrim =
+    (
+        (_closeWeight * 1.25) +
+        (_midWeight * 1.12) +
+        (_farWeight * 1.00)
+    ) / _bodyWeightSum;
+
 private _baseCloseBodyGain =
-    _distanceGain * _closeWeight * _closeBodyDirectivity * 1.25 * _exteriorMix;
+    if (_singleCloseBankEnabled) then
+    {
+        _distanceGain *
+        _distanceBodyDirectivity *
+        _distanceBodyTrim *
+        _exteriorMix
+    }
+    else
+    {
+        _distanceGain *
+        _closeWeight *
+        _closeBodyDirectivity *
+        1.25 *
+        _exteriorMix
+    };
 
 
 private _baseMidBodyGain =
-    _distanceGain * _midWeight * _midBodyDirectivity * 1.12 * _exteriorMix;
+    if (_singleCloseBankEnabled) then
+    {
+        0
+    }
+    else
+    {
+        _distanceGain *
+        _midWeight *
+        _midBodyDirectivity *
+        1.12 *
+        _exteriorMix
+    };
 
 private _baseFarBodyGain =
-    _distanceGain * _farWeight * _farBodyDirectivity * _exteriorMix;
+    if (_singleCloseBankEnabled) then
+    {
+        0
+    }
+    else
+    {
+        _distanceGain *
+        _farWeight *
+        _farBodyDirectivity *
+        _exteriorMix
+    };
 
 private _baseMechanicalGain =
     _distanceGain * _mechanicalPresence * _mechanicalDirectivity * 0.35 * _exteriorMix;
 
 private _baseMuzzleGain =
-    _distanceGain * _closeWeight * _muzzleDirectivity * 0.90 * _exteriorMix;
+    _distanceGain * _muzzlePresence * _muzzleDirectivity * 0.90 * _exteriorMix;
 
 
 private _closeBodyGain = _baseCloseBodyGain;

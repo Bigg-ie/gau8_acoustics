@@ -1170,6 +1170,12 @@ private _handler =
 
             if (_shotCount == 0) then
             {
+                _vehicle setVariable
+                [
+                    "gau_gau8_lastMRTerminalState",
+                    []
+                ];
+
                 private _mechanicalStartPath =
                     _vehicle getVariable
                     [
@@ -1212,12 +1218,32 @@ private _playCockpitSound =
                         ]
                     ) max 0 min 5;
 
+                private _singleCloseBankEnabled =
+                    _vehicle getVariable
+                    [
+                        "gau_gau8_singleCloseBankEnabled",
+                        missionNamespace getVariable
+                        [
+                            "gau_gau8_singleCloseBankEnabledDefault",
+                            false
+                        ]
+                    ];
+
                 private _mrAttackVoices =
-                [
-                    ["gau_gau8_mrCloseStartPath", _closeBodyGain],
-                    ["gau_gau8_mrMidStartPath", _midBodyGain],
-                    ["gau_gau8_mrFarStartPath", _farBodyGain]
-                ];
+                    if (_singleCloseBankEnabled) then
+                    {
+                        [
+                            ["gau_gau8_mrCloseStartPath", _closeBodyGain]
+                        ]
+                    }
+                    else
+                    {
+                        [
+                            ["gau_gau8_mrCloseStartPath", _closeBodyGain],
+                            ["gau_gau8_mrMidStartPath", _midBodyGain],
+                            ["gau_gau8_mrFarStartPath", _farBodyGain]
+                        ]
+                    };
 
                 {
                     _x params ["_pathVariable", "_bodyGain"];
@@ -1351,118 +1377,196 @@ private _playCockpitSound =
                         {
 
 
-                            private _releasePosition =
+                            private _mrReleaseEnabled =
                                 _vehicle getVariable
                                 [
-                                    "gau_gau8_lastEmissionPositionASL",
-                                    getPosASL _vehicle
+                                    "gau_gau8_mrReleaseEnabled",
+                                    missionNamespace getVariable
+                                    [
+                                        "gau_gau8_mrReleaseEnabledDefault",
+                                        false
+                                    ]
                                 ];
 
-                            private _releaseArrival =
-                                _vehicle getVariable ["gau_gau8_lastArrivalTime", time];
-
-                            private _releaseCloseGain =
-                                _vehicle getVariable ["gau_gau8_lastCloseGain", 0];
-
-                            private _releaseMidGain =
-                                _vehicle getVariable ["gau_gau8_lastMidBodyGain", 0];
-
-                            if (_releaseMidGain <= 0.000001) then
+                            if (_mrReleaseEnabled) then
                             {
-                                _releaseMidGain =
-                                    _vehicle getVariable ["gau_gau8_lastMidGain", 0];
-                            };
+                                private _releasePosition =
+                                    _vehicle getVariable
+                                    [
+                                        "gau_gau8_lastEmissionPositionASL",
+                                        getPosASL _vehicle
+                                    ];
 
-                            private _releaseFarGain =
-                                _vehicle getVariable ["gau_gau8_lastFarBodyGain", 0];
+                                private _releaseArrival =
+                                    _vehicle getVariable ["gau_gau8_lastArrivalTime", time];
 
-                            if (_releaseFarGain <= 0.000001) then
-                            {
-                                _releaseFarGain =
-                                    _vehicle getVariable ["gau_gau8_lastFarGain", 0];
-                            };
+                                private _releaseCloseGain =
+                                    _vehicle getVariable ["gau_gau8_lastCloseGain", 0];
 
-                            private _lastMRGrainTick =
-                                _vehicle getVariable ["gau_gau8_v27_23LastMRGrainTick", -1];
+                                private _releaseMidGain =
+                                    _vehicle getVariable ["gau_gau8_lastMidBodyGain", 0];
 
-                            private _sourceOffset =
-                                _vehicle getVariable ["gau_gau8_v27_23LastMRSourceOffset", 0];
-
-                            private _lastMRPitch =
-                                _vehicle getVariable ["gau_gau8_v27_23LastMRPitch", 1.0];
-
-                            private _cycleDuration =
-                                _vehicle getVariable ["gau_gau8_v27_23MRCycleDuration", 5.129];
-
-                            private _phaseStep = 0.1115;
-                            private _phaseTime = 0;
-
-                            if (_lastMRGrainTick >= 0) then
-                            {
-                                _phaseTime =
-                                    _sourceOffset +
-                                    (((diag_tickTime - _lastMRGrainTick) max 0) * _lastMRPitch);
-                            };
-
-                            if (_cycleDuration > 0.001) then
-                            {
-                                _phaseTime = _phaseTime mod _cycleDuration;
-                            };
-
-                            private _phaseIndex = floor (_phaseTime / _phaseStep);
-                            _phaseIndex = _phaseIndex max 0 min 45;
-
-                            private _releaseClosePaths =
-                                _vehicle getVariable ["gau_gau8_mrCloseReleasePaths", []];
-                            private _releaseMidPaths =
-                                _vehicle getVariable ["gau_gau8_mrMidReleasePaths", []];
-                            private _releaseFarPaths =
-                                _vehicle getVariable ["gau_gau8_mrFarReleasePaths", []];
-
-                            private _phaseCount =
-                                (count _releaseClosePaths) min
-                                (count _releaseMidPaths) min
-                                (count _releaseFarPaths);
-
-                            if (_phaseCount > 0) then
-                            {
-                                _phaseIndex = _phaseIndex mod _phaseCount;
-
-                                private _mrMaster =
-                                    (
-                                        _vehicle getVariable
-                                        [
-                                            "gau_gau8_mrDirectMaster",
-                                            missionNamespace getVariable ["gau_gau8_mrDirectMasterDefault", 5.0]
-                                        ]
-                                    ) max 0 min 5;
-
-                                private _releaseVoices =
-                                [
-                                    [_releaseClosePaths select _phaseIndex, _releaseCloseGain],
-                                    [_releaseMidPaths select _phaseIndex, _releaseMidGain],
-                                    [_releaseFarPaths select _phaseIndex, _releaseFarGain]
-                                ];
-
+                                if (_releaseMidGain <= 0.000001) then
                                 {
-                                    _x params ["_releasePath", "_releaseGain"];
+                                    _releaseMidGain =
+                                        _vehicle getVariable ["gau_gau8_lastMidGain", 0];
+                                };
 
-                                    if (_releaseGain > 0.000001) then
+                                private _releaseFarGain =
+                                    _vehicle getVariable ["gau_gau8_lastFarBodyGain", 0];
+
+                                if (_releaseFarGain <= 0.000001) then
+                                {
+                                    _releaseFarGain =
+                                        _vehicle getVariable ["gau_gau8_lastFarGain", 0];
+                                };
+
+                                private _lastMRGrainTick =
+                                    _vehicle getVariable ["gau_gau8_v27_23LastMRGrainTick", -1];
+
+                                private _sourceOffset =
+                                    _vehicle getVariable ["gau_gau8_v27_23LastMRSourceOffset", 0];
+
+                                private _lastMRPitch =
+                                    _vehicle getVariable ["gau_gau8_v27_23LastMRPitch", 1.0];
+
+                                private _cycleDuration =
+                                    _vehicle getVariable ["gau_gau8_v27_23MRCycleDuration", 5.129];
+
+                                private _phaseStep = 0.1115;
+                                private _phaseTime = 0;
+
+                                if (_lastMRGrainTick >= 0) then
+                                {
+                                    _phaseTime =
+                                        _sourceOffset +
+                                        (((diag_tickTime - _lastMRGrainTick) max 0) * _lastMRPitch);
+                                };
+
+                                if (_cycleDuration > 0.001) then
+                                {
+                                    _phaseTime = _phaseTime mod _cycleDuration;
+                                };
+
+                                private _phaseIndex = floor (_phaseTime / _phaseStep);
+                                _phaseIndex = _phaseIndex max 0 min 45;
+
+                                private _releaseClosePaths =
+                                    _vehicle getVariable ["gau_gau8_mrCloseReleasePaths", []];
+                                private _releaseMidPaths =
+                                    _vehicle getVariable ["gau_gau8_mrMidReleasePaths", []];
+                                private _releaseFarPaths =
+                                    _vehicle getVariable ["gau_gau8_mrFarReleasePaths", []];
+
+                                private _phaseCount =
+                                    (count _releaseClosePaths) min
+                                    (count _releaseMidPaths) min
+                                    (count _releaseFarPaths);
+
+                                if (_phaseCount > 0) then
+                                {
+                                    _phaseIndex = _phaseIndex mod _phaseCount;
+
+                                    private _mrMaster =
+                                        (
+                                            _vehicle getVariable
+                                            [
+                                                "gau_gau8_mrDirectMaster",
+                                                missionNamespace getVariable ["gau_gau8_mrDirectMasterDefault", 5.0]
+                                            ]
+                                        ) max 0 min 5;
+
+                                    private _releaseVoices =
+                                    [
+                                        [_releaseClosePaths select _phaseIndex, _releaseCloseGain],
+                                        [_releaseMidPaths select _phaseIndex, _releaseMidGain],
+                                        [_releaseFarPaths select _phaseIndex, _releaseFarGain]
+                                    ];
+
+                                    {
+                                        _x params ["_releasePath", "_releaseGain"];
+
+                                        if (_releaseGain > 0.000001) then
+                                        {
+                                            [
+                                                _vehicle,
+                                                _releasePath,
+                                                _releasePosition,
+                                                _releaseArrival,
+                                                _mrMaster * _releaseGain,
+                                                1.0,
+                                                50000
+                                            ]
+                                            call gau_gau8_fnc_queueSoundArrival;
+                                        };
+                                    }
+                                    forEach _releaseVoices;
+                                };
+
+                            };
+
+                            private _terminalEnvironmentEnabled =
+                                _vehicle getVariable
+                                [
+                                    "gau_gau8_terminalEnvironmentTailEnabled",
+                                    missionNamespace getVariable
+                                    [
+                                        "gau_gau8_terminalEnvironmentTailEnabledDefault",
+                                        true
+                                    ]
+                                ];
+
+                            if (_terminalEnvironmentEnabled) then
+                            {
+                                private _terminalState =
+                                    _vehicle getVariable
+                                    [
+                                        "gau_gau8_lastMRTerminalState",
+                                        []
+                                    ];
+
+                                if ((count _terminalState) >= 7) then
+                                {
+                                    _terminalState params
+                                    [
+                                        "_terminalPath",
+                                        "_terminalPositionASL",
+                                        "_terminalArrivalHint",
+                                        "_terminalVolume",
+                                        "_terminalPitch",
+                                        "_terminalSourceVelocity",
+                                        "_terminalEmissionTick"
+                                    ];
+
+                                    if (
+                                        _terminalPath isNotEqualTo "" &&
+                                        {_terminalVolume > 0.000001}
+                                    ) then
                                     {
                                         [
                                             _vehicle,
-                                            _releasePath,
-                                            _releasePosition,
-                                            _releaseArrival,
-                                            _mrMaster * _releaseGain,
-                                            1.0,
-                                            50000
+                                            _terminalPath,
+                                            +_terminalPositionASL,
+                                            _terminalArrivalHint,
+                                            _terminalVolume,
+                                            _terminalPitch,
+                                            50000,
+                                            +_terminalSourceVelocity,
+                                            -1,
+                                            _terminalEmissionTick,
+                                            -1,
+                                            true
                                         ]
                                         call gau_gau8_fnc_queueSoundArrival;
                                     };
-                                }
-                                forEach _releaseVoices;
+                                };
                             };
+
+                            _vehicle setVariable
+                            [
+                                "gau_gau8_lastMRTerminalState",
+                                []
+                            ];
 
                             private _releaseCockpitBodyGain =
                                 _vehicle getVariable ["gau_gau8_lastCockpitBodyGain", 0];

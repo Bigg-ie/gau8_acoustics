@@ -10,7 +10,8 @@ params
     ["_sourceVelocityOverride", []],
     ["_lockedArrivalTick", -1],
     ["_emissionTickOverride", -1],
-    ["_reportBurstToken", -1]
+    ["_reportBurstToken", -1],
+    ["_environmentOnly", false]
 ];
 
 if (
@@ -370,7 +371,8 @@ _queue pushBack
         ]
         select _lockedArrivalValid
     },
-    _reportBurstToken
+    _reportBurstToken,
+    _environmentOnly
 ];
 
 
@@ -693,7 +695,8 @@ if (!_workerRunning) then
                                     ["_eventRipCrossTrack", -1.0],
                                     ["_eventPropagationSpeed", 343.0],
                                     ["_eventLockedArrivalTick", -1.0],
-                                    ["_eventReportBurstToken", -1]
+                                    ["_eventReportBurstToken", -1],
+                                    ["_eventEnvironmentOnly", false]
                                 ];
 
                                 private _currentDistance =
@@ -2560,58 +2563,281 @@ if (!_workerRunning) then
 
                                         private _mrGroundScale = 1.0;
 
-                                        if (_isMRCloseBody) then
+                                        private _singleCloseBankEnabled =
+                                            _vehicle getVariable
+                                            [
+                                                "gau_gau8_singleCloseBankEnabled",
+                                                missionNamespace getVariable
+                                                [
+                                                    "gau_gau8_singleCloseBankEnabledDefault",
+                                                    false
+                                                ]
+                                            ];
+
+                                        if (
+                                            _singleCloseBankEnabled &&
+                                            {_isMRBody}
+                                        ) then
                                         {
+                                            private _closeToMidProcessing =
+                                                if (_currentDistance <= 400) then
+                                                {
+                                                    0
+                                                }
+                                                else
+                                                {
+                                                    if (_currentDistance >= 1250) then
+                                                    {
+                                                        1
+                                                    }
+                                                    else
+                                                    {
+                                                        if (_currentDistance <= 500) then
+                                                        {
+                                                            linearConversion
+                                                            [
+                                                                400,
+                                                                500,
+                                                                _currentDistance,
+                                                                0.00,
+                                                                0.05,
+                                                                true
+                                                            ]
+                                                        }
+                                                        else
+                                                        {
+                                                            if (_currentDistance <= 600) then
+                                                            {
+                                                                linearConversion
+                                                                [
+                                                                    500,
+                                                                    600,
+                                                                    _currentDistance,
+                                                                    0.05,
+                                                                    0.15,
+                                                                    true
+                                                                ]
+                                                            }
+                                                            else
+                                                            {
+                                                                if (_currentDistance <= 700) then
+                                                                {
+                                                                    linearConversion
+                                                                    [
+                                                                        600,
+                                                                        700,
+                                                                        _currentDistance,
+                                                                        0.15,
+                                                                        0.35,
+                                                                        true
+                                                                    ]
+                                                                }
+                                                                else
+                                                                {
+                                                                    if (_currentDistance <= 800) then
+                                                                    {
+                                                                        linearConversion
+                                                                        [
+                                                                            700,
+                                                                            800,
+                                                                            _currentDistance,
+                                                                            0.35,
+                                                                            0.55,
+                                                                            true
+                                                                        ]
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        if (_currentDistance <= 950) then
+                                                                        {
+                                                                            linearConversion
+                                                                            [
+                                                                                800,
+                                                                                950,
+                                                                                _currentDistance,
+                                                                                0.55,
+                                                                                0.75,
+                                                                                true
+                                                                            ]
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            if (_currentDistance <= 1100) then
+                                                                            {
+                                                                                linearConversion
+                                                                                [
+                                                                                    950,
+                                                                                    1100,
+                                                                                    _currentDistance,
+                                                                                    0.75,
+                                                                                    0.90,
+                                                                                    true
+                                                                                ]
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                linearConversion
+                                                                                [
+                                                                                    1100,
+                                                                                    1250,
+                                                                                    _currentDistance,
+                                                                                    0.90,
+                                                                                    1.00,
+                                                                                    true
+                                                                                ]
+                                                                            };
+                                                                        };
+                                                                    };
+                                                                };
+                                                            };
+                                                        };
+                                                    };
+                                                };
+
+                                            private _midToFarProcessing =
+                                                linearConversion
+                                                [
+                                                    1500,
+                                                    3000,
+                                                    _currentDistance,
+                                                    0,
+                                                    1,
+                                                    true
+                                                ];
+
+                                            private _processingCloseWeight = 0;
+                                            private _processingMidWeight = 0;
+                                            private _processingFarWeight = 0;
+
+                                            if (_currentDistance < 1500) then
+                                            {
+                                                _processingCloseWeight =
+                                                    1 - _closeToMidProcessing;
+
+                                                _processingMidWeight =
+                                                    _closeToMidProcessing;
+                                            }
+                                            else
+                                            {
+                                                _processingMidWeight =
+                                                    1 - _midToFarProcessing;
+
+                                                _processingFarWeight =
+                                                    _midToFarProcessing;
+                                            };
+
+                                            private _terrainBodyScale =
+                                                (
+                                                    _processingCloseWeight *
+                                                    _terrainCloseScale
+                                                ) +
+                                                (
+                                                    _processingMidWeight *
+                                                    _terrainMidScale
+                                                ) +
+                                                (
+                                                    _processingFarWeight *
+                                                    _terrainFarScale
+                                                );
+
+                                            private _objectBodyScale =
+                                                (
+                                                    _processingCloseWeight *
+                                                    _objectCloseScale
+                                                ) +
+                                                (
+                                                    _processingMidWeight *
+                                                    _objectMidScale
+                                                ) +
+                                                (
+                                                    _processingFarWeight *
+                                                    _objectFarScale
+                                                );
+
+                                            private _groundBodyScale =
+                                                (
+                                                    _processingCloseWeight *
+                                                    _closeGroundScale
+                                                ) +
+                                                (
+                                                    _processingMidWeight *
+                                                    _midGroundScale
+                                                ) +
+                                                (
+                                                    _processingFarWeight *
+                                                    _farGroundScale
+                                                );
+
                                             _mrGroundScale =
                                                 1 +
                                                 (
                                                     (
-                                                        _closeGroundScale -
+                                                        _groundBodyScale -
                                                         1
                                                     ) *
                                                     _mrGroundResponseMaster
                                                 );
 
                                             _eventScale =
-                                                _terrainCloseScale *
-                                                _objectCloseScale *
+                                                _terrainBodyScale *
+                                                _objectBodyScale *
                                                 _mrGroundScale;
-                                        };
-
-                                        if (_isMRMidBody) then
+                                        }
+                                        else
                                         {
-                                            _mrGroundScale =
-                                                1 +
-                                                (
+                                            if (_isMRCloseBody) then
+                                            {
+                                                _mrGroundScale =
+                                                    1 +
                                                     (
-                                                        _midGroundScale -
-                                                        1
-                                                    ) *
-                                                    _mrGroundResponseMaster
-                                                );
+                                                        (
+                                                            _closeGroundScale -
+                                                            1
+                                                        ) *
+                                                        _mrGroundResponseMaster
+                                                    );
 
-                                            _eventScale =
-                                                _terrainMidScale *
-                                                _objectMidScale *
-                                                _mrGroundScale;
-                                        };
+                                                _eventScale =
+                                                    _terrainCloseScale *
+                                                    _objectCloseScale *
+                                                    _mrGroundScale;
+                                            };
 
-                                        if (_isMRFarBody) then
-                                        {
-                                            _mrGroundScale =
-                                                1 +
-                                                (
+                                            if (_isMRMidBody) then
+                                            {
+                                                _mrGroundScale =
+                                                    1 +
                                                     (
-                                                        _farGroundScale -
-                                                        1
-                                                    ) *
-                                                    _mrGroundResponseMaster
-                                                );
+                                                        (
+                                                            _midGroundScale -
+                                                            1
+                                                        ) *
+                                                        _mrGroundResponseMaster
+                                                    );
 
-                                            _eventScale =
-                                                _terrainFarScale *
-                                                _objectFarScale *
-                                                _mrGroundScale;
+                                                _eventScale =
+                                                    _terrainMidScale *
+                                                    _objectMidScale *
+                                                    _mrGroundScale;
+                                            };
+
+                                            if (_isMRFarBody) then
+                                            {
+                                                _mrGroundScale =
+                                                    1 +
+                                                    (
+                                                        (
+                                                            _farGroundScale -
+                                                            1
+                                                        ) *
+                                                        _mrGroundResponseMaster
+                                                    );
+
+                                                _eventScale =
+                                                    _terrainFarScale *
+                                                    _objectFarScale *
+                                                    _mrGroundScale;
+                                            };
                                         };
 
                                         _eventTrim =
@@ -3033,14 +3259,17 @@ if (!_workerRunning) then
                                         };
                                     };
 
-                                    [
-                                        _eventPath,
-                                        _eventVolume *
-                                        _eventMaster *
-                                        _eventTrim *
-                                        _eventScale
-                                    ]
-                                    call _playExternalSound;
+                                    if (!_eventEnvironmentOnly) then
+                                    {
+                                        [
+                                            _eventPath,
+                                            _eventVolume *
+                                            _eventMaster *
+                                            _eventTrim *
+                                            _eventScale
+                                        ]
+                                        call _playExternalSound;
+                                    };
                                 };
 
 
@@ -3379,11 +3608,15 @@ if (!_workerRunning) then
                                             -1
                                         ];
 
-                                    private _tailEligible = false;
+                                    private _tailEligible =
+                                        _eventEnvironmentOnly;
 
                                     if (
-                                        _eventBucket !=
-                                        _lastTailBucket
+                                        !_eventEnvironmentOnly &&
+                                        {
+                                            _eventBucket !=
+                                            _lastTailBucket
+                                        }
                                     ) then
                                     {
                                         if (
@@ -3536,6 +3769,24 @@ if (!_workerRunning) then
                                         ) then
                                         {
                                             _tailEventScale = 1.10;
+                                        };
+
+                                        if (_eventEnvironmentOnly) then
+                                        {
+                                            _tailEventScale =
+                                                (
+                                                    _vehicle getVariable
+                                                    [
+                                                        "gau_gau8_terminalEnvironmentTailScale",
+                                                        missionNamespace getVariable
+                                                        [
+                                                            "gau_gau8_terminalEnvironmentTailScaleDefault",
+                                                            1.10
+                                                        ]
+                                                    ]
+                                                )
+                                                max 0
+                                                min 2.0;
                                         };
 
                                         private _tailSourceTrim =
@@ -3759,7 +4010,14 @@ if (!_workerRunning) then
                                                         _tailPitch
                                                         toFixed 3
                                                     ),
-                                                    _eventPath
+                                                    if (_eventEnvironmentOnly) then
+                                                    {
+                                                        _eventPath + " [terminal-environment]"
+                                                    }
+                                                    else
+                                                    {
+                                                        _eventPath
+                                                    }
                                                 ];
 
                                             systemChat _tailMessage;

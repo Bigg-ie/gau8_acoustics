@@ -73,12 +73,31 @@ if (_mrDue) then
 
     _vehicle setVariable ["gau_gau8_nextGrainTick", _now + (_nextGapShots / 65)];
 
+    private _singleCloseBankEnabled =
+        _vehicle getVariable
+        [
+            "gau_gau8_singleCloseBankEnabled",
+            missionNamespace getVariable
+            [
+                "gau_gau8_singleCloseBankEnabledDefault",
+                false
+            ]
+        ];
+
     private _closePaths = _vehicle getVariable ["gau_gau8_mrCloseGrainPaths", []];
     private _midPaths = _vehicle getVariable ["gau_gau8_mrMidGrainPaths", []];
     private _farPaths = _vehicle getVariable ["gau_gau8_mrFarGrainPaths", []];
     private _sourceOffsets = _vehicle getVariable ["gau_gau8_v27_23MRSourceOffsets", []];
 
-    private _grainCount = (count _closePaths) min (count _midPaths) min (count _farPaths);
+    private _grainCount =
+        if (_singleCloseBankEnabled) then
+        {
+            count _closePaths
+        }
+        else
+        {
+            (count _closePaths) min (count _midPaths) min (count _farPaths)
+        };
 
     if (
         (_grainCount > 0) &&
@@ -114,11 +133,20 @@ if (_mrDue) then
         };
 
         private _voices =
-        [
-            [_closePaths select _grainIndex, _closeBodyGain],
-            [_midPaths select _grainIndex, _midBodyGain],
-            [_farPaths select _grainIndex, _farBodyGain]
-        ];
+            if (_singleCloseBankEnabled) then
+            {
+                [
+                    [_closePaths select _grainIndex, _closeBodyGain]
+                ]
+            }
+            else
+            {
+                [
+                    [_closePaths select _grainIndex, _closeBodyGain],
+                    [_midPaths select _grainIndex, _midBodyGain],
+                    [_farPaths select _grainIndex, _farBodyGain]
+                ]
+            };
 
         {
             _x params ["_path", "_gain"];
@@ -138,6 +166,55 @@ if (_mrDue) then
             };
         }
         forEach _voices;
+
+        private _terminalPath =
+            _closePaths select _grainIndex;
+
+        private _terminalPeakGain =
+            _closeBodyGain;
+
+        if (!_singleCloseBankEnabled) then
+        {
+            if (_midBodyGain > _terminalPeakGain) then
+            {
+                _terminalPath =
+                    _midPaths select _grainIndex;
+
+                _terminalPeakGain =
+                    _midBodyGain;
+            };
+
+            if (_farBodyGain > _terminalPeakGain) then
+            {
+                _terminalPath =
+                    _farPaths select _grainIndex;
+
+                _terminalPeakGain =
+                    _farBodyGain;
+            };
+        };
+
+        private _terminalBodyEnergy =
+            sqrt
+            (
+                (_closeBodyGain * _closeBodyGain) +
+                (_midBodyGain * _midBodyGain) +
+                (_farBodyGain * _farBodyGain)
+            );
+
+        _vehicle setVariable
+        [
+            "gau_gau8_lastMRTerminalState",
+            [
+                _terminalPath,
+                +_emissionPositionASL,
+                _arrivalTime,
+                _mrMaster * _terminalBodyEnergy,
+                _pitch,
+                +(velocity _vehicle),
+                _now
+            ]
+        ];
 
         _vehicle setVariable ["gau_gau8_lastGrainIndex", _grainIndex];
         _vehicle setVariable ["gau_gau8_v27_23LastMRGrainTick", _now];
