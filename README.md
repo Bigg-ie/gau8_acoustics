@@ -6,19 +6,19 @@ A client-side acoustic replacement for the **GAU-8/A Avenger** in **Arma 3**. Th
 
 ## Features
 
-- Speed-of-sound propagation delay for the external cannon report
-- Continuous long-grain cannon body with close, medium, and far distance banks
-- Per-emission distance weighting and moving-source positioning
-- 65 Hz stationary firing-pulse reference
-- Source-referenced Doppler for approaching and receding aircraft
-- Muzzle directivity
+- Speed-of-sound propagation delay
+- Close, medium, and distant cannon-report layers
+- Distance-dependent report timbre and spectral balance
+- Directional muzzle and cannon report
+- Doppler behavior for approaching and receding aircraft
 - Terrain and object obstruction
-- Ground-interference coloration
+- Ground-interference response
 - Environmental reflections and decay
-- Independent supersonic projectile crack model with Mach-wave geometry
-- Distance-dependent spectral attenuation of projectile cracks
-- Dedicated cockpit mix
+- Dedicated cockpit presentation
 - Continuous support for short and long bursts
+- Supersonic projectile cracks based on Mach-wave geometry
+- Distance-dependent spectral attenuation of projectile cracks
+- Projectile-crack reflections and environmental decay
 - AI firing-mode support
 - Optional compatibility with RHSUSAF, Firewill, USAF, CUP, A-10-tastic, and JSRS Soundmod 2025
 
@@ -36,13 +36,11 @@ Compatibility components load only when their required addons are present.
 
 ## Acoustic model
 
-The external report is emitted from the historical firing position and delayed using a nominal sound speed of 343 m/s. Close, medium, and far report banks are recalculated as the aircraft moves, so a pass can migrate through the distance field without freezing the first-shot geometry.
+The cannon report changes with distance, direction, aircraft motion, obstruction, and the surrounding environment. Distant observers hear the report after the visible firing event because sound propagation is delayed.
 
-The stationary cannon pulse reference is 65 Hz. The current source recording contains a higher pulse rate because it was captured from an aircraft moving toward the target. Runtime pitch therefore derives the stationary state downward from the source and applies source-motion Doppler for approaching and receding passes.
+The supersonic projectile crack field is modeled separately from the cannon report, allowing listeners near the projectile flight path to hear the crack independently of the delayed report arriving from the aircraft.
 
-The supersonic projectile crack field is modeled independently of the cannon-body level and distance-bank system. Listeners near the projectile Mach wave can therefore hear the projectile crack separately from the delayed report arriving from the aircraft.
-
-Cockpit listeners use a separate internal mix and do not receive the same free-field presentation as external listeners.
+Cockpit listeners receive a dedicated internal presentation rather than the same external sound heard by observers outside the aircraft.
 
 ## What the mod does not change
 
@@ -120,19 +118,20 @@ Release output is written under `.hemttout\release`.
 
 ## Repository versioning
 
-Public releases use semantic versioning. The current source release is **1.2.0** and should be tagged `v1.2.0`. Internal V27 development numbers are not part of the public release version.
+Public releases use semantic versioning. Internal V27 development numbers are not part of the public release version.
 
 ## Known limitations
 
 - The model is a gameplay-oriented acoustic approximation rather than a full wave-propagation simulation.
 - Sound speed is fixed at approximately 343 m/s.
+- Atmospheric temperature, humidity, wind, and pressure are not currently used to vary propagation.
 - Obstruction and ground response depend on Arma world geometry and script timing.
 - Very low or unstable frame rates can reduce timing precision.
 - Third-party updates can require compatibility maintenance.
 
 ## Reporting issues
 
-Include the Arma 3 version, mod version or commit, loaded mod list, aircraft and weapon, firing mode, listener position, approximate distance, and relevant RPT errors.
+Include the Arma 3 version, mod version or commit, loaded mod list, aircraft and weapon, firing mode, listener position, approximate distance, whether the issue occurs internally or externally, whether it concerns the cannon report or supersonic projectile crack, and relevant RPT errors.
 
 Repository: https://github.com/Bigg-ie/gau8_acoustics
 
