@@ -419,16 +419,21 @@ if ((count _positionASL) != 3) exitWith
 };
 
 
+private _phaseAtmosphere =
+    [
+        _vehicle
+    ]
+    call gau_gau8_fnc_getAtmosphereState;
+
 private _phaseSoundSpeed =
-    (
-        _vehicle getVariable
-        [
-            "gau_gau8_speedOfSound",
-            343.0
-        ]
-    )
-    max 300
-    min 360;
+    _phaseAtmosphere param [0, 343.0];
+
+private _phaseWind =
+    _phaseAtmosphere param
+    [
+        1,
+        [0, 0, 0]
+    ];
 
 private _phaseGeometry =
     _vehicle getVariable
@@ -465,8 +470,17 @@ if ((count _phaseGeometry) >= 7) then
                     _phaseSoundSpeed
                 ]
             )
-            max 300
-            min 360;
+            max 280
+            min 380;
+
+        _phaseWind =
+            +(
+                _phaseGeometry param
+                [
+                    18,
+                    _phaseWind
+                ]
+            );
     };
 };
 
@@ -476,15 +490,30 @@ private _phaseListenerPositionASL =
         positionCameraToWorld [0, 0, 0]
     );
 
+private _phaseTravel =
+    [
+        _positionASL,
+        _phaseListenerPositionASL,
+        _phaseSoundSpeed,
+        _phaseWind
+    ]
+    call gau_gau8_fnc_getSoundTravelTime;
+
 private _attackPhaseArrivalTick =
     _eventTime +
     (
-        (
-            _phaseListenerPositionASL
-            vectorDistance
-            _positionASL
-        ) /
-        _phaseSoundSpeed
+        _phaseTravel param
+        [
+            0,
+            (
+                (
+                    _phaseListenerPositionASL
+                    vectorDistance
+                    _positionASL
+                ) /
+                _phaseSoundSpeed
+            )
+        ]
     );
 
 _vehicle setVariable

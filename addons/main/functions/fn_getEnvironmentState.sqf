@@ -28,6 +28,36 @@ if (
     ]
 };
 
+private _atmosphere =
+    [
+        _vehicle
+    ]
+    call gau_gau8_fnc_getAtmosphereState;
+
+_atmosphere params
+[
+    "_soundSpeed",
+    "_windVector",
+    "_ambientTemperatureC",
+    "_relativeHumidity"
+];
+
+private _directTravel =
+    [
+        _emissionPositionASL,
+        _listenerPositionASL,
+        _soundSpeed,
+        _windVector
+    ]
+    call gau_gau8_fnc_getSoundTravelTime;
+
+private _directPropagationDelay =
+    _directTravel param
+    [
+        0,
+        (_distance / _soundSpeed)
+    ];
+
 private _sampleCurve =
 {
     params
@@ -447,12 +477,6 @@ private _reflectedDistance =
 
 _reflectedDistance = _reflectedDistance max _distance;
 
-private _reflectionPropagationDelay =
-    _reflectedDistance / 343.0;
-
-private _reflectionExtraDelay =
-    (_reflectedDistance - _distance) / 343.0;
-
 private _reflectionPositionASL = +_emissionPositionASL;
 private _mirrorToListener =
     _listenerPositionASL vectorDiff _mirrorSource;
@@ -484,6 +508,35 @@ if ((abs _verticalSpan) > 0.001) then
         ) + 0.15
     ];
 };
+
+private _sourceReflectionTravel =
+    [
+        _emissionPositionASL,
+        _reflectionPositionASL,
+        _soundSpeed,
+        _windVector
+    ]
+    call gau_gau8_fnc_getSoundTravelTime;
+
+private _reflectionListenerTravel =
+    [
+        _reflectionPositionASL,
+        _listenerPositionASL,
+        _soundSpeed,
+        _windVector
+    ]
+    call gau_gau8_fnc_getSoundTravelTime;
+
+private _reflectionPropagationDelay =
+    (_sourceReflectionTravel param [0, 0]) +
+    (_reflectionListenerTravel param [0, 0]);
+
+private _reflectionExtraDelay =
+    (
+        _reflectionPropagationDelay -
+        _directPropagationDelay
+    )
+    max 0;
 
 private _distancePresence =
     [

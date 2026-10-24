@@ -114,14 +114,35 @@ private _playbackMaxDistance =
         ]
     ) max 10000 min 50000;
 
-private _speedOfSound =
-    (
-        _vehicle getVariable
-        [
-            "gau_gau8_speedOfSound",
-            343.0
-        ]
-    ) max 300 min 360;
+private _atmosphere =
+    [
+        _vehicle
+    ]
+    call gau_gau8_fnc_getAtmosphereState;
+
+_atmosphere params
+[
+    "_speedOfSound",
+    "_windVector",
+    "_ambientTemperatureC",
+    "_relativeHumidity"
+];
+
+private _directTravel =
+    [
+        _emissionPositionASL,
+        _listenerPositionASL,
+        _speedOfSound,
+        _windVector
+    ]
+    call gau_gau8_fnc_getSoundTravelTime;
+
+private _directTravelTime =
+    _directTravel param
+    [
+        0,
+        (_directDistance / _speedOfSound)
+    ];
 
 private _sampleDistanceGain =
 {
@@ -466,8 +487,37 @@ private _pathData =
     private _listenerLeg = _positionASL vectorDistance _listenerPositionASL;
     private _sourceLeg = _positionASL vectorDistance _emissionPositionASL;
     private _reflectedPath = _sourceLeg + _listenerLeg;
-    private _extraPath = (_reflectedPath - _directDistance) max 0;
-    private _predelay = (_extraPath / _speedOfSound) max 0.010 min 0.600;
+
+    private _sourceReflectionTravel =
+        [
+            _emissionPositionASL,
+            _positionASL,
+            _speedOfSound,
+            _windVector
+        ]
+        call gau_gau8_fnc_getSoundTravelTime;
+
+    private _reflectionListenerTravel =
+        [
+            _positionASL,
+            _listenerPositionASL,
+            _speedOfSound,
+            _windVector
+        ]
+        call gau_gau8_fnc_getSoundTravelTime;
+
+    private _reflectedTravelTime =
+        (_sourceReflectionTravel param [0, 0]) +
+        (_reflectionListenerTravel param [0, 0]);
+
+    private _predelay =
+        (
+            _reflectedTravelTime -
+            _directTravelTime
+        )
+        max 0.010
+        min 0.600;
+
     private _reflectedCurveGain = [_reflectedPath] call _sampleDistanceGain;
     private _fullPathScale = (_reflectedCurveGain / (_directCurveGain max 0.01)) max 0.10 min 1.00;
 

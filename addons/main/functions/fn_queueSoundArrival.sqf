@@ -31,14 +31,19 @@ private _generation =
     ];
 
 
-private _speedOfSound =
-    (
-        _vehicle getVariable
-        [
-            "gau_gau8_speedOfSound",
-            343.0
-        ]
-    ) max 300 min 360;
+private _atmosphere =
+    [
+        _vehicle
+    ]
+    call gau_gau8_fnc_getAtmosphereState;
+
+_atmosphere params
+[
+    "_speedOfSound",
+    "_eventWind",
+    "_eventAmbientTemperatureC",
+    "_eventRelativeHumidity"
+];
 
 private _queueCallTick =
     diag_tickTime;
@@ -132,7 +137,30 @@ if (_isRipAtQueue) then
                         6,
                         _eventPropagationSpeed
                     ]
-                ) max 300 min 360;
+                ) max 280 min 380;
+
+            _eventWind =
+                +(
+                    _geometrySnapshot param
+                    [
+                        18,
+                        _eventWind
+                    ]
+                );
+
+            _eventAmbientTemperatureC =
+                _geometrySnapshot param
+                [
+                    19,
+                    _eventAmbientTemperatureC
+                ];
+
+            _eventRelativeHumidity =
+                _geometrySnapshot param
+                [
+                    20,
+                    _eventRelativeHumidity
+                ];
         };
     };
 
@@ -177,6 +205,22 @@ private _listenerAtQueueASL =
 private _initialDistance =
     _listenerAtQueueASL vectorDistance _emissionPositionASL;
 
+private _initialTravel =
+    [
+        _emissionPositionASL,
+        _listenerAtQueueASL,
+        _eventPropagationSpeed,
+        _eventWind
+    ]
+    call gau_gau8_fnc_getSoundTravelTime;
+
+private _initialTravelTime =
+    _initialTravel param
+    [
+        0,
+        (_initialDistance / _eventPropagationSpeed)
+    ];
+
 private _arrivalHint =
     if (_lockedArrivalValid) then
     {
@@ -185,7 +229,7 @@ private _arrivalHint =
     else
     {
         _emissionTick +
-        (_initialDistance / _eventPropagationSpeed)
+        _initialTravelTime
     };
 
 
@@ -296,10 +340,7 @@ if (
 
         _clockBaseArrival =
             _emissionTick +
-            (
-                _initialDistance /
-                _eventPropagationSpeed
-            );
+            _initialTravelTime;
 
         _clockLastEmission = _emissionTick;
         _clockValid = true;
@@ -372,7 +413,10 @@ _queue pushBack
         select _lockedArrivalValid
     },
     _reportBurstToken,
-    _environmentOnly
+    _environmentOnly,
+    +_eventWind,
+    _eventAmbientTemperatureC,
+    _eventRelativeHumidity
 ];
 
 
@@ -578,14 +622,25 @@ if (!_workerRunning) then
                                 positionCameraToWorld [0, 0, 0]
                             );
 
+                        private _workerAtmosphere =
+                            [
+                                _vehicle
+                            ]
+                            call gau_gau8_fnc_getAtmosphereState;
+
                         private _speedOfSound =
-                            (
-                                _vehicle getVariable
-                                [
-                                    "gau_gau8_speedOfSound",
-                                    343.0
-                                ]
-                            ) max 300 min 360;
+                            _workerAtmosphere param
+                            [
+                                0,
+                                343.0
+                            ];
+
+                        private _workerWind =
+                            _workerAtmosphere param
+                            [
+                                1,
+                                [0, 0, 0]
+                            ];
 
                         private _nowTick = diag_tickTime;
                         private _nextIndex = -1;
@@ -616,7 +671,35 @@ if (!_workerRunning) then
                                         10,
                                         _speedOfSound
                                     ]
-                                ) max 300 min 360;
+                                ) max 280 min 380;
+
+                            private _candidateWind =
+                                +(
+                                    _x param
+                                    [
+                                        14,
+                                        _workerWind
+                                    ]
+                                );
+
+                            private _candidateTravel =
+                                [
+                                    _candidatePositionASL,
+                                    _listenerPositionASL,
+                                    _candidatePropagationSpeed,
+                                    _candidateWind
+                                ]
+                                call gau_gau8_fnc_getSoundTravelTime;
+
+                            private _candidateTravelTime =
+                                _candidateTravel param
+                                [
+                                    0,
+                                    (
+                                        _candidateDistance /
+                                        _candidatePropagationSpeed
+                                    )
+                                ];
 
                             private _candidateLockedArrivalTick =
                                 _x param
@@ -633,10 +716,7 @@ if (!_workerRunning) then
                                 else
                                 {
                                     _candidateEmissionTick +
-                                    (
-                                        _candidateDistance /
-                                        _candidatePropagationSpeed
-                                    )
+                                    _candidateTravelTime
                                 };
 
                             if (
@@ -696,7 +776,10 @@ if (!_workerRunning) then
                                     ["_eventPropagationSpeed", 343.0],
                                     ["_eventLockedArrivalTick", -1.0],
                                     ["_eventReportBurstToken", -1],
-                                    ["_eventEnvironmentOnly", false]
+                                    ["_eventEnvironmentOnly", false],
+                                    ["_eventWind", [0, 0, 0]],
+                                    ["_eventAmbientTemperatureC", 20.0],
+                                    ["_eventRelativeHumidity", 0.0]
                                 ];
 
                                 private _currentDistance =
@@ -721,36 +804,38 @@ if (!_workerRunning) then
                                     _eventPositionASL;
 
 
+                                private _currentTravel =
+                                    [
+                                        _eventPositionASL,
+                                        _listenerPositionASL,
+                                        _eventPropagationSpeed,
+                                        _eventWind
+                                    ]
+                                    call gau_gau8_fnc_getSoundTravelTime;
+
+                                private _currentTravelTime =
+                                    _currentTravel param
+                                    [
+                                        0,
+                                        (
+                                            _currentDistance /
+                                            _eventPropagationSpeed
+                                        )
+                                    ];
+
+                                private _effectiveGroundSpeed =
+                                    _currentTravel param
+                                    [
+                                        1,
+                                        _eventPropagationSpeed
+                                    ];
+
                                 private _rayDirection =
-                                    if (_currentDistance > 0.01) then
-                                    {
-                                        [
-                                            (
-                                                _listenerPositionASL # 0
-                                            ) -
-                                            (
-                                                _eventPositionASL # 0
-                                            ),
-                                            (
-                                                _listenerPositionASL # 1
-                                            ) -
-                                            (
-                                                _eventPositionASL # 1
-                                            ),
-                                            (
-                                                _listenerPositionASL # 2
-                                            ) -
-                                            (
-                                                _eventPositionASL # 2
-                                            )
-                                        ]
-                                        vectorMultiply
-                                        (1 / _currentDistance)
-                                    }
-                                    else
-                                    {
+                                    _currentTravel param
+                                    [
+                                        2,
                                         [0, 0, 0]
-                                    };
+                                    ];
 
                                 private _listenerObject =
                                     if (!isNull cameraOn) then
@@ -779,13 +864,23 @@ if (!_workerRunning) then
                                         [0, 0, 0]
                                     };
 
-                                private _sourceVelocityAlongRay =
+                                private _sourceAirVelocity =
                                     _storedSourceVelocity
+                                    vectorDiff
+                                    _eventWind;
+
+                                private _listenerAirVelocity =
+                                    _listenerVelocity
+                                    vectorDiff
+                                    _eventWind;
+
+                                private _sourceVelocityAlongRay =
+                                    _sourceAirVelocity
                                     vectorDotProduct
                                     _rayDirection;
 
                                 private _listenerVelocityAlongRay =
-                                    _listenerVelocity
+                                    _listenerAirVelocity
                                     vectorDotProduct
                                     _rayDirection;
 
@@ -4738,8 +4833,7 @@ if (!_workerRunning) then
                                             _storedEmissionTick;
 
                                         private _geometricToF =
-                                            _currentDistance /
-                                            _eventPropagationSpeed;
+                                            _currentTravelTime;
 
                                         private _timingErrorMs =
                                             (
@@ -4751,9 +4845,13 @@ if (!_workerRunning) then
                                         private _propagationMessage =
                                             format
                                             [
-                                                "GAU-8 propagation: distance=%1 m c=%2 m/s geometric=%3 s actual=%4 s error=%5 ms path=%6",
+                                                "GAU-8 propagation: distance=%1m c=%2m/s effective=%3m/s temp=%4C humidity=%5 wind=%6 geometric=%7s actual=%8s error=%9ms path=%10",
                                                 (_currentDistance toFixed 1),
                                                 (_eventPropagationSpeed toFixed 1),
+                                                (_effectiveGroundSpeed toFixed 1),
+                                                (_eventAmbientTemperatureC toFixed 1),
+                                                (_eventRelativeHumidity toFixed 2),
+                                                _eventWind,
                                                 (_geometricToF toFixed 3),
                                                 (_actualToF toFixed 3),
                                                 (_timingErrorMs toFixed 1),

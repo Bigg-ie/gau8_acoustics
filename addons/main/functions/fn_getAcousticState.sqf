@@ -23,6 +23,32 @@ private _emissionPositionASL =
 private _distance =
     _listenerPositionASL vectorDistance _emissionPositionASL;
 
+private _atmosphere =
+    [
+        _vehicle
+    ]
+    call gau_gau8_fnc_getAtmosphereState;
+
+_atmosphere params
+[
+    "_soundSpeed",
+    "_windVector",
+    "_ambientTemperatureC",
+    "_relativeHumidity"
+];
+
+private _directTravel =
+    [
+        _emissionPositionASL,
+        _listenerPositionASL,
+        _soundSpeed,
+        _windVector
+    ]
+    call gau_gau8_fnc_getSoundTravelTime;
+
+private _propagationDelay =
+    _directTravel param [0, (_distance / _soundSpeed)];
+
 private _sampleCurve =
 {
     params
@@ -321,7 +347,7 @@ private _objectOcclusion = 0.0;
 private _combinedOcclusion = 0.0;
 private _reflectionPresence = 0.0;
 private _reflectionPositionASL = +_emissionPositionASL;
-private _reflectionPropagationDelay = _distance / 343.0;
+private _reflectionPropagationDelay = _propagationDelay;
 private _reflectionExtraDelay = 0.0;
 private _sourceHeightAGL = 0.0;
 private _listenerHeightAGL = 0.0;
@@ -419,7 +445,7 @@ private _reflectionGain = 0.0;
     _listenerPositionASL,
     _emissionPositionASL,
     _distance,
-    _distance / 343.0,
+    _propagationDelay,
     _distanceGain,
     _closeBodyGain,
     _midBodyGain,

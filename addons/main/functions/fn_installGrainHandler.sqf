@@ -1105,12 +1105,19 @@ private _handler =
                 {!isNull _projectile}
             ) then
             {
+                private _shockAtmosphere =
+                    [
+                        _vehicle
+                    ]
+                    call gau_gau8_fnc_getAtmosphereState;
+
                 private _shockGeometry =
                     [
                         getPosASL _projectile,
                         velocity _projectile,
                         _listenerPositionASL,
-                        343.0
+                        _shockAtmosphere param [0, 343.0],
+                        _shockAtmosphere param [1, [0, 0, 0]]
                     ]
                     call gau_gau8_fnc_calculateShockGeometry;
 

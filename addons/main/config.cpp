@@ -562,6 +562,14 @@ class CfgFunctions
             {
             };
 
+            class getAtmosphereState
+            {
+            };
+
+            class getSoundTravelTime
+            {
+            };
+
             class getAcousticState
             {
             };

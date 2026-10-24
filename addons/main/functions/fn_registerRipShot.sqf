@@ -18,18 +18,27 @@ private _sourcePositionASL = getPosASL _projectile;
 private _sourceVelocity = velocity _projectile;
 private _sourceSpeed = vectorMagnitude _sourceVelocity;
 
-private _soundSpeed =
-    (
-        missionNamespace getVariable
-        [
-            "gau_gau8_speedOfSound",
-            343
-        ]
-    )
-    max 300
-    min 360;
+private _atmosphere =
+    [
+        _vehicle
+    ]
+    call gau_gau8_fnc_getAtmosphereState;
 
-if (_sourceSpeed <= (_soundSpeed * 1.05)) exitWith
+_atmosphere params
+[
+    "_soundSpeed",
+    "_windVector",
+    "_ambientTemperatureC",
+    "_relativeHumidity"
+];
+
+private _sourceAirVelocity =
+    _sourceVelocity vectorDiff _windVector;
+
+private _sourceAirSpeed =
+    vectorMagnitude _sourceAirVelocity;
+
+if (_sourceAirSpeed <= (_soundSpeed * 1.05)) exitWith
 {
     false
 };
@@ -67,7 +76,7 @@ if (_initialCrossTrack > (_maxCrossTrack * 1.08)) exitWith
     false
 };
 
-private _sourceMach = _sourceSpeed / _soundSpeed;
+private _sourceMach = _sourceAirSpeed / _soundSpeed;
 private _sourceMachRoot =
     sqrt ((_sourceMach * _sourceMach) - 1);
 
@@ -92,11 +101,6 @@ private _maxEmissionDelay =
     )
     max 0.25
     min 6.0;
-
-if (_constantVelocityEmissionDelay < -0.08) exitWith
-{
-    false
-};
 
 private _ammoClass = typeOf _projectile;
 private _ammoConfig =
@@ -130,22 +134,39 @@ private _evaluateMachCondition =
 {
     params ["_positionASL", "_velocity"];
 
-    private _toListener =
-        _listenerPositionASL vectorDiff _positionASL;
+    private _travel =
+        [
+            _positionASL,
+            _listenerPositionASL,
+            _soundSpeed,
+            _windVector
+        ]
+        call gau_gau8_fnc_getSoundTravelTime;
 
-    private _distance =
-        vectorMagnitude _toListener;
+    private _travelTime =
+        _travel param [0, 0];
 
-    if (_distance <= 0.01) exitWith
+    if (_travelTime <= 0.000001) exitWith
     {
         -1e9
     };
 
-    private _ray =
-        _toListener vectorMultiply
-        (1 / _distance);
+    private _mediumRay =
+        _travel param
+        [
+            2,
+            [0, 0, 0]
+        ];
 
-    (_velocity vectorDotProduct _ray) - _soundSpeed
+    private _airRelativeVelocity =
+        _velocity vectorDiff _windVector;
+
+    (
+        _airRelativeVelocity
+        vectorDotProduct
+        _mediumRay
+    ) -
+    _soundSpeed
 };
 
 private _previousPosition = +_sourcePositionASL;
@@ -158,17 +179,25 @@ private _previousCondition =
     ]
     call _evaluateMachCondition;
 
-if (_previousCondition <= 0) exitWith
-{
-    false
-};
+private _initialMachCondition =
+    _previousCondition;
 
 private _previousTime = 0.0;
 private _solved = false;
 private _becameSubsonic = false;
+private _solutionType = "";
 private _emissionTravelTime = -1.0;
 private _emissionPositionASL = [];
 private _emissionVelocity = [];
+
+if (_previousCondition <= 0) then
+{
+    _emissionTravelTime = 0.0;
+    _emissionPositionASL = +_sourcePositionASL;
+    _emissionVelocity = +_sourceVelocity;
+    _solutionType = "boundary";
+    _solved = true;
+};
 
 while
 {
@@ -217,64 +246,71 @@ do
     private _nextSpeed =
         vectorMagnitude _nextVelocity;
 
+    private _nextAirSpeed =
+        vectorMagnitude
+        (
+            _nextVelocity vectorDiff _windVector
+        );
+
     private _nextTime =
         _previousTime + _dt;
 
-    if (_nextSpeed <= (_soundSpeed * 1.0005)) then
+    private _nextCondition =
+        [
+            _nextPosition,
+            _nextVelocity
+        ]
+        call _evaluateMachCondition;
+
+    if (
+        _previousCondition >= 0 &&
+        {_nextCondition <= 0}
+    ) then
     {
-        _becameSubsonic = true;
+        private _denominator =
+            _previousCondition - _nextCondition;
+
+        private _fraction =
+            if (abs _denominator > 0.000001) then
+            {
+                (_previousCondition / _denominator)
+                max 0
+                min 1
+            }
+            else
+            {
+                0.5
+            };
+
+        _emissionTravelTime =
+            _previousTime + (_dt * _fraction);
+
+        _emissionPositionASL =
+            _previousPosition vectorAdd
+            (
+                (
+                    _nextPosition vectorDiff _previousPosition
+                )
+                vectorMultiply _fraction
+            );
+
+        _emissionVelocity =
+            _previousVelocity vectorAdd
+            (
+                (
+                    _nextVelocity vectorDiff _previousVelocity
+                )
+                vectorMultiply _fraction
+            );
+
+        _solutionType = "tangent";
+        _solved = true;
     }
     else
     {
-        private _nextCondition =
-            [
-                _nextPosition,
-                _nextVelocity
-            ]
-            call _evaluateMachCondition;
-
-        if (
-            _previousCondition >= 0 &&
-            {_nextCondition <= 0}
-        ) then
+        if (_nextAirSpeed <= (_soundSpeed * 1.0005)) then
         {
-            private _denominator =
-                _previousCondition - _nextCondition;
-
-            private _fraction =
-                if (abs _denominator > 0.000001) then
-                {
-                    (_previousCondition / _denominator)
-                    max 0
-                    min 1
-                }
-                else
-                {
-                    0.5
-                };
-
-            _emissionTravelTime =
-                _previousTime + (_dt * _fraction);
-
-            _emissionPositionASL =
-                _previousPosition vectorAdd
-                (
-                    (
-                        _nextPosition vectorDiff _previousPosition
-                    )
-                    vectorMultiply _fraction
-                );
-
-            _emissionVelocity =
-                _previousVelocity vectorAdd
-                (
-                    (
-                        _nextVelocity vectorDiff _previousVelocity
-                    )
-                    vectorMultiply _fraction
-                );
-
-            _solved = true;
+            _becameSubsonic = true;
         }
         else
         {
@@ -298,13 +334,19 @@ if (
 private _emissionSpeed =
     vectorMagnitude _emissionVelocity;
 
-if (_emissionSpeed <= (_soundSpeed * 1.0005)) exitWith
+private _emissionAirVelocity =
+    _emissionVelocity vectorDiff _windVector;
+
+private _emissionAirSpeed =
+    vectorMagnitude _emissionAirVelocity;
+
+if (_emissionAirSpeed <= (_soundSpeed * 1.0005)) exitWith
 {
     false
 };
 
 private _emissionMach =
-    _emissionSpeed / _soundSpeed;
+    _emissionAirSpeed / _soundSpeed;
 
 private _machAngleDegrees =
     asin
@@ -360,6 +402,25 @@ if (_emissionDistance > _maxDistance) exitWith
     false
 };
 
+private _emissionAcousticTravel =
+    [
+        _emissionPositionASL,
+        _listenerPositionASL,
+        _soundSpeed,
+        _windVector
+    ]
+    call gau_gau8_fnc_getSoundTravelTime;
+
+private _arrivalOffset =
+    _emissionTravelTime +
+    (
+        _emissionAcousticTravel param
+        [
+            0,
+            (_emissionDistance / _soundSpeed)
+        ]
+    );
+
 private _nowTick = diag_tickTime;
 private _eventTime =
     _nowTick + _emissionTravelTime;
@@ -372,6 +433,8 @@ _vehicle setVariable ["gau_gau8_ripEmissionVelocity", +_emissionVelocity];
 _vehicle setVariable ["gau_gau8_ripEmissionMach", _emissionMach];
 _vehicle setVariable ["gau_gau8_ripMachAngleDegrees", _machAngleDegrees];
 _vehicle setVariable ["gau_gau8_ripCrossTrack", _crossTrack];
+_vehicle setVariable ["gau_gau8_ripSolutionType", _solutionType];
+_vehicle setVariable ["gau_gau8_ripArrivalOffset", _arrivalOffset];
 
 
 _vehicle setVariable
@@ -392,7 +455,14 @@ _vehicle setVariable
         _airFriction,
         _coefGravity,
         _sourceSpeed,
-        _constantVelocityEmissionDelay
+        _constantVelocityEmissionDelay,
+        _solutionType,
+        _arrivalOffset,
+        _initialMachCondition,
+        +_windVector,
+        _ambientTemperatureC,
+        _relativeHumidity,
+        _emissionAirSpeed
     ]
 ];
 
@@ -420,7 +490,14 @@ missionNamespace setVariable
         _emissionDistance,
         _airFriction,
         _coefGravity,
-        _integrationStep
+        _integrationStep,
+        _solutionType,
+        _arrivalOffset,
+        _initialMachCondition,
+        +_windVector,
+        _ambientTemperatureC,
+        _relativeHumidity,
+        _emissionAirSpeed
     ]
 ];
 
@@ -450,16 +527,21 @@ if (
         diag_log
         format
         [
-            "GAU-8 ballistic emission: ammo=%1 source=%2m/s emit=%3m/s M=%4 angle=%5deg t=%6s cross=%7m drag=%8 g=%9",
+            "GAU-8 ballistic crack: solution=%1 ammo=%2 ground=%3m/s air=%4m/s M=%5 angle=%6deg emitT=%7s arrival=%8s cross=%9m condition0=%10 c=%11 temp=%12C humidity=%13 wind=%14",
+            _solutionType,
             _ammoClass,
-            round _sourceSpeed,
             round _emissionSpeed,
+            round _emissionAirSpeed,
             _emissionMach toFixed 3,
             _machAngleDegrees toFixed 2,
             _emissionTravelTime toFixed 4,
+            _arrivalOffset toFixed 4,
             round _crossTrack,
-            _airFriction,
-            _coefGravity
+            _initialMachCondition toFixed 2,
+            _soundSpeed toFixed 2,
+            _ambientTemperatureC toFixed 1,
+            _relativeHumidity toFixed 2,
+            _windVector
         ];
     };
 };

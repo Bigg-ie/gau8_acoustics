@@ -7,6 +7,8 @@ A client-side acoustic replacement for the **GAU-8/A Avenger** in **Arma 3**. Th
 ## Features
 
 - Speed-of-sound propagation delay
+- Temperature- and humidity-dependent sound speed
+- Wind-influenced arrival timing for cannon reports and supersonic projectile cracks
 - Close, medium, and distant cannon-report layers
 - Distance-dependent report timbre and spectral balance
 - Directional muzzle and cannon report
@@ -28,7 +30,7 @@ A client-side acoustic replacement for the **GAU-8/A Avenger** in **Arma 3**. Th
 | --- | --- | --- |
 | Arma 3 | A-164 Wipeout | `Gatling_30mm_Plane_CAS_01_F` |
 | RHSUSAF | A-10A | `RHS_weap_gau8` |
-| Firewill | A-10C | `FIR_GAU8` |
+| Firewill | A-10 Warthog variants | `FIR_GAU8` |
 | USAF | A-10C family | `USAF_GAU8_GUN` |
 | CUP | A-10 variants | `CUP_Vacannon_GAU8_veh` |
 
@@ -37,6 +39,8 @@ Compatibility components load only when their required addons are present.
 ## Acoustic model
 
 The cannon report changes with distance, direction, aircraft motion, obstruction, and the surrounding environment. Distant observers hear the report after the visible firing event because sound propagation is delayed.
+
+Ambient temperature and humidity affect the modeled speed of sound. Wind direction and strength influence sound travel time, so the same firing event can reach different observers at different times under different atmospheric conditions. These effects also apply to the supersonic projectile crack field.
 
 The supersonic projectile crack field is modeled separately from the cannon report, allowing listeners near the projectile flight path to hear the crack independently of the delayed report arriving from the aircraft.
 
@@ -70,7 +74,7 @@ Compatibility components activate only when their corresponding third-party addo
 Supported optional integrations include:
 
 - RHSUSAF A-10A
-- Firewill A-10C
+- Firewill A-10 Warthog variants
 - CUP A-10 variants
 - USAF A-10C
 - A-10-tastic
@@ -123,8 +127,8 @@ Public releases use semantic versioning. Internal V27 development numbers are no
 ## Known limitations
 
 - The model is a gameplay-oriented acoustic approximation rather than a full wave-propagation simulation.
-- Sound speed is fixed at approximately 343 m/s.
-- Atmospheric temperature, humidity, wind, and pressure are not currently used to vary propagation.
+- Atmospheric propagation is a simplified approximation using Arma 3 ambient temperature, humidity, and wind conditions. Local variations along individual sound paths are not simulated.
+- Air pressure is not modeled independently, and detailed frequency-dependent atmospheric absorption remains outside the current approximation.
 - Obstruction and ground response depend on Arma world geometry and script timing.
 - Very low or unstable frame rates can reduce timing precision.
 - Third-party updates can require compatibility maintenance.
